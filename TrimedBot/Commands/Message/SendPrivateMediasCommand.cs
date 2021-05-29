@@ -1,0 +1,76 @@
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Telegram.Bot.Types.InputFiles;
+using Telegram.Bot.Types.ReplyMarkups;
+using TrimedBot.Core.Interfaces;
+using TrimedBot.Core.Services;
+using TrimedBot.Database.Models;
+
+namespace TrimedBot.Commands.Message
+{
+    public class SendPrivateMediasCommand : ICommand
+    {
+        public IServiceProvider provider { get; }
+        private int pageNum;
+        private ObjectBox objectBox;
+
+        public SendPrivateMediasCommand(IServiceProvider provider, int pageNum)
+        {
+            provider = provider;
+            this.pageNum = pageNum;
+            this.objectBox = provider.GetRequiredService<ObjectBox>();
+        }
+
+        public async Task Do()
+        {
+            IMedia mediaServices = provider.GetRequiredService<IMedia>();
+            ITempMessage tempMessagesServices = provider.GetRequiredService<ITempMessage>();
+            IUser userServices = provider.GetRequiredService<IUser>();
+            BotServices _bot = provider.GetRequiredService<BotServices>();
+            var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum); //Invalid attempt to call IsDBNull when reader is closed
+            if (medias.Length != 0)
+            {
+                if (pageNum <= 0) pageNum = 1;
+                if (medias.Length == 0) pageNum = 1;
+
+                List<TempMessage> tempMessages = new List<TempMessage>();
+
+                for (int i = 0; i < medias.Length; i++)
+                {
+                    InlineKeyboardButton[] t1 =
+                    {
+                        InlineKeyboardButton.WithCallbackData("Edit title", $"Post/Edit/Title/{medias[i].Id}"),
+                        InlineKeyboardButton.WithCallbackData("Edit caption", $"Post/Edit/Caption/{medias[i].Id}"),
+                        InlineKeyboardButton.WithCallbackData("Edit video", $"Post/Edit/Video/{medias[i].Id}")
+                    };
+
+                    InlineKeyboardButton[] t2 =
+                    {
+                        InlineKeyboardButton.WithCallbackData("Delete", $"Post/Delete/{medias[i].Id}")
+                    };
+
+                    var media = await _bot.SendVideoAsync(objectBox.User.UserId,
+                        new InputOnlineFile(medias[i].FileId), caption: $"{medias[i].Title}\n{medias[i].Caption}",
+                        replyMarkup: new InlineKeyboardMarkup(new[] { t1, t2 }));
+                    tempMessages.Add(new TempMessage { MessageId = media.MessageId, UserId = objectBox.User.UserId });
+                }
+
+                await tempMessagesServices.AddAsync(tempMessages);
+                await tempMessagesServices.SaveAsync();
+
+                userServices.ChangeUserPlace(objectBox.User, UserPlace.SeeAddedVideos_Member);
+                await userServices.SaveAsync();
+            }
+            else
+                await _bot.SendTextMessageAsync(objectBox.User.UserId, "There is no videos");
+        }
+
+        public Task UnDo()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
