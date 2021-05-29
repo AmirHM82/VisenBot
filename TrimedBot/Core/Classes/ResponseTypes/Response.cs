@@ -16,9 +16,9 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             this.provider = provider;
         }
 
-        public void Message(Message message)
+        public async Task Message(Message message)
         {
-            new MessageResponse(provider).Response(message);
+            await new MessageResponse(provider).Response(message);
         }
 
         public void Callback(CallbackQuery callbackQuery)

@@ -49,7 +49,7 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             keyboard = objectBox.Keyboard;
         }
 
-        public void Response(Message message)
+        public async Task Response(Message message)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
             if (message.Text.ToLower() == "/cancel" || message.Text.ToLower() == "cancel")
@@ -153,8 +153,11 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                         break;
                 }
             }
-
-            cmds.ForEach(async (x) => { await x(); await Task.Delay(34); });
+            foreach (var x in cmds)
+            {
+                await x(); 
+                await Task.Delay(34);
+            }
         }
     }
 }

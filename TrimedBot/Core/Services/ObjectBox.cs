@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Telegram.Bot.Types.ReplyMarkups;
+
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Database.Models;
 
@@ -16,18 +19,15 @@ namespace TrimedBot.Core.Services
         public Settings Settings { get; set; }
 
         private IServiceProvider provider;
-        protected IUser userServices;
-        protected ISettings settingsServices;
 
         public ObjectBox(IServiceProvider provider)
         {
             this.provider = provider;
-            userServices = provider.GetRequiredService<IUser>();
-            settingsServices = provider.GetRequiredService<ISettings>();
         }
 
         public async Task AssignUser(Telegram.Bot.Types.User user)
         {
+            IUser userServices = provider.GetRequiredService<IUser>();
             var NewOrFoundedUser = await userServices.FindOrAddAsync(user);
             if (NewOrFoundedUser.UserName != user.Username)
             {
@@ -40,6 +40,7 @@ namespace TrimedBot.Core.Services
 
         public async Task AssignSettings()
         {
+            ISettings settingsServices = provider.GetRequiredService<ISettings>();
             var settings = await settingsServices.GetSettings();
             if (settings == null)
             {
@@ -47,6 +48,7 @@ namespace TrimedBot.Core.Services
                 await settingsServices.Add(settings);
                 await settingsServices.SaveAsync();
             }
+            Settings = settings;
         }
 
         public void AssignKeyboard(Access access) => Keyboard = TrimedCore.Core.Classes.Keyboard.SpecificKeyboard(access);

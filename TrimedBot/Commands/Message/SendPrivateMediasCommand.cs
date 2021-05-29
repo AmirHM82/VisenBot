@@ -17,60 +17,67 @@ namespace TrimedBot.Commands.Message
         private int pageNum;
         private ObjectBox objectBox;
 
-        public SendPrivateMediasCommand(IServiceProvider provider, int pageNum)
+        public SendPrivateMediasCommand(IServiceProvider prv, int pageNum)
         {
-            provider = provider;
+            provider = prv;
             this.pageNum = pageNum;
             this.objectBox = provider.GetRequiredService<ObjectBox>();
         }
 
         public async Task Do()
         {
-            IMedia mediaServices = provider.GetRequiredService<IMedia>();
-            ITempMessage tempMessagesServices = provider.GetRequiredService<ITempMessage>();
-            IUser userServices = provider.GetRequiredService<IUser>();
-            BotServices _bot = provider.GetRequiredService<BotServices>();
-            var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum); //Invalid attempt to call IsDBNull when reader is closed
-            if (medias.Length != 0)
+            try
             {
-                if (pageNum <= 0) pageNum = 1;
-                if (medias.Length == 0) pageNum = 1;
-
-                List<TempMessage> tempMessages = new List<TempMessage>();
-
-                for (int i = 0; i < medias.Length; i++)
+                IMedia mediaServices = provider.GetRequiredService<IMedia>();
+                ITempMessage tempMessagesServices = provider.GetRequiredService<ITempMessage>();
+                IUser userServices = provider.GetRequiredService<IUser>();
+                BotServices _bot = provider.GetRequiredService<BotServices>();
+                var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum); //Invalid attempt to call IsDBNull when reader is closed
+                if (medias.Length != 0)
                 {
-                    InlineKeyboardButton[] t1 =
+                    if (pageNum <= 0) pageNum = 1;
+                    if (medias.Length == 0) pageNum = 1;
+
+                    List<TempMessage> tempMessages = new List<TempMessage>();
+
+                    for (int i = 0; i < medias.Length; i++)
                     {
+                        InlineKeyboardButton[] t1 =
+                        {
                         InlineKeyboardButton.WithCallbackData("Edit title", $"Post/Edit/Title/{medias[i].Id}"),
                         InlineKeyboardButton.WithCallbackData("Edit caption", $"Post/Edit/Caption/{medias[i].Id}"),
                         InlineKeyboardButton.WithCallbackData("Edit video", $"Post/Edit/Video/{medias[i].Id}")
                     };
 
-                    InlineKeyboardButton[] t2 =
-                    {
+                        InlineKeyboardButton[] t2 =
+                        {
                         InlineKeyboardButton.WithCallbackData("Delete", $"Post/Delete/{medias[i].Id}")
                     };
 
-                    var media = await _bot.SendVideoAsync(objectBox.User.UserId,
-                        new InputOnlineFile(medias[i].FileId), caption: $"{medias[i].Title}\n{medias[i].Caption}",
-                        replyMarkup: new InlineKeyboardMarkup(new[] { t1, t2 }));
-                    tempMessages.Add(new TempMessage { MessageId = media.MessageId, UserId = objectBox.User.UserId });
+                        var media = await _bot.SendVideoAsync(objectBox.User.UserId,
+                            new InputOnlineFile(medias[i].FileId), caption: $"{medias[i].Title}\n{medias[i].Caption}",
+                            replyMarkup: new InlineKeyboardMarkup(new[] { t1, t2 }));
+                        tempMessages.Add(new TempMessage { MessageId = media.MessageId, UserId = objectBox.User.UserId });
+                    }
+
+                    await tempMessagesServices.AddAsync(tempMessages);
+                    await tempMessagesServices.SaveAsync();
+
+                    userServices.ChangeUserPlace(objectBox.User, UserPlace.SeeAddedVideos_Member);
+                    await userServices.SaveAsync();
                 }
-
-                await tempMessagesServices.AddAsync(tempMessages);
-                await tempMessagesServices.SaveAsync();
-
-                userServices.ChangeUserPlace(objectBox.User, UserPlace.SeeAddedVideos_Member);
-                await userServices.SaveAsync();
+                else
+                    await _bot.SendTextMessageAsync(objectBox.User.UserId, "There is no videos");
             }
-            else
-                await _bot.SendTextMessageAsync(objectBox.User.UserId, "There is no videos");
+            catch (Exception e)
+            {
+                e.Message.LogError();
+            }
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

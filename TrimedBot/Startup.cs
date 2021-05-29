@@ -31,7 +31,7 @@ namespace TrimedBot
         {
             services.AddDbContext<DB>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("EGO"));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddTransient<IMedia, MediaServices>();
@@ -47,7 +47,7 @@ namespace TrimedBot
             services.AddHttpClient();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env/*, IServiceProvider sp*/)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
