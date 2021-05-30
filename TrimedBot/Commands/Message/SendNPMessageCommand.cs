@@ -7,6 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 using TrimedCore.Core.Classes;
 
 namespace TrimedBot.Commands.Message
@@ -35,8 +36,8 @@ namespace TrimedBot.Commands.Message
 
             InlineKeyboardButton[] t2 =
             {
-                InlineKeyboardButton.WithCallbackData("Next", $"{Category}/Next/{nextPage}/"),
-                InlineKeyboardButton.WithCallbackData("Previous", $"{Category}/Previous/{previousPage}/")
+                InlineKeyboardButton.WithCallbackData("Next", $"{Category}/{CallbackSection.Next}/{nextPage}"),
+                InlineKeyboardButton.WithCallbackData("Previous", $"{Category}/{CallbackSection.Previous}/{previousPage}")
             };
 
             var message = await _bot.SendTextMessageAsync(objectBox.User.UserId, $"Page: {pageNumber}", replyMarkup: new InlineKeyboardMarkup(t2));

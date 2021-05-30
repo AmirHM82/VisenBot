@@ -21,7 +21,9 @@ namespace TrimedBot.Commands.Post
         public SearchInMediasCommand(IServiceProvider provider, InlineQuery query)
         {
             this.provider = provider;
-            var mediaServices = provider.GetRequiredService<IMedia>();
+            mediaServices = provider.GetRequiredService<IMedia>();
+            objectBox = provider.GetRequiredService<ObjectBox>();
+            _bot = provider.GetRequiredService<BotServices>();
             this.query = query;
         }
 
@@ -37,7 +39,11 @@ namespace TrimedBot.Commands.Post
                 {
                     results[i] = new InlineQueryResultCachedVideo(videos[i].Id.ToString(), videos[i].FileId, $"{videos[i].Title} - {videos[i].Caption}");
                 }
-                await _bot.AnswerInlineQueryAsync(query.Id, results);
+                try
+                {
+                    await _bot.AnswerInlineQueryAsync(query.Id, results);
+                }
+                catch { }
             }
         }
 

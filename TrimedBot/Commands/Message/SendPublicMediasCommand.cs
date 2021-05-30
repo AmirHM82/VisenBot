@@ -8,6 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Commands.Message
 {
@@ -48,8 +49,8 @@ namespace TrimedBot.Commands.Message
                     {
                         InlineKeyboardButton[] t1 =
                         {
-                            InlineKeyboardButton.WithCallbackData("Confirm", $"Post/Confirm/{medias[i].Id}"),
-                            InlineKeyboardButton.WithCallbackData("Delete", $"Post/Delete/{medias[i].Id}")
+                            InlineKeyboardButton.WithCallbackData("Confirm", $"{CallbackSection.Post}/{CallbackSection.Confirm}/{medias[i].Id}"),
+                            InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{medias[i].Id}")
                         };
 
                         var media = await _bot.SendVideoAsync(objectBox.User.UserId,

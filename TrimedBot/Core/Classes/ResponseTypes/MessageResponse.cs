@@ -28,6 +28,7 @@ using TrimedBot.Commands.User.Member;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 using TrimedCore.Core.Classes;
 
 namespace TrimedBot.Core.Classes.ResponseTypes
@@ -73,7 +74,7 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                             case "/myvideos":
                             case "my videos":
                                 cmds.Add(new SendPrivateMediasCommand(provider, 1).Do);
-                                cmds.Add(new SendNPMessageCommand(provider, 1, "Post").Do);
+                                cmds.Add(new SendNPMessageCommand(provider, 1, CallbackSection.Post).Do);
                                 break;
                             case "send admin request":
                             case "/sendadminrequest":
@@ -82,17 +83,17 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                             case "admin requests":
                             case "/adminrequests":
                                 cmds.Add(new SendAdminRequestsCommand(provider, 1).Do);
-                                cmds.Add(new SendNPMessageCommand(provider, 1, "Admin/Request").Do);
+                                cmds.Add(new SendNPMessageCommand(provider, 1, $"{CallbackSection.Admin}/{CallbackSection.Request}").Do);
                                 break;
                             case "admins":
                             case "/admins":
                                 cmds.Add(new SendAdminsCommand(provider, 1).Do);
-                                cmds.Add(new SendNPMessageCommand(provider, 1, "Admin/Delete").Do);
+                                cmds.Add(new SendNPMessageCommand(provider, 1, CallbackSection.Admin).Do);
                                 break;
                             case "posts":
                             case "/posts":
                                 cmds.Add(new SendPublicMediasCommand(provider, 1).Do);
-                                cmds.Add(new SendNPMessageCommand(provider, 1, "Post").Do);
+                                cmds.Add(new SendNPMessageCommand(provider, 1, CallbackSection.Post).Do);
                                 break;
                             case "search in posts":
                             case "/searchinposts":

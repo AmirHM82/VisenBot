@@ -1,34 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InlineQueryResults;
-using Telegram.Bot.Types.InputFiles;
-using Telegram.Bot.Types.ReplyMarkups;
-using TrimedBot.Commands;
 using TrimedBot.Commands.Message;
 using TrimedBot.Commands.objectBox.User.Manager.Request;
 using TrimedBot.Commands.Post;
-using TrimedBot.Commands.Post.Add;
 using TrimedBot.Commands.Post.Delete;
 using TrimedBot.Commands.Post.Edit;
-using TrimedBot.Commands.Service.Settings;
 using TrimedBot.Commands.Service.Temp;
 using TrimedBot.Commands.User.Admin;
-using TrimedBot.Commands.User.All;
 using TrimedBot.Commands.User.Manager;
 using TrimedBot.Commands.User.Manager.Message;
 using TrimedBot.Commands.User.Manager.Request;
-using TrimedBot.Commands.User.Manager.Settings;
-using TrimedBot.Commands.User.Member;
-using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
-using TrimedCore.Core.Classes;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Core.Classes.ResponseTypes
 {
@@ -51,109 +38,109 @@ namespace TrimedBot.Core.Classes.ResponseTypes
         {
             List<Func<Task>> cmds = new();
             await _bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            var data = new Queue<string>(callbackQuery.Data.Split("/"));
 
-            string[] splitedQuery = callbackQuery.Data.Split("/");
-            string InputData = splitedQuery.LastOrDefault();
-
-            switch (splitedQuery[0])
+            switch (data.Dequeue())
             {
-                case "Post":
-                    switch (splitedQuery[1])
+                case CallbackSection.Post:
+                    switch (data.Dequeue())
                     {
-                        case "Edit":
+                        case CallbackSection.Edit:
                             cmds.Add(new DeleteTempMessagesCommand(provider).Do);
-                            switch (splitedQuery[2])
+                            switch (data.Dequeue())
                             {
-                                case "Title":
-                                    cmds.Add(new GetInEditMediaChangeTitleSectionCommand(provider, InputData).Do);
+                                case CallbackSection.Title:
+                                    cmds.Add(new GetInEditMediaChangeTitleSectionCommand(provider, data.Dequeue()).Do);
                                     break;
-                                case "Caption":
-                                    cmds.Add(new GetInEditMediaChangeCaptionSectionCommand(provider, InputData).Do);
+                                case CallbackSection.Caption:
+                                    cmds.Add(new GetInEditMediaChangeCaptionSectionCommand(provider, data.Dequeue()).Do);
                                     break;
-                                case "Video":
-                                    cmds.Add(new GetInEditMediaChangeVideoSectionCommand(provider, InputData).Do);
+                                case CallbackSection.Video:
+                                    cmds.Add(new GetInEditMediaChangeVideoSectionCommand(provider, data.Dequeue()).Do);
                                     break;
                             }
                             break;
-                        case "Delete":
-                            cmds.Add(new DeletePostCommand(provider, callbackQuery.Message.MessageId, InputData).Do);
+                        case CallbackSection.Delete:
+                            cmds.Add(new DeletePostCommand(provider, callbackQuery.Message.MessageId, data.Dequeue()).Do);
                             break;
-                        case "Decline":
-                        case "Confirm":
-                            if (splitedQuery[1] == "Confirm")
-                                cmds.Add(new ConfirmPostCommand(provider, InputData, callbackQuery.Message.MessageId).Do);
-                            else if (splitedQuery[1] == "Decline")
-                                cmds.Add(new DeclinePostCommand(provider, InputData, callbackQuery.Message.MessageId).Do);
+                        case CallbackSection.Confirm:
+                            cmds.Add(new ConfirmPostCommand(provider, data.Dequeue(), callbackQuery.Message.MessageId).Do);
                             break;
-                        case "Next":
-                        case "Previous":
+                        case CallbackSection.Decline:
+                            cmds.Add(new DeclinePostCommand(provider, data.Dequeue(), callbackQuery.Message.MessageId).Do);
+                            break;
+                        case CallbackSection.Next:
+                        case CallbackSection.Previous:
                             cmds.Add(new DeleteTempMessagesCommand(provider).Do);
+                            int pageNum = Int32.Parse(data.Dequeue());
 
                             if (user.UserPlace == UserPlace.SeeAddedVideos_Member)
-                                cmds.Add(new SendPrivateMediasCommand(provider, Int32.Parse(InputData)).Do);
+                                cmds.Add(new SendPrivateMediasCommand(provider, pageNum).Do);
                             else if (user.UserPlace == UserPlace.SeeAddedVideos_Admin || user.UserPlace == UserPlace.SeeAddedVideos_Manager)
-                                cmds.Add(new SendPublicMediasCommand(provider, Int32.Parse(InputData)).Do);
+                                cmds.Add(new SendPublicMediasCommand(provider, pageNum).Do);
 
-                            cmds.Add(new SendNPMessageCommand(provider, Int32.Parse(InputData), "Post").Do);
+                            cmds.Add(new SendNPMessageCommand(provider, pageNum, CallbackSection.Post).Do);
                             break;
                     }
                     break;
-                case "Admin":
-                    switch (splitedQuery[1])
+                case CallbackSection.Admin:
+                    switch (data.Dequeue())
                     {
-                        case "Request":
-                            switch (splitedQuery[2])
+                        case CallbackSection.Request:
+                            switch (data.Dequeue())
                             {
-                                case "Accept":
-                                    cmds.Add(new AcceptAdminRequestCommand(provider, InputData, callbackQuery.Message.MessageId).Do);
+                                case CallbackSection.Accept:
+                                    cmds.Add(new AcceptAdminRequestCommand(provider, data.Dequeue(), callbackQuery.Message.MessageId).Do);
                                     break;
-                                case "Refuse":
-                                    cmds.Add(new RefuseAdminRequestCommand(provider, InputData, callbackQuery.Message.MessageId).Do);
+                                case CallbackSection.Refuse:
+                                    cmds.Add(new RefuseAdminRequestCommand(provider, data.Dequeue(), callbackQuery.Message.MessageId).Do);
                                     break;
-                                case "Next":
-                                case "Previous":
+                                case CallbackSection.Next:
+                                case CallbackSection.Previous:
                                     cmds.Add(new DeleteTempMessagesCommand(provider).Do);
                                     if (user.UserPlace == UserPlace.SeeAdmins_Manager)
                                     {
-                                        cmds.Add(new SendAdminRequestsCommand(provider, Int32.Parse(InputData)).Do);
-                                        cmds.Add(new SendNPMessageCommand(provider, Int32.Parse(InputData), "Admin/Request").Do);
+                                        int pageNum = Int32.Parse(data.Dequeue());
+                                        cmds.Add(new SendAdminRequestsCommand(provider, pageNum).Do);
+                                        cmds.Add(new SendNPMessageCommand(provider, pageNum, $"{CallbackSection.Admin}/{CallbackSection.Request}").Do);
                                     }
                                     break;
                             }
                             break;
-                        case "Delete":
-                            cmds.Add(new DeleteAdminCommand(provider, InputData, callbackQuery.Message.MessageId).Do);
+                        case CallbackSection.Delete:
+                            cmds.Add(new DeleteAdminCommand(provider, data.Dequeue(), callbackQuery.Message.MessageId).Do);
                             break;
-                        case "Add":
-                            cmds.Add(new AddAdminCommand(provider, InputData).Do);
+                        case CallbackSection.Add:
+                            cmds.Add(new AddAdminCommand(provider, data.Dequeue()).Do);
                             break;
-                        case "Next":
-                        case "Previous":
+                        case CallbackSection.Next:
+                        case CallbackSection.Previous:
                             cmds.Add(new DeleteTempMessagesCommand(provider).Do);
                             if (user.UserPlace == UserPlace.SeeAdmins_Manager)
                             {
-                                cmds.Add(new SendAdminsCommand(provider, Int32.Parse(InputData)).Do);
-                                cmds.Add(new SendNPMessageCommand(provider, Int32.Parse(InputData), "Admin").Do);
+                                int pageNum = Int32.Parse(data.Dequeue());
+                                cmds.Add(new SendAdminsCommand(provider, pageNum).Do);
+                                cmds.Add(new SendNPMessageCommand(provider, pageNum, CallbackSection.Admin).Do);
                             }
                             break;
                         default:
                             break;
                     }
                     break;
-                case "User":
-                    switch (splitedQuery[1])
+                case CallbackSection.User:
+                    switch (data.Dequeue())
                     {
-                        case "Ban":
-                            cmds.Add(new BanUserCommand(provider, Guid.Parse(InputData)).Do);
+                        case CallbackSection.Ban:
+                            cmds.Add(new BanUserCommand(provider, Guid.Parse(data.Dequeue())).Do);
                             break;
-                        case "Unban":
-                            cmds.Add(new BanUserCommand(provider, Guid.Parse(InputData)).UnDo);
+                        case CallbackSection.Unban:
+                            cmds.Add(new BanUserCommand(provider, Guid.Parse(data.Dequeue())).UnDo);
                             break;
-                        case "Send":
-                            switch (splitedQuery[2])
+                        case CallbackSection.Send:
+                            switch (data.Dequeue())
                             {
-                                case "Message":
-                                    cmds.Add(new GetInSendMessageToSomeOneCommand(provider, InputData).Do);
+                                case CallbackSection.Message:
+                                    cmds.Add(new GetInSendMessageToSomeOneCommand(provider, data.Dequeue()).Do);
                                     break;
                             }
                             break;

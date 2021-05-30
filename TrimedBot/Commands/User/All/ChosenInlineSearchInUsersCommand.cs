@@ -8,6 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Commands.User.All
 {
@@ -41,24 +42,22 @@ namespace TrimedBot.Commands.User.All
                     InlineKeyboardButton[] t1 =
                     {
                     selectedUser.Access == Access.Member ?
-                    InlineKeyboardButton.WithCallbackData("Make admin", $"Admin/Add/{selectedUser.Id}") :
+                    InlineKeyboardButton.WithCallbackData("Make admin", $"{CallbackSection.Admin}/{CallbackSection.Add}/{selectedUser.Id}") :
                     selectedUser.Access == Access.Admin ?
-                    InlineKeyboardButton.WithCallbackData("Delete admin", $"Admin/Delete/{selectedUser.Id}") :
-                    InlineKeyboardButton.WithCallbackData("Delete manager", $"Manager/Delete/{selectedUser.Id}")
+                    InlineKeyboardButton.WithCallbackData("Delete admin", $"{CallbackSection.Admin}/{CallbackSection.Delete}/{selectedUser.Id}") :
+                    InlineKeyboardButton.WithCallbackData("Delete manager", $"M/D/{selectedUser.Id}")
                     };
-
-                    //I didn't write callbacks of this section
 
                     InlineKeyboardButton[] t2 =
                     {
-                    InlineKeyboardButton.WithCallbackData("Send a message", $"User/Send/Message/{selectedUser.UserId}")
+                    InlineKeyboardButton.WithCallbackData("Send a message", $"{CallbackSection.User}/{CallbackSection.Send}/{CallbackSection.Message}/{selectedUser.UserId}")
                     };
 
                     InlineKeyboardButton[] t3 =
                     {
                     selectedUser.IsBanned ?
-                    InlineKeyboardButton.WithCallbackData("Unban", $"User/Unban/{selectedUser.Id}")
-                    : InlineKeyboardButton.WithCallbackData("Ban", $"User/Ban/{selectedUser.Id}")
+                    InlineKeyboardButton.WithCallbackData("Unban", $"{CallbackSection.User}/{CallbackSection.Unban}/{selectedUser.Id}")
+                    : InlineKeyboardButton.WithCallbackData("Ban", $"{CallbackSection.User}/{CallbackSection.Ban}/{selectedUser.Id}")
                     };
 
                     var sentMedia = await _bot.SendTextMessageAsync(objectBox.User.UserId,

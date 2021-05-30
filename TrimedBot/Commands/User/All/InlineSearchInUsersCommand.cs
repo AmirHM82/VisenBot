@@ -36,7 +36,11 @@ namespace TrimedBot.Commands.User.All
                     results[i] = new InlineQueryResultArticle(seletedUsers[i].UserId.ToString(), seletedUsers[i].UserName,
                         new InputTextMessageContent($"{seletedUsers[i].UserId} - {seletedUsers[i].UserName}"));
                 }
-                await _bot.AnswerInlineQueryAsync(query.Id, results);
+                try
+                {
+                    await _bot.AnswerInlineQueryAsync(query.Id, results);
+                }
+                catch { }
             }
         }
 

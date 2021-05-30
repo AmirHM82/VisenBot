@@ -8,6 +8,7 @@ using TrimedBot.Core.Classes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Commands.User.Manager.Request
 {
@@ -44,8 +45,8 @@ namespace TrimedBot.Commands.User.Manager.Request
                     {
                         var CallBackKeyboard = new InlineKeyboardMarkup(new[]
                         {
-                            InlineKeyboardButton.WithCallbackData("Accept", $"Admin/Request/Accept/{users[i].UserId}"),
-                            InlineKeyboardButton.WithCallbackData("Refuse", $"Admin/Request/Refuse/{users[i].UserId}"),
+                            InlineKeyboardButton.WithCallbackData("Accept", $"{CallbackSection.Admin}/{CallbackSection.Request}/{CallbackSection.Accept}/{users[i].UserId}"),
+                            InlineKeyboardButton.WithCallbackData("Refuse", $"{CallbackSection.Admin}/{CallbackSection.Request}/{CallbackSection.Refuse}/{users[i].UserId}"),
                         });
                         var messageR = await _bot.SendTextMessageAsync(objectBox.User.UserId,
                             $"UserName: {users[i].UserName} \n Start date: {users[i].StartDate}", replyMarkup: CallBackKeyboard);

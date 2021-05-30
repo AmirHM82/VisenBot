@@ -7,6 +7,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Commands.User.Manager.Request
 {
@@ -44,7 +45,7 @@ namespace TrimedBot.Commands.User.Manager.Request
                     {
                         InlineKeyboardButton[] p1 =
                         {
-                                InlineKeyboardButton.WithCallbackData("Delete", $"Admin/Delete/{admins[i].Id}")
+                                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Admin}/{CallbackSection.Delete}/{admins[i].Id}")
                                 };
 
                         var adminMessage = await _bot.SendTextMessageAsync(objectBox.User.UserId,

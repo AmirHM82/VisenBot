@@ -23,6 +23,7 @@ namespace TrimedBot.Commands.Post.Edit
             this.provider = provider;
             objectBox = provider.GetRequiredService<ObjectBox>();
             _bot = provider.GetRequiredService<BotServices>();
+            userServices = provider.GetRequiredService<IUser>();
             this.id = id;
         }
 

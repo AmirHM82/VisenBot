@@ -8,6 +8,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.Database.Models;
+using TrimedBot.Database.Sections;
 
 namespace TrimedBot.Commands.Message
 {
@@ -32,7 +33,7 @@ namespace TrimedBot.Commands.Message
                 ITempMessage tempMessagesServices = provider.GetRequiredService<ITempMessage>();
                 IUser userServices = provider.GetRequiredService<IUser>();
                 BotServices _bot = provider.GetRequiredService<BotServices>();
-                var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum); //Invalid attempt to call IsDBNull when reader is closed
+                var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum);
                 if (medias.Length != 0)
                 {
                     if (pageNum <= 0) pageNum = 1;
@@ -44,14 +45,14 @@ namespace TrimedBot.Commands.Message
                     {
                         InlineKeyboardButton[] t1 =
                         {
-                        InlineKeyboardButton.WithCallbackData("Edit title", $"Post/Edit/Title/{medias[i].Id}"),
-                        InlineKeyboardButton.WithCallbackData("Edit caption", $"Post/Edit/Caption/{medias[i].Id}"),
-                        InlineKeyboardButton.WithCallbackData("Edit video", $"Post/Edit/Video/{medias[i].Id}")
+                        InlineKeyboardButton.WithCallbackData("Edit title", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Title}/{medias[i].Id}"),
+                        InlineKeyboardButton.WithCallbackData("Edit caption", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Caption}/{medias[i].Id}"),
+                        InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{medias[i].Id}")
                     };
 
                         InlineKeyboardButton[] t2 =
                         {
-                        InlineKeyboardButton.WithCallbackData("Delete", $"Post/Delete/{medias[i].Id}")
+                        InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{medias[i].Id}")
                     };
 
                         var media = await _bot.SendVideoAsync(objectBox.User.UserId,

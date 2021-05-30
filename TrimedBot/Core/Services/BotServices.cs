@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Services
         protected IServiceProvider Provider;
         //public static Proxy Proxy { get; set; }
 
-        public BotServices(IConfiguration config, IServiceProvider provider) : base(config["Token"]/*, new WebProxy(Host: Proxy.Address, Port: Proxy.Port)*/)
+        public BotServices(IConfiguration config, IServiceProvider provider) : base(config["Token"]/*, new WebProxy("", )*/)
         {
             Token = config["Token"];
             Provider = provider;

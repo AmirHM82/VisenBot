@@ -35,7 +35,9 @@ namespace TrimedBot.Commands.Post
 
         public async Task Do()
         {
-            if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin || objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager || objectBox.User.UserPlace == UserPlace.Search_Posts)
+            if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin || 
+                objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager || 
+                objectBox.User.UserPlace == UserPlace.Search_Posts)
             {
                 var media = await mediaServices.FindAsync(Guid.Parse(id));
                 if (media != null)
