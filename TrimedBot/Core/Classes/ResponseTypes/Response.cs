@@ -21,19 +21,19 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             await new MessageResponse(provider).Response(message);
         }
 
-        public void Callback(CallbackQuery callbackQuery)
+        public async Task Callback(CallbackQuery callbackQuery)
         {
-            new CallbackResponse(provider).Response(callbackQuery);
+            await new CallbackResponse(provider).Response(callbackQuery);
         }
 
-        public void Inline(InlineQuery inlineQuery)
+        public async Task Inline(InlineQuery inlineQuery)
         {
-            new InlineResponse(provider).Response(inlineQuery);
+            await new InlineResponse(provider).Response(inlineQuery);
         }
 
-        public void ChosenInline(ChosenInlineResult result)
+        public async Task ChosenInline(ChosenInlineResult result)
         {
-            new ChosenInlineResponse(provider).Response(result);
+            await new ChosenInlineResponse(provider).Response(result);
         }
     }
 }

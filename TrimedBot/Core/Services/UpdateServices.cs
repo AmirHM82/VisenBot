@@ -47,17 +47,17 @@ namespace TrimedBot.Core.Services
                 case UpdateType.InlineQuery:
                     await objectBox.AssignUser(update.InlineQuery.From);
                     objectBox.AssignKeyboard(objectBox.User.Access);
-                    response.Inline(update.InlineQuery);
+                    await response.Inline(update.InlineQuery);
                     break;
                 case UpdateType.ChosenInlineResult:
                     await objectBox.AssignUser(update.ChosenInlineResult.From);
                     objectBox.AssignKeyboard(objectBox.User.Access);
-                    response.ChosenInline(update.ChosenInlineResult);
+                    await response.ChosenInline(update.ChosenInlineResult);
                     break;
                 case UpdateType.CallbackQuery:
                     await objectBox.AssignUser(update.CallbackQuery.From);
                     objectBox.AssignKeyboard(objectBox.User.Access);
-                    response.Callback(update.CallbackQuery);
+                    await response.Callback(update.CallbackQuery);
                     break;
                 default:
                     return;

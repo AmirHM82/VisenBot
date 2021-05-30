@@ -45,7 +45,7 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             user = objectBox.User;
         }
 
-        public void Response(InlineQuery inlineQuery)
+        public async Task Response(InlineQuery inlineQuery)
         {
             List<Func<Task>> cmds = new();
             if (inlineQuery.Query != null && inlineQuery.Query != "")
@@ -54,7 +54,11 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                 else
                     cmds.Add(new SearchInMediasCommand(provider, inlineQuery).Do);
 
-            cmds.ForEach(async (x) => { x(); await Task.Delay(34); });
+            foreach (var x in cmds)
+            {
+                await x();
+                await Task.Delay(34);
+            }
         }
     }
 }

@@ -47,10 +47,10 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             user = objectBox.User;
         }
 
-        public void Response(CallbackQuery callbackQuery)
+        public async Task Response(CallbackQuery callbackQuery)
         {
             List<Func<Task>> cmds = new();
-            _bot.AnswerCallbackQueryAsync(callbackQuery.Id);
+            await _bot.AnswerCallbackQueryAsync(callbackQuery.Id);
 
             string[] splitedQuery = callbackQuery.Data.Split("/");
             string InputData = splitedQuery.LastOrDefault();
@@ -163,7 +163,11 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                     break;
             }
 
-            cmds.ForEach(async (x) => { x(); await Task.Delay(34); });
+            foreach (var x in cmds)
+            {
+                await x();
+                await Task.Delay(34);
+            }
         }
     }
 }

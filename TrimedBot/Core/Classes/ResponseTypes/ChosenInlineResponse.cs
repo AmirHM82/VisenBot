@@ -24,7 +24,7 @@ namespace TrimedBot.Core.Classes.ResponseTypes
             user = objectBox.User;
         }
 
-        public void Response(ChosenInlineResult result)
+        public async Task Response(ChosenInlineResult result)
         {
             List<Func<Task>> cmds = new();
 
@@ -38,7 +38,11 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                     break;
             }
 
-            cmds.ForEach(async (x) => { x(); await Task.Delay(34); });
+            foreach (var x in cmds)
+            {
+                await x();
+                await Task.Delay(34);
+            }
         }
     }
 }
