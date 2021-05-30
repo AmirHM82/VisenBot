@@ -32,6 +32,7 @@ namespace TrimedBot.Core.Services
             {
                 Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
                 media.Title = Title;
+                media.IsConfirmed = false;
                 _db.Medias.Update(media);
                 await _db.SaveChangesAsync();
                 return media;
@@ -44,6 +45,7 @@ namespace TrimedBot.Core.Services
             {
                 Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
                 media.Caption = Caption;
+                media.IsConfirmed = false;
                 _db.Medias.Update(media);
                 await _db.SaveChangesAsync();
                 return media;
@@ -56,6 +58,7 @@ namespace TrimedBot.Core.Services
             {
                 Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
                 media.FileId = FileId;
+                media.IsConfirmed = false;
                 _db.Medias.Update(media);
                 await _db.SaveChangesAsync();
                 return media;
@@ -145,6 +148,11 @@ namespace TrimedBot.Core.Services
         public void Decline(Media media)
         {
             media.IsConfirmed = false;
+            _db.Medias.Update(media);
+        }
+
+        public void Update(Media media)
+        {
             _db.Medias.Update(media);
         }
     }

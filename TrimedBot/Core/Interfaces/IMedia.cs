@@ -19,6 +19,7 @@ namespace TrimedBot.Core.Interfaces
         Task<Media[]> GetMediasAsync(string fileId, int pageNumber);
         Task SaveAsync();
         void Remove(Media media);
+        void Update(Media media);
         Task<Media> Remove(string id);
         Task<Media> ChangeTitle(Guid Id, string Caption);
         Task<Media> ChangeCaption(Guid Id, string Caption);
