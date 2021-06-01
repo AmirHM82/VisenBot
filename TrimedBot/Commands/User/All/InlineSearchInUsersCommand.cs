@@ -20,8 +20,8 @@ namespace TrimedBot.Commands.User.All
         public InlineSearchInUsersCommand(IServiceProvider provider, InlineQuery query)
         {
             this.provider = provider;
-            var userServices = provider.GetRequiredService<IUser>();
-            var _bot = provider.GetRequiredService<BotServices>();
+            userServices = provider.GetRequiredService<IUser>();
+            _bot = provider.GetRequiredService<BotServices>();
             this.query = query;
         }
 

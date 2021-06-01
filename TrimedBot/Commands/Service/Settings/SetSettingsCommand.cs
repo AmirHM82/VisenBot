@@ -50,7 +50,7 @@ namespace TrimedBot.Commands.Service.Settings
                     }
                     settingsServices.Update(objectBox.Settings);
                     await settingsServices.SaveAsync();
-                    await _bot.SendTextMessageAsync(objectBox.User.UserId, "Saved", replyMarkup: Keyboard.AdsPropertiesKeyboard);
+                    await _bot.SendTextMessageAsync(objectBox.User.UserId, "Saved", replyMarkup: objectBox.Keyboard);
                     await userServices.Reset(objectBox.User, UserResetSection.UserPlace);
                 }
                 else await _bot.SendTextMessageAsync(objectBox.User.UserId, "Please send subject numbers:");

@@ -52,17 +52,19 @@ namespace TrimedBot.Core.Classes.ResponseTypes
 
         public async Task Response(Message message)
         {
-            List<Func<Task>> cmds = new List<Func<Task>>();
-            if (message.Text.ToLower() == "/cancel" || message.Text.ToLower() == "cancel")
-            {
-                cmds.Add(new DeleteTempMessagesCommand(provider).Do);
-                cmds.Add(new CancelCommand(provider).Do);
-            }
-            else
-            {
-                switch (user.UserPlace)
+            if (message.Text != null)
+                if (message.Text.ToLower() == "/cancel" || message.Text.ToLower() == "cancel")
                 {
-                    case UserPlace.NoWhere:
+                    await new DeleteTempMessagesCommand(provider).Do();
+                    await new CancelCommand(provider).Do();
+                    return;
+                }
+
+            List<Func<Task>> cmds = new List<Func<Task>>();
+            switch (user.UserPlace)
+            {
+                case UserPlace.NoWhere:
+                    if (message.Text != null)
                         switch (message.Text.ToLower())
                         {
                             case "/start":
@@ -116,47 +118,51 @@ namespace TrimedBot.Core.Classes.ResponseTypes
                                 cmds.Add(new SendHelpCommand(provider).Do);
                                 break;
                         }
-                        break;
-                    case UserPlace.AddMedia_SendTitle:
-                        cmds.Add(new AddMediaRecieveTitleCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.AddMedia_SendCaption:
-                        cmds.Add(new AddMediaRecieveCaptionCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.AddMedia_SendMedia:
-                        cmds.Add(new AddMediaRecieveVideoCommand(provider, message.Video).Do);
-                        break;
-                    case UserPlace.EditMedia_Title:
-                        cmds.Add(new EditMediaChangeTitleCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.EditMedia_Caption:
-                        cmds.Add(new EditMediaChangeCaptionCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.EditMedia_Video:
-                        cmds.Add(new EditMediaChangeVideoCommand(provider, message.Video).Do);
-                        break;
-                    case UserPlace.Settings_Menu:
-                        cmds.Add(new SettingsMenuCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.Settings_PerMemberAdsPrice:
-                    case UserPlace.Settings_BasicAdsPrice:
-                    case UserPlace.Settings_NumberOfAdsPerDay:
-                        cmds.Add(new SetSettingsCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.Send_Message_ToSomeone:
-                        cmds.Add(new SendMessageToSomeOneCommand(provider, message.Text).Do);
-                        break;
-                    case UserPlace.Send_Message_ToAll:
-                        cmds.Add(new SendMessageToAllCommand(provider, message.Text).Do);
-                        break;
-                    default:
-                        cmds.Add(new NotfoundCommand(provider).Do);
-                        break;
-                }
+                    break;
+                case UserPlace.AddMedia_SendTitle:
+                    cmds.Add(new AddMediaRecieveTitleCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.AddMedia_SendCaption:
+                    cmds.Add(new AddMediaRecieveCaptionCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.AddMedia_SendMedia:
+                    cmds.Add(new AddMediaRecieveVideoCommand(provider, message.Video).Do);
+                    break;
+                case UserPlace.EditMedia_Title:
+                    cmds.Add(new EditMediaChangeTitleCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.EditMedia_Caption:
+                    cmds.Add(new EditMediaChangeCaptionCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.EditMedia_Video:
+                    cmds.Add(new EditMediaChangeVideoCommand(provider, message.Video).Do);
+                    break;
+                case UserPlace.Settings_Menu:
+                    cmds.Add(new SettingsMenuCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.Settings_PerMemberAdsPrice:
+                case UserPlace.Settings_BasicAdsPrice:
+                case UserPlace.Settings_NumberOfAdsPerDay:
+                    cmds.Add(new SetSettingsCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.Send_Message_ToSomeone:
+                    cmds.Add(new DeleteTempMessagesCommand(provider).Do);
+                    cmds.Add(new SendMessageToSomeOneCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.Send_Message_ToAll:
+                    cmds.Add(new SendMessageToAllCommand(provider, message.Text).Do);
+                    break;
+                case UserPlace.Search_Posts:
+                case UserPlace.Search_Users:
+                    break;
+                default:
+                    cmds.Add(new NotfoundCommand(provider).Do);
+                    break;
             }
+
             foreach (var x in cmds)
             {
-                await x(); 
+                await x();
                 await Task.Delay(34);
             }
         }

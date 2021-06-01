@@ -22,6 +22,7 @@ namespace TrimedBot.Commands.Post
             this.provider = provider;
             _bot = provider.GetRequiredService<BotServices>();
             objectBox = provider.GetRequiredService<ObjectBox>();
+            userServices = provider.GetRequiredService<IUser>();
         }
 
         public async Task Do()

@@ -26,6 +26,8 @@ namespace TrimedBot.Commands.objectBox.User.Manager.Request
             this.provider = provider;
             objectBox = provider.GetRequiredService<ObjectBox>();
             _bot = provider.GetRequiredService<BotServices>();
+            userServices = provider.GetRequiredService<IUser>();
+            tempMessageServices = provider.GetRequiredService<ITempMessage>();
             this.id = id;
             this.messageId = messageId;
         }
