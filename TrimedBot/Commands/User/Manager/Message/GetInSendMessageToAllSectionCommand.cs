@@ -34,7 +34,7 @@ namespace TrimedBot.Commands.User.Manager.Message
                 await _bot.SendTextMessageAsync(objectBox.User.UserId, "Send your message:", replyMarkup: Keyboard.CancelKeyboard);
             }
             else
-                _bot.SendTextMessageAsync(objectBox.User.UserId, Sentences.Access_Denied, replyMarkup: objectBox.Keyboard);
+                await _bot.SendTextMessageAsync(objectBox.User.UserId, Sentences.Access_Denied, replyMarkup: objectBox.Keyboard);
         }
 
         public Task UnDo()
