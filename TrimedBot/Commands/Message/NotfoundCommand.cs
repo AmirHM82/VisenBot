@@ -22,7 +22,7 @@ namespace TrimedBot.Commands.Message
 
         public Task Do()
         {
-            return _bot.SendTextMessageAsync(objectBox.User.UserId, "Command not found.", replyMarkup: objectBox.Keyboard);
+            return _bot.SendTextMessageAsync(objectBox.User.UserId, "Command not found.\nUse your keyboard or send /help", replyMarkup: objectBox.Keyboard);
         }
 
         public Task UnDo()
