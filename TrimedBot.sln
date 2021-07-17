@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot", "TrimedBot\TrimedBot.csproj", "{C2720F7C-33EE-41AD-9422-5E77FC316889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot", "TrimedBot\TrimedBot.csproj", "{C2720F7C-33EE-41AD-9422-5E77FC316889}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.DAL", "TrimedBot.DAL\TrimedBot.DAL.csproj", "{7D4C3C3C-EB7A-4DE8-8CEE-D92867E013F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.Core", "TrimedBot.Core\TrimedBot.Core.csproj", "{7CFF22B9-1EE0-4C09-A5F7-27500C2703AA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.ConsoleApp", "TrimedBot.ConsoleApp\TrimedBot.ConsoleApp.csproj", "{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.gRPC", "TrimedBot.gRPC\TrimedBot.gRPC.csproj", "{C895E3E9-32AD-4007-BC3F-53D444373E15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{C2720F7C-33EE-41AD-9422-5E77FC316889}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C2720F7C-33EE-41AD-9422-5E77FC316889}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C2720F7C-33EE-41AD-9422-5E77FC316889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D4C3C3C-EB7A-4DE8-8CEE-D92867E013F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D4C3C3C-EB7A-4DE8-8CEE-D92867E013F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D4C3C3C-EB7A-4DE8-8CEE-D92867E013F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D4C3C3C-EB7A-4DE8-8CEE-D92867E013F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CFF22B9-1EE0-4C09-A5F7-27500C2703AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CFF22B9-1EE0-4C09-A5F7-27500C2703AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CFF22B9-1EE0-4C09-A5F7-27500C2703AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CFF22B9-1EE0-4C09-A5F7-27500C2703AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

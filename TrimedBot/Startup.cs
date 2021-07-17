@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ using Telegram.Bot;
 using TrimedBot.Core.Classes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
-using TrimedBot.Database.Context;
+using TrimedBot.DAL.Context;
+using TrimedBot.DAL.Entities;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace TrimedBot
 {
@@ -31,7 +34,7 @@ namespace TrimedBot
         {
             services.AddDbContext<DB>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(Configuration.GetConnectionString("SQL"));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddTransient<IMedia, MediaServices>();
@@ -41,6 +44,7 @@ namespace TrimedBot
             services.AddTransient<ITempMessage, TempMessageServices>();
             services.AddTransient<ISettings, SettingsServices>();
             services.AddScoped<ObjectBox>();
+            services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();
 
             services.AddControllers();
@@ -60,7 +64,10 @@ namespace TrimedBot
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
+
             app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
+            app.ApplicationServices.GetRequiredService<ResponseService>().StartProccesingMessages();
         }
     }
 }
