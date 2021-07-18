@@ -126,37 +126,37 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             }
         }
 
-        public async Task ResponseMessage(string message)
+        public async Task ResponseMessage(Message message)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserPlace)
             {
                 case UserPlace.AddMedia_SendTitle:
-                    cmds.Add(new AddMediaRecieveTitleCommand(objectBox, message).Do);
+                    cmds.Add(new AddMediaRecieveTitleCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.AddMedia_SendCaption:
-                    cmds.Add(new AddMediaRecieveCaptionCommand(objectBox, message).Do);
+                    cmds.Add(new AddMediaRecieveCaptionCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.EditMedia_Title:
-                    cmds.Add(new EditMediaChangeTitleCommand(objectBox, message).Do);
+                    cmds.Add(new EditMediaChangeTitleCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.EditMedia_Caption:
-                    cmds.Add(new EditMediaChangeCaptionCommand(objectBox, message).Do);
+                    cmds.Add(new EditMediaChangeCaptionCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.Settings_Menu:
-                    cmds.Add(new SettingsMenuCommand(objectBox, message).Do);
+                    cmds.Add(new SettingsMenuCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.Settings_PerMemberAdsPrice:
                 case UserPlace.Settings_BasicAdsPrice:
                 case UserPlace.Settings_NumberOfAdsPerDay:
-                    cmds.Add(new SetSettingsCommand(objectBox, message).Do);
+                    cmds.Add(new SetSettingsCommand(objectBox, message.Text).Do);
                     break;
                 case UserPlace.Send_Message_ToSomeone:
-                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do); //Fuck
-                    cmds.Add(new SendMessageToSomeOneCommand(objectBox, message).Do); //Fuck
+                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                    cmds.Add(new SendMessageToSomeOneCommand(objectBox, message.MessageId).Do);
                     break;
                 case UserPlace.Send_Message_ToAll:
-                    cmds.Add(new SendMessageToAllCommand(objectBox, message).Do); //Fuck
+                    cmds.Add(new SendMessageToAllCommand(objectBox, message.Text).Do);
                     break;
             }
             foreach (var cmd in cmds)
@@ -193,7 +193,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     string command = message.Text.ToLower();
                     if (command == "/cancel" || command == "cancel") { await ResponseCancel(); return; }
                     if (user.UserPlace == UserPlace.NoWhere) { await ResponseCommand(command); return; }
-                    await ResponseMessage(message.Text);
+                    await ResponseMessage(message);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Video:
                     await ResponseVideo(message.Video);

@@ -15,28 +15,43 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Classes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Entities;
+using Telegram.Bot.Extensions.Polling;
 
 namespace TrimedBot.Core.Services
 {
     public class BotServices : TelegramBotClient, IBot
     {
         public static string Token { get; set; }
-        protected IServiceProvider provider;
+        public IServiceProvider provider;
 
         public BotServices(IConfiguration config, IServiceProvider provider) : base(config["Token"]/*, new WebProxy("", )*/)
         {
             Token = config["Token"];
             this.provider = provider;
-            OnUpdate += BotServices_OnUpdate;
+            //OnUpdate += BotServices_OnUpdate;
         }
 
-        private async void BotServices_OnUpdate(object sender, Telegram.Bot.Args.UpdateEventArgs e)
-        {
-            using var scope = provider.CreateScope();
-            provider = scope.ServiceProvider;
+        //private async void BotServices_OnUpdate(object sender, Telegram.Bot.Args.UpdateEventArgs e)
+        //{
+        //    using var scope = provider.CreateScope();
+        //    var scopedProvider = scope.ServiceProvider;
 
-            var updateServices = provider.GetRequiredService<UpdateServices>();
-            await updateServices.ProcessUpdate(provider, e.Update);
+        //    var updateServices = provider.GetRequiredService<UpdateServices>();
+        //    await updateServices.ProcessUpdate(scopedProvider, e.Update);
+        //}
+
+        public async Task StartReceiving()
+        {
+            var updateReceiver = new QueuedUpdateReceiver(this);
+            updateReceiver.StartReceiving();
+            await foreach (var update in updateReceiver.YieldUpdatesAsync())
+            {
+                using var scope = provider.CreateScope();
+                var scopedProvider = scope.ServiceProvider;
+
+                var updateServices = provider.GetRequiredService<UpdateServices>();
+                await updateServices.ProcessUpdate(scopedProvider, update);
+            }
         }
     }
 }

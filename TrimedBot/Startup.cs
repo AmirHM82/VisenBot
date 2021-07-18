@@ -37,15 +37,7 @@ namespace TrimedBot
                 options.UseSqlServer(Configuration.GetConnectionString("SQL"));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
-            services.AddTransient<IMedia, MediaServices>();
-            services.AddTransient<IUser, UserServices>();
-            services.AddTransient<IToken, TokenServices>();
-            services.AddTransient<UpdateServices>();
-            services.AddTransient<ITempMessage, TempMessageServices>();
-            services.AddTransient<ISettings, SettingsServices>();
-            services.AddScoped<ObjectBox>();
-            services.AddSingleton<ResponseService>();
-            services.AddSingleton<BotServices>();
+            services.AddServices();
 
             services.AddControllers();
             services.AddHttpClient();
@@ -68,6 +60,22 @@ namespace TrimedBot
 
             app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
             app.ApplicationServices.GetRequiredService<ResponseService>().StartProccesingMessages();
+        }
+    }
+
+    public static class Services
+    {
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddTransient<IMedia, MediaServices>();
+            services.AddTransient<IUser, UserServices>();
+            services.AddTransient<IToken, TokenServices>();
+            services.AddTransient<UpdateServices>();
+            services.AddTransient<ITempMessage, TempMessageServices>();
+            services.AddTransient<ISettings, SettingsServices>();
+            services.AddScoped<ObjectBox>();
+            services.AddSingleton<ResponseService>();
+            services.AddSingleton<BotServices>();
         }
     }
 }

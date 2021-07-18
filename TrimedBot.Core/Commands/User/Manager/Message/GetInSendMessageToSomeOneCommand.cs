@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                 new TextResponseProcessor()
                 {
                     RecieverId = objectBox.User.UserId,
-                    Text = "Send your message:",
+                    Text = "Chat started.\nSend your messages. They will be send.\n/cancel if you want to finish chatting.",
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
             }
