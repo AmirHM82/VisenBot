@@ -29,35 +29,38 @@ namespace TrimedBot.Core.Commands.Message
         public async Task Do()
         {
             IMedia mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            IUser userServices = objectBox.Provider.GetRequiredService<IUser>();
+            //IUser userServices = objectBox.Provider.GetRequiredService<IUser>();
 
-            var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum);
-            if (medias.Length != 0)
+            if (pageNum > 0)
             {
-                if (pageNum <= 0) pageNum = 1;
-                if (medias.Length == 0) pageNum = 1;
-
-                for (int i = 0; i < medias.Length; i++)
+                var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum);
+                if (medias.Length != 0)
                 {
-                    new VideoResponseProcessor()
-                    {
-                        Text = $"{medias[i].Title}\n{medias[i].Caption}",
-                        Keyboard = Keyboard.PrivateMediaKeyboard(medias[i].Id),
-                        RecieverId = objectBox.User.UserId,
-                        IsDeletable = true,
-                        FileId = medias[i].FileId
-                    }.AddThisMessageToService(objectBox.Provider);
-                }
+                    //if (pageNum <= 0) pageNum = 1;
+                    //if (medias.Length == 0) pageNum = 1;
 
-                objectBox.User.UserPlace = UserPlace.SeeAddedVideos_Member;
-                userServices.Update(objectBox.User);
-                await userServices.SaveAsync();
+                    for (int i = 0; i < medias.Length; i++)
+                    {
+                        new VideoResponseProcessor()
+                        {
+                            Text = $"{medias[i].Title}\n{medias[i].Caption}",
+                            Keyboard = Keyboard.PrivateMediaKeyboard(medias[i].Id),
+                            ReceiverId = objectBox.User.UserId,
+                            IsDeletable = true,
+                            Video = medias[i].FileId
+                        }.AddThisMessageToService(objectBox.Provider);
+                    }
+
+                    objectBox.User.UserPlace = UserPlace.SeeAddedVideos_Member;
+                    //userServices.Update(objectBox.User);
+                    //await userServices.SaveAsync();
+                }
+                else new TextResponseProcessor()
+                {
+                    ReceiverId = objectBox.User.UserId,
+                    Text = "There is no videos."
+                }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
-            {
-                RecieverId = objectBox.User.UserId,
-                Text = "There is no videos."
-            }.AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

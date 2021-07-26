@@ -35,7 +35,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                 await userServices.SaveAsync();
                 new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Chat started.\nSend your messages. They will be send.\n/cancel if you want to finish chatting.",
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
             else
                 new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied,
                     Keyboard = objectBox.Keyboard
                 }.AddThisMessageToService(objectBox.Provider);

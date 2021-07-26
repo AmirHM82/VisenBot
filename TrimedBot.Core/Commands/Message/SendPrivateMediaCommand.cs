@@ -15,22 +15,22 @@ namespace TrimedBot.Core.Commands.Message
 {
     public class SendPrivateMediaCommand : ICommand
     {
-        private Media media;
+        private DAL.Entities.Media media;
         protected ObjectBox objectBox;
 
-        public SendPrivateMediaCommand(ObjectBox objectBox, Media media)
+        public SendPrivateMediaCommand(ObjectBox objectBox, DAL.Entities.Media media)
         {
             this.objectBox = objectBox;
             this.media = media;
         }
 
-        public async Task Do()
+        public Task Do()
         {
             if (media != null)
             {
                 new VideoResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = $"{media.Title}\n{media.Caption}",
                     Keyboard = Keyboard.PrivateMediaKeyboard(media.Id),
                     IsDeletable = true
@@ -38,15 +38,17 @@ namespace TrimedBot.Core.Commands.Message
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",
                 Keyboard = objectBox.Keyboard
-            }.AddThisMessageToService(objectBox.Provider);                
+            }.AddThisMessageToService(objectBox.Provider);
+
+            return Task.CompletedTask;         
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

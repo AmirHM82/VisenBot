@@ -11,6 +11,7 @@ using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using Media = TrimedBot.DAL.Entities.Media;
 
 namespace TrimedBot.Core.Commands.Post.Add
 {
@@ -35,7 +36,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             {
                 message = new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Please send a video.",
                     Keyboard = Keyboard.CancelKeyboard()
                 };
@@ -44,7 +45,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             {
                 message = new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "It's done.",
                     Keyboard = objectBox.Keyboard
                 };

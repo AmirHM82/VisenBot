@@ -15,8 +15,8 @@ namespace TrimedBot.Core.Commands.Message
 {
     public class SendNPMessageCommand : ICommand
     {
-        private int pageNumber;
-        private string Category;
+        public int pageNumber;
+        public string Category;
         private ObjectBox objectBox;
 
         public SendNPMessageCommand(ObjectBox objectBox, int pageNumber, string category)
@@ -30,23 +30,26 @@ namespace TrimedBot.Core.Commands.Message
         {
             if (objectBox.User.UserPlace != DAL.Enums.UserPlace.NoWhere)
             {
-                var npMessage = new NPResponseProcessor()
+                if (pageNumber > 0)
                 {
-                    PageNumber = pageNumber,
-                    Keyboard = Keyboard.NPKeyboard(pageNumber, Category),
-                    RecieverId = objectBox.User.UserId
-                };
+                    var npMessage = new NPResponseProcessor()
+                    {
+                        PageNumber = pageNumber,
+                        Keyboard = Keyboard.NPKeyboard(pageNumber, Category),
+                        ReceiverId = objectBox.User.UserId
+                    };
 
-                var textMessage = new TextResponseProcessor()
-                {
-                    Text = "Here you are.",
-                    RecieverId = objectBox.User.UserId,
-                    Keyboard = Keyboard.CancelKeyboard()
-                };
+                    var textMessage = new TextResponseProcessor()
+                    {
+                        Text = "Here you are.",
+                        ReceiverId = objectBox.User.UserId,
+                        Keyboard = Keyboard.CancelKeyboard()
+                    };
 
-                new MultiProcessor
-                    (new List<Classes.Processors.Processor>() { npMessage, textMessage })
-                    .AddThisMessageToService(objectBox.Provider);
+                    new MultiProcessor
+                        (new List<Classes.Processors.Processor>() { npMessage, textMessage })
+                        .AddThisMessageToService(objectBox.Provider);
+                }
             }
             return Task.CompletedTask;
         }

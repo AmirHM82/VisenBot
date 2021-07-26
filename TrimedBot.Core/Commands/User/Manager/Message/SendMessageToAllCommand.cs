@@ -10,6 +10,7 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes;
 
 namespace TrimedBot.Core.Commands.User.Manager.Message
 {
@@ -17,9 +18,9 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
     {
         private ObjectBox objectBox;
         protected IUser userServices;
-        private string message;
+        private Telegram.Bot.Types.Message message;
 
-        public SendMessageToAllCommand(ObjectBox objectBox, string message)
+        public SendMessageToAllCommand(ObjectBox objectBox, Telegram.Bot.Types.Message message)
         {
             this.objectBox = objectBox;
             userServices = objectBox.Provider.GetRequiredService<IUser>();
@@ -31,25 +32,10 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
             var userIds = await userServices.GetUserIds();
             if (userIds.Length != 0)
             {
-                List<Processor> messages = new();
                 for (int i = 0; i < userIds.Length; i++)
                 {
-                    messages.Add(new TextResponseProcessor()
-                    {
-                        RecieverId = userIds[i],
-                        Text = $"Message from: {objectBox.User.UserName}({objectBox.User.Access}):\n{message}",
-                        ParseMode = ParseMode.Html
-                    });
+                    message.SendMessage(userIds[i], objectBox);
                 }
-                messages.Add(new TextResponseProcessor()
-                {
-                    RecieverId = objectBox.User.UserId,
-                    Text = "Your message sent",
-                    Keyboard = objectBox.Keyboard
-                });
-                new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
-
-                userServices.Reset(objectBox.User, new UserResetSection[] { UserResetSection.Temp, UserResetSection.UserPlace });
             }
         }
 

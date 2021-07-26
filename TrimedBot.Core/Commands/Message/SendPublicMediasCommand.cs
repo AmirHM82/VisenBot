@@ -18,13 +18,13 @@ namespace TrimedBot.Core.Commands.Message
 {
     public class SendPublicMediasCommand : ICommand
     {
-        protected IUser userServices;
+        //protected IUser userServices;
         private ObjectBox objectBox;
         private int pageNum;
 
         public SendPublicMediasCommand(ObjectBox objectBox, int pageNum)
         {
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
+            //userServices = objectBox.Provider.GetRequiredService<IUser>();
             this.objectBox = objectBox;
             this.pageNum = pageNum;
         }
@@ -34,39 +34,42 @@ namespace TrimedBot.Core.Commands.Message
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             if (objectBox.User.Access == Access.Admin || objectBox.User.Access == Access.Manager)
             {
-                var medias = await mediaServices.GetNotConfirmedPostsAsync(pageNum);
-                if (medias.Length > 0)
+                if (pageNum > 0)
                 {
-                    if (pageNum <= 0) pageNum = 1;
-                    if (medias.Length == 0) pageNum = 1;
-
-                    List<Processor> messages = new();
-                    for (int i = 0; i < medias.Length; i++)
+                    var medias = await mediaServices.GetNotConfirmedPostsAsync(pageNum);
+                    if (medias.Length > 0)
                     {
-                        messages.Add(new VideoResponseProcessor()
+                        //if (pageNum <= 0) pageNum = 1;
+                        //if (medias.Length == 0) pageNum = 1;
+
+                        List<Processor> messages = new();
+                        for (int i = 0; i < medias.Length; i++)
                         {
-                            RecieverId = objectBox.User.UserId,
-                            FileId = medias[i].FileId,
-                            Text = $"{medias[i].Title}\n{medias[i].Caption}",
-                            Keyboard = Keyboard.DeclinedPublicMediaKeyboard(medias[i].Id),
-                            IsDeletable = true
-                        });
+                            messages.Add(new VideoResponseProcessor()
+                            {
+                                ReceiverId = objectBox.User.UserId,
+                                Video = medias[i].FileId,
+                                Text = $"{medias[i].Title}\n{medias[i].Caption}",
+                                Keyboard = Keyboard.DeclinedPublicMediaKeyboard(medias[i].Id),
+                                IsDeletable = true
+                            });
+                        }
+
+                        new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+
+
+                        objectBox.User.UserPlace = objectBox.User.Access == Access.Admin
+                           ? UserPlace.SeeAddedVideos_Admin
+                           : UserPlace.SeeAddedVideos_Manager;
+                        //userServices.ChangeUserPlace(objectBox.User, a);
+                        //await userServices.SaveAsync();
                     }
-
-                    new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
-
-
-                    var a = objectBox.User.Access == Access.Admin
-                       ? UserPlace.SeeAddedVideos_Admin
-                       : UserPlace.SeeAddedVideos_Manager;
-                    userServices.ChangeUserPlace(objectBox.User, a);
-                    await userServices.SaveAsync();
+                    else new TextResponseProcessor()
+                    {
+                        ReceiverId = objectBox.User.UserId,
+                        Text = "No medias found."
+                    }.AddThisMessageToService(objectBox.Provider);
                 }
-                else new TextResponseProcessor()
-                {
-                    RecieverId = objectBox.User.UserId,
-                    Text = "No medias found."
-                }.AddThisMessageToService(objectBox.Provider);
             }
         }
 

@@ -15,7 +15,9 @@ namespace TrimedBot.Core.Services
 {
     public class ObjectBox
     {
-        public User User { get; set; }
+        public bool IsUserChanged { get; set; }
+        private User _user;
+        public User User { get => _user; set { _user = value; IsUserChanged = true; } }
         public ReplyKeyboardMarkup Keyboard { get; set; }
         public Settings Settings { get; set; }
 
@@ -53,5 +55,15 @@ namespace TrimedBot.Core.Services
         }
 
         public void AssignKeyboard(Access access) => Keyboard = Classes.Keyboard.GetSpecificKeyboard(access);
+
+        public async Task UpdateUserInfo()
+        {
+            if (IsUserChanged)
+            {
+                var userServices = Provider.GetRequiredService<IUser>();
+                userServices.Update(User);
+                await userServices.SaveAsync();
+            }
+        }
     }
 }

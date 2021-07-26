@@ -74,15 +74,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:
-                            cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
-                            int pageNum = Int32.Parse(data.Dequeue());
-
-                            if (user.UserPlace == UserPlace.SeeAddedVideos_Member)
-                                cmds.Add(new SendPrivateMediasCommand(objectBox, pageNum).Do);
-                            else if (user.UserPlace == UserPlace.SeeAddedVideos_Admin || user.UserPlace == UserPlace.SeeAddedVideos_Manager)
-                                cmds.Add(new SendPublicMediasCommand(objectBox, pageNum).Do);
-
-                            cmds.Add(new SendNPMessageCommand(objectBox, pageNum, CallbackSection.Post).Do);
+                            cmds.Add(new MediasNPCommand(objectBox, int.Parse(data.Dequeue()), CallbackSection.Post).Do);
                             break;
                     }
                     break;
@@ -100,13 +92,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                                     break;
                                 case CallbackSection.Next:
                                 case CallbackSection.Previous:
-                                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
-                                    if (user.UserPlace == UserPlace.SeeAdmins_Manager)
-                                    {
-                                        int pageNum = Int32.Parse(data.Dequeue());
-                                        cmds.Add(new SendAdminRequestsCommand(objectBox, pageNum).Do);
-                                        cmds.Add(new SendNPMessageCommand(objectBox, pageNum, $"{CallbackSection.Admin}/{CallbackSection.Request}").Do);
-                                    }
+                                    cmds.Add(new SendAdminRequestsCommand(objectBox, int.Parse(data.Dequeue())).Do);
                                     break;
                             }
                             break;
@@ -118,13 +104,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:
-                            cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
-                            if (user.UserPlace == UserPlace.SeeAdmins_Manager)
-                            {
-                                int pageNum = Int32.Parse(data.Dequeue());
-                                cmds.Add(new SendAdminsCommand(objectBox, pageNum).Do);
-                                cmds.Add(new SendNPMessageCommand(objectBox, pageNum, CallbackSection.Admin).Do);
-                            }
+                            cmds.Add(new AdminsCommand(objectBox, int.Parse(data.Dequeue())).Do);
                             break;
                         default:
                             break;

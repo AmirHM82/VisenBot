@@ -25,8 +25,8 @@ namespace TrimedBot.Core.Services
             switch (update.Type)
             {
                 case UpdateType.Message:
-                    if (update.Message.Chat.Type == ChatType.Private &&
-                        (update.Message.Type == MessageType.Text || update.Message.Type == MessageType.Video))
+                    //if (update.Message.Chat.Type == ChatType.Private &&
+                    //    (update.Message.Type == MessageType.Text || update.Message.Type == MessageType.Video || update.Message.Type == MessageType.Photo))
                     {
                         await objectBox.AssignUser(update.Message.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);

@@ -16,12 +16,12 @@ namespace TrimedBot.Core.Commands.User.All
     public class OpenSearchInUsersSectionCommand : ICommand
     {
         private ObjectBox objectBox;
-        protected IUser userServices;
+        //protected IUser userServices;
 
         public OpenSearchInUsersSectionCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
+            //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
         public async Task Do()
@@ -30,16 +30,18 @@ namespace TrimedBot.Core.Commands.User.All
             {
                 new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "You can find users here with inline mode.",
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
-                userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Users);
-                await userServices.SaveAsync();
+
+                objectBox.User.UserPlace = UserPlace.Search_Users;
+                //userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Users);
+                //await userServices.SaveAsync();
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied,
                 Keyboard = objectBox.Keyboard
             };

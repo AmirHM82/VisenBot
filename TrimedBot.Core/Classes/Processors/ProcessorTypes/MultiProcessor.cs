@@ -21,7 +21,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
         protected async override Task Action(IServiceProvider provider)
         {
             List<Exception> exceptions = new();
-            if (messages != null)
+            if (messages.Count > 0)
             {
                 foreach (var item in messages)
                 {

@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
                 await mediaServices.ChangeVideo(Guid.Parse(objectBox.User.Temp), video.FileId);
                 new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Edited",
                     Keyboard = objectBox.Keyboard
                 }.AddThisMessageToService(objectBox.Provider);
@@ -42,7 +42,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Please send a video.",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);

@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.Post.Add
         {
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Now it's time to send the video:",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);

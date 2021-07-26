@@ -38,7 +38,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
                 var dadmin = await userServices.FindAsync(Guid.Parse(id));
                 messages.Add(new TextResponseProcessor()
                 {
-                    RecieverId = dadmin.UserId,
+                    ReceiverId = dadmin.UserId,
                     Text = "Manager deleted you from admins.",
                     Keyboard = Keyboard.StartKeyboard_Member()
                 });
@@ -57,7 +57,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
             else
                 messages.Add(new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied
                 });
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);

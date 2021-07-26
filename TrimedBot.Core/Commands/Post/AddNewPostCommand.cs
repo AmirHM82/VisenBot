@@ -16,27 +16,27 @@ namespace TrimedBot.Core.Commands.Post
     {
         protected BotServices _bot;
         protected ObjectBox objectBox;
-        protected IUser userServices;
+        //protected IUser userServices;
 
         public AddNewPostCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
             _bot = objectBox.Provider.GetRequiredService<BotServices>();
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
+            //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
         public async Task Do()
         {
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Send title of the video:",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
 
             objectBox.User.UserPlace = UserPlace.AddMedia_SendTitle;
-            userServices.Update(objectBox.User);
-            await userServices.SaveAsync();
+            //userServices.Update(objectBox.User);
+            //await userServices.SaveAsync();
         }
 
         public Task UnDo()

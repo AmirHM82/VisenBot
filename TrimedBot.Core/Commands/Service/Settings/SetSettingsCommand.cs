@@ -52,7 +52,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
                     await settingsServices.SaveAsync();
                     Pmessage = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = "Saved",
                         Keyboard = objectBox.Keyboard
                     };
@@ -60,7 +60,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
                 }
                 else Pmessage = new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Please send subject numbers:"
                 };
             }
@@ -68,7 +68,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
             {
                 Pmessage = new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Format was incorrect\nPlease send subject numbers:"
                 };
             }

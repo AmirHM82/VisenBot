@@ -7,9 +7,9 @@ namespace TrimedBot.DAL.Entities
 {
     public class Banner
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Text { get; set; }
-        public string ImageFileId { get; set; }
+        public string BannerFileId { get; set; }
         public bool IsPaid { get; set; }
         public DateTime ShowDate { get; set; }
         public User User { get; set; }

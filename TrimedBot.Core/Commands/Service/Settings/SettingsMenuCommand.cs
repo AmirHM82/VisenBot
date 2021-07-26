@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
                 case "ads properties":
                     message = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = "Choose, wich one you wanna change:",
                         Keyboard = Keyboard.AdsPropertiesKeyboard()
                     };
@@ -60,7 +60,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
                     }
                     message = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = $"Current value: {value}\nSend your new value:",
                         Keyboard = Keyboard.CancelKeyboard()
                     };

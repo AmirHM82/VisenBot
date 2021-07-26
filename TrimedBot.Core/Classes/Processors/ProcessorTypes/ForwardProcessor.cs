@@ -10,7 +10,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class ForwardProcessor : Processor
     {
-        public long RecieverId { get; set; }
+        public long ReceiverId { get; set; }
         public long FromId { get; set; }
         public int messageId { get; set; }
         public bool IsDeletable { get; set; }
@@ -18,7 +18,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
         protected override async Task Action(IServiceProvider provider)
         {
             var bot = provider.GetRequiredService<BotServices>();
-            await bot.ForwardMessageAsync(RecieverId, FromId, messageId);
+            await bot.ForwardMessageAsync(ReceiverId, FromId, messageId);
 
             if (IsDeletable)
             {

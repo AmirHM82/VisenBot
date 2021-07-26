@@ -44,14 +44,14 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
                 await tempMessageServices.SaveAsync();
                 messages.Add(new TextResponseProcessor()
                 {
-                    RecieverId = RefusedUser.UserId,
+                    ReceiverId = RefusedUser.UserId,
                     Text = "Your request refused"
                 });
             }
             else
                 messages.Add(new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied
                 });
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);

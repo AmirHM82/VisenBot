@@ -10,6 +10,7 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
@@ -21,25 +22,24 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
             //this.provider = provider;
         }
 
-        public long RecieverId { get; set; }
+        public long ReceiverId { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }
         public bool IsDeletable { get; set; } = false;
         public string Text { get; set; }
-        public string FileId { get; set; }
+        public InputOnlineFile Video { get; set; }
 
         protected override async Task Action(IServiceProvider provider)
         {
             BotServices bot = provider.GetRequiredService<BotServices>();
             ITempMessage tempService = provider.GetRequiredService<ITempMessage>();
 
-            var SentMessage = await bot.SendVideoAsync(RecieverId,
-                new Telegram.Bot.Types.InputFiles.InputOnlineFile(FileId),
+            var SentMessage = await bot.SendVideoAsync(ReceiverId, Video,
                 caption: Text, parseMode: ParseMode, replyMarkup: Keyboard);
 
             if (IsDeletable)
             {
-                await tempService.AddAsync(new TempMessage { MessageId = SentMessage.MessageId, UserId = RecieverId });
+                await tempService.AddAsync(new TempMessage { MessageId = SentMessage.MessageId, UserId = ReceiverId });
                 await tempService.SaveAsync();
             }
         }

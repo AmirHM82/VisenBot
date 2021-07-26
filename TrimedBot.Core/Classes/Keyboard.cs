@@ -142,15 +142,15 @@ namespace TrimedBot.Core.Classes
             InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Admin}/{CallbackSection.Delete}/{adminId}")
         });
 
-        public static InlineKeyboardMarkup ManageUser(Guid UserId, Access UserAccess, bool IsBanned)
+        public static InlineKeyboardMarkup ManageUser(Guid Id, long UserId, Access UserAccess, bool IsBanned)
         {
             InlineKeyboardButton[] t1 =
                     {
                     UserAccess == Access.Member ?
-                    InlineKeyboardButton.WithCallbackData("Make admin", $"{CallbackSection.Admin}/{CallbackSection.Add}/{UserId}") :
+                    InlineKeyboardButton.WithCallbackData("Make admin", $"{CallbackSection.Admin}/{CallbackSection.Add}/{Id}") :
                     UserAccess == Access.Admin ?
-                    InlineKeyboardButton.WithCallbackData("Delete admin", $"{CallbackSection.Admin}/{CallbackSection.Delete}/{UserId}") :
-                    InlineKeyboardButton.WithCallbackData("Delete manager", $"M/D/{UserId}")
+                    InlineKeyboardButton.WithCallbackData("Delete admin", $"{CallbackSection.Admin}/{CallbackSection.Delete}/{Id}") :
+                    InlineKeyboardButton.WithCallbackData("Delete manager", $"M/D/{Id}")
                     };
 
             InlineKeyboardButton[] t2 =
@@ -161,8 +161,8 @@ namespace TrimedBot.Core.Classes
             InlineKeyboardButton[] t3 =
             {
                     IsBanned ?
-                    InlineKeyboardButton.WithCallbackData("Unban", $"{CallbackSection.User}/{CallbackSection.Unban}/{UserId}")
-                    : InlineKeyboardButton.WithCallbackData("Ban", $"{CallbackSection.User}/{CallbackSection.Ban}/{UserId}")
+                    InlineKeyboardButton.WithCallbackData("Unban", $"{CallbackSection.User}/{CallbackSection.Unban}/{Id}")
+                    : InlineKeyboardButton.WithCallbackData("Ban", $"{CallbackSection.User}/{CallbackSection.Ban}/{Id}")
                     };
             return new InlineKeyboardMarkup(new[] { t1, t2, t3 });
         }

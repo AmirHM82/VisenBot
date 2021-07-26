@@ -45,9 +45,9 @@ namespace TrimedBot.Core.Commands.Post
                     {
                         messages.Add(new VideoResponseProcessor()
                         {
-                            RecieverId = media.User.UserId,
+                            ReceiverId = media.User.UserId,
                             Text = $"{media.Title} - {media.Caption}\nThis post confirmed by an admin.",
-                            FileId = media.FileId
+                            Video = media.FileId
                         });
                         mediaServices.Confirm(media);
                         await mediaServices.SaveAsync();
@@ -69,7 +69,7 @@ namespace TrimedBot.Core.Commands.Post
             else
                 messages.Add(new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied
                 });
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);

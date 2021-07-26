@@ -14,7 +14,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class NPResponseProcessor : Processor
     {
-        public long RecieverId { get; set; }
+        public long ReceiverId { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }
         public bool IsDeletable { get; set; } = true;
@@ -25,12 +25,12 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
             ITempMessage tempService = provider.GetRequiredService<ITempMessage>();
             BotServices bot = provider.GetRequiredService<BotServices>();
 
-            var SentMessage = await bot.SendTextMessageAsync(RecieverId, $"Page: {PageNumber}", ParseMode,
+            var SentMessage = await bot.SendTextMessageAsync(ReceiverId, $"Page: {PageNumber}", ParseMode,
                 replyMarkup: Keyboard);
 
             if (IsDeletable)
             {
-                await tempService.AddAsync(new TempMessage { MessageId = SentMessage.MessageId, UserId = RecieverId });
+                await tempService.AddAsync(new TempMessage { MessageId = SentMessage.MessageId, UserId = ReceiverId });
                 await tempService.SaveAsync();
             }
         }

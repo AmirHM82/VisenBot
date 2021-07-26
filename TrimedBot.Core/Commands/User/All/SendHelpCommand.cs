@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.User.All
                 case Access.Manager:
                     message = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Manager,
                         Keyboard = objectBox.Keyboard
                     };
@@ -37,7 +37,7 @@ namespace TrimedBot.Core.Commands.User.All
                 case Access.Admin:
                     message = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Admin,
                         Keyboard = objectBox.Keyboard
                     };
@@ -45,7 +45,7 @@ namespace TrimedBot.Core.Commands.User.All
                 case Access.Member:
                     message = new TextResponseProcessor()
                     {
-                        RecieverId = objectBox.User.UserId,
+                        ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Member,
                         Keyboard = objectBox.Keyboard
                     };

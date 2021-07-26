@@ -46,9 +46,9 @@ namespace TrimedBot.Core.Commands.Post.Delete
                 if (objectBox.User.Access == Access.Admin)
                 messages.Add(new VideoResponseProcessor()
                 {
-                    RecieverId = deletedMedia.User.UserId,
+                    ReceiverId = deletedMedia.User.UserId,
                     Text = $"{deletedMedia.Title} - {deletedMedia.Caption}\nThis post deleted by an admin.",
-                    FileId = deletedMedia.FileId
+                    Video = deletedMedia.FileId
                 });
                 await mediaServices.SaveAsync();
 

@@ -24,7 +24,7 @@ namespace TrimedBot.Core.Commands.Message
         {
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Hello, send /help if you need help.",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);

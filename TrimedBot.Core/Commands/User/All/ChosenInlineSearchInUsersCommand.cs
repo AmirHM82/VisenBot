@@ -33,17 +33,17 @@ namespace TrimedBot.Core.Commands.User.All
             var selectedUser = await userServices.FindAsync(long.Parse(result.ResultId));
             if (selectedUser != null)
             {
-                new VideoResponseProcessor()
+                new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = $"Id: {selectedUser.UserId}\nUsername: {selectedUser.UserName}",
-                    Keyboard = Keyboard.ManageUser(selectedUser.Id, selectedUser.Access, selectedUser.IsBanned),
+                    Keyboard = Keyboard.ManageUser(selectedUser.Id, selectedUser.UserId, selectedUser.Access, selectedUser.IsBanned),
                     IsDeletable = true
                 }.AddThisMessageToService(objectBox.Provider);
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "No users found",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);

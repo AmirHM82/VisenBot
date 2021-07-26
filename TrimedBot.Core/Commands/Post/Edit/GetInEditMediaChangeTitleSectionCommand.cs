@@ -33,7 +33,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
             await userServices.SaveAsync();
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Send new title:",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);

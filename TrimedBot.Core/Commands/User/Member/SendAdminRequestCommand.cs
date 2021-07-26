@@ -15,12 +15,12 @@ namespace TrimedBot.Core.Commands.User.Member
     public class SendAdminRequestCommand : ICommand
     {
         private ObjectBox objectBox;
-        protected IUser userServices;
+        //protected IUser userServices;
 
         public SendAdminRequestCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
+            //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
         public async Task Do()
@@ -28,23 +28,24 @@ namespace TrimedBot.Core.Commands.User.Member
             Processor message;
             if (objectBox.User.Access == Access.Member && objectBox.User.IsSentAdminRequest == false)
             {
-                userServices.SendAdminRequest(objectBox.User);
-                await userServices.SaveAsync();
+                objectBox.User.IsSentAdminRequest = true;
+                //userServices.SendAdminRequest(objectBox.User);
+                //await userServices.SaveAsync();
                 message = new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "Your admin request sent. Wait for answer from an admin.",
                     Keyboard = objectBox.Keyboard
                 };
             }
             else if (objectBox.User.IsSentAdminRequest) message = new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "You have sent an admin request."
             };
             else message = new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = $"You are {objectBox.User.Access}. You don't need to send an admin request."
             };
 

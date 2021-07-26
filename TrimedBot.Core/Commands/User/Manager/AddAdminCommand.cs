@@ -40,13 +40,13 @@ namespace TrimedBot.Core.Commands.User.Manager
                 }
                 else new TextResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
+                    ReceiverId = objectBox.User.UserId,
                     Text = "You're manager"
                 }.AddThisMessageToService(objectBox.Provider);
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied
             }.AddThisMessageToService(objectBox.Provider);
         }

@@ -13,14 +13,12 @@ namespace TrimedBot.Core.Commands.Service.Temp
 {
     public class DeleteTempMessagesCommand : ICommand
     {
-        protected IUser userServices;
         private ObjectBox objectBox;
         private ITempMessage tempMessageServices;
 
         public DeleteTempMessagesCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
             tempMessageServices = objectBox.Provider.GetRequiredService<ITempMessage>();
         }
 

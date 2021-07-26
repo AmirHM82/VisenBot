@@ -58,7 +58,12 @@ namespace TrimedBot
 
             app.UseAuthentication();
 
-            app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDefaultControllerRoute();
+            });
+
+            //app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
             app.ApplicationServices.GetRequiredService<ResponseService>().StartProccesingMessages();
         }
     }
@@ -73,6 +78,7 @@ namespace TrimedBot
             services.AddTransient<UpdateServices>();
             services.AddTransient<ITempMessage, TempMessageServices>();
             services.AddTransient<ISettings, SettingsServices>();
+            services.AddTransient<IBanner, BannerServices>();
             services.AddScoped<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();

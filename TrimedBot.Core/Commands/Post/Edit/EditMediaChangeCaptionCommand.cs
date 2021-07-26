@@ -30,7 +30,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
             await mediaServices.ChangeCaption(Guid.Parse(objectBox.User.Temp), newCaption);
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Edited",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);

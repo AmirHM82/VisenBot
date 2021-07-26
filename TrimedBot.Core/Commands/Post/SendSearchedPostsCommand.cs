@@ -36,8 +36,8 @@ namespace TrimedBot.Core.Commands.Post
             {
                 new VideoResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
-                    FileId = media.FileId,
+                    ReceiverId = objectBox.User.UserId,
+                    Video = media.FileId,
                     Text = $"{media.Title} - {media.Caption}\nIt's not your post and you aren't admin or manager, So you can't do anything with this post",
                     Keyboard = objectBox.Keyboard,
                     IsDeletable = true

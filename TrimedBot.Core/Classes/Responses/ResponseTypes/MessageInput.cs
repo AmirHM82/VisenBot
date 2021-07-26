@@ -54,8 +54,9 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case "/myvideos":
                 case "my videos":
-                    cmds.Add(new SendPrivateMediasCommand(objectBox, 1).Do);
-                    cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
+                    //cmds.Add(new SendPrivateMediasCommand(objectBox, 1).Do);
+                    //cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
+                    cmds.Add(new MyVideosCommand(objectBox, 1).Do);
                     break;
                 case "send admin request":
                 case "/sendadminrequest":
@@ -64,17 +65,16 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case "admin requests":
                 case "/adminrequests":
                     cmds.Add(new SendAdminRequestsCommand(objectBox, 1).Do);
-                    cmds.Add(new SendNPMessageCommand(objectBox, 1, $"{CallbackSection.Admin}/{CallbackSection.Request}").Do);
                     break;
                 case "admins":
                 case "/admins":
-                    cmds.Add(new SendAdminsCommand(objectBox, 1).Do);
-                    cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Admin).Do);
+                    cmds.Add(new AdminsCommand(objectBox, 1).Do);
                     break;
                 case "posts":
                 case "/posts":
-                    cmds.Add(new SendPublicMediasCommand(objectBox, 1).Do);
-                    cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
+                    //cmds.Add(new SendPublicMediasCommand(objectBox, 1).Do);
+                    //cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
+                    cmds.Add(new PostsCommand(objectBox).Do);
                     break;
                 case "search in posts":
                 case "/searchinposts":
@@ -106,7 +106,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             }
         }
 
-        public async Task ResponseVideo(Video video)
+        public async Task ResponseVideo(Video video, string caption)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserPlace)
@@ -116,6 +116,13 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case UserPlace.EditMedia_Video:
                     cmds.Add(new EditMediaChangeVideoCommand(objectBox, video).Do);
+                    break;
+                case UserPlace.Send_Message_ToSomeone:
+                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                    cmds.Add(new SendVideoToSomeOneCommand(objectBox, video, caption).Do);
+                    break;
+                case UserPlace.Send_Message_ToAll:
+                    cmds.Add(new SendVideoToAllCommand(objectBox, video, message.Caption).Do);
                     break;
                 default:
                     break;
@@ -153,10 +160,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case UserPlace.Send_Message_ToSomeone:
                     cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
-                    cmds.Add(new SendMessageToSomeOneCommand(objectBox, message.MessageId).Do);
+                    cmds.Add(new SendMessageToSomeOneCommand(objectBox, message).Do);
                     break;
                 case UserPlace.Send_Message_ToAll:
-                    cmds.Add(new SendMessageToAllCommand(objectBox, message.Text).Do);
+                    cmds.Add(new SendMessageToAllCommand(objectBox, message).Do);
                     break;
             }
             foreach (var cmd in cmds)
@@ -179,7 +186,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "You are in home page.",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);
@@ -196,8 +203,52 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     await ResponseMessage(message);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Video:
-                    await ResponseVideo(message.Video);
+                    await ResponseVideo(message.Video, message.Caption);
                     break;
+                //case Telegram.Bot.Types.Enums.MessageType.Photo:
+                //    await ResponsePhoto(message.Photo, message.Caption);
+                //    break;
+                default:
+                    await ResponseOther(message);
+                    break;
+            }
+        }
+
+        private async Task ResponsePhoto(PhotoSize[] photo, string caption)
+        {
+            List<Func<Task>> cmds = new List<Func<Task>>();
+            switch (user.UserPlace)
+            {
+                case UserPlace.Send_Message_ToSomeone:
+                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                    cmds.Add(new SendPhotoToSomeOneCommand(objectBox, photo, caption).Do);
+                    break;
+                case UserPlace.Send_Message_ToAll:
+                    cmds.Add(new SendPhotoToAllCommand(objectBox, message.Photo, message.Caption).Do);
+                    break;
+            }
+            foreach (var cmd in cmds)
+            {
+                await cmd();
+            }
+        }
+
+        private async Task ResponseOther(Message message)
+        {
+            List<Func<Task>> cmds = new List<Func<Task>>();
+            switch (user.UserPlace)
+            {
+                case UserPlace.Send_Message_ToSomeone:
+                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                    cmds.Add(new SendMessageToSomeOneCommand(objectBox, message).Do);
+                    break;
+                case UserPlace.Send_Message_ToAll:
+                    cmds.Add(new SendMessageToAllCommand(objectBox, message).Do);
+                    break;
+            }
+            foreach (var cmd in cmds)
+            {
+                await cmd();
             }
         }
     }

@@ -15,10 +15,10 @@ namespace TrimedBot.Core.Commands.Message
 {
     public class SendPublicMediaCommand : ICommand
     {
-        private Media media;
+        private DAL.Entities.Media media;
         protected ObjectBox objectBox;
 
-        public SendPublicMediaCommand(ObjectBox objectBox, Media media)
+        public SendPublicMediaCommand(ObjectBox objectBox, DAL.Entities.Media media)
         {
             this.objectBox = objectBox;
             this.media = media;
@@ -36,8 +36,8 @@ namespace TrimedBot.Core.Commands.Message
 
                 new VideoResponseProcessor()
                 {
-                    RecieverId = objectBox.User.UserId,
-                    FileId = media.FileId,
+                    ReceiverId = objectBox.User.UserId,
+                    Video = media.FileId,
                     Text = $"{media.Title}\n{media.Caption}",
                     Keyboard = key,
                     IsDeletable = true
@@ -45,7 +45,7 @@ namespace TrimedBot.Core.Commands.Message
             }
             else new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);

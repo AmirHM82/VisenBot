@@ -26,7 +26,7 @@ namespace TrimedBot.Core.Commands.User.All
         {
             new TextResponseProcessor()
             {
-                RecieverId = objectBox.User.UserId,
+                ReceiverId = objectBox.User.UserId,
                 Text = "Canceled",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);

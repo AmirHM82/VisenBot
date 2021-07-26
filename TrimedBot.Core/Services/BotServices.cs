@@ -16,6 +16,7 @@ using TrimedBot.Core.Classes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Entities;
 using Telegram.Bot.Extensions.Polling;
+using Newtonsoft.Json;
 
 namespace TrimedBot.Core.Services
 {

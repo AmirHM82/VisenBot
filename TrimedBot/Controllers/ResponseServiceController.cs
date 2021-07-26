@@ -23,11 +23,14 @@ namespace TrimedBot.Controllers
             this.response = response;
         }
 
-        public void StartResponsing()
+        [Route("start")]
+        public async Task<IActionResult> StartResponsing()
         {
-            response.StartProccesingMessages();
+            await response.StartProccesingMessages();
+            return Ok();
         }
 
+        [Route("stop")]
         public void StopResponsing()
         {
             response.StopResponsing();

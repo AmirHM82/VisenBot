@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
 using TrimedBot.Core.Classes.Responses.ResponseTypes;
+using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 
 namespace TrimedBot.Core.Classes.Responses
@@ -27,10 +28,12 @@ namespace TrimedBot.Core.Classes.Responses
             try
             {
                 await Action();
+                await objectBox.UpdateUserInfo();
                 Statue = true;
             }
             catch (Exception e)
             {
+                "Input:".LogError();
                 e.Message.LogError();
                 Statue = false;
             }

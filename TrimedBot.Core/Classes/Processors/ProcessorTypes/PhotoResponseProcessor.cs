@@ -13,8 +13,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class PhotoResponseProcessor : Processor
     {
-
-        public long RecieverId { get; set; }
+        public long ReceiverId { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }
         public bool IsDeletable { get; set; } = false;
@@ -24,7 +23,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
         protected override async Task Action(IServiceProvider provider)
         {
             var bot = provider.GetRequiredService<BotServices>();
-            await bot.SendPhotoAsync(RecieverId, Photo, Text, ParseMode, replyMarkup: Keyboard);
+            await bot.SendPhotoAsync(ReceiverId, Photo, Text, ParseMode, replyMarkup: Keyboard);
 
             if (IsDeletable)
             {
