@@ -59,5 +59,42 @@ namespace TrimedBot.Core.Classes
                 Text = Sentences.Access_Denied
             }.AddThisMessageToService(objectBox.Provider);
         }
+
+        public async Task<List<Processor>> CreateSendMessages(int pageNum)
+        {
+            List<Processor> messages = new();
+            if (objectBox.User.Access == Access.Manager)
+            {
+                var userServices = objectBox.Provider.GetRequiredService<IUser>();
+                var users = await userServices.GetUsersWithAdminRequestAsync(pageNum);
+                if (users.Length != 0)
+                {
+                    for (int i = 0; i < users.Length; i++)
+                    {
+                        messages.Add(new TextResponseProcessor()
+                        {
+                            ReceiverId = objectBox.User.UserId,
+                            Text = $"UserName: {users[i].UserName} \n Start date: {users[i].StartDate}",
+                            Keyboard = Keyboard.AdminRequest(users[i].UserId),
+                            IsDeletable = true
+                        });
+                    }
+
+                    objectBox.User.UserPlace = UserPlace.SeeAdminRequests_Manager;
+                }
+                else messages.Add(new TextResponseProcessor()
+                {
+                    ReceiverId = objectBox.User.UserId,
+                    Text = "No request found."
+                });
+            }
+            else messages.Add(new TextResponseProcessor()
+            {
+                ReceiverId = objectBox.User.UserId,
+                Text = Sentences.Access_Denied
+            });
+
+            return messages;
+        }
     }
 }

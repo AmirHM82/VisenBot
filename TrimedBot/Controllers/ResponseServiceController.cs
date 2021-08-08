@@ -12,8 +12,7 @@ using TrimedBot.DAL.Entities;
 
 namespace TrimedBot.Controllers
 {
-    [ApiController]
-    [Route("api/responseservice")]
+    [Route("responseservice")]
     public class ResponseServiceController : ControllerBase
     {
         protected ResponseService response;
@@ -24,16 +23,17 @@ namespace TrimedBot.Controllers
         }
 
         [Route("start")]
-        public async Task<IActionResult> StartResponsing()
+        public IActionResult StartResponsing()
         {
-            await response.StartProccesingMessages();
-            return Ok();
+            response.StartProccesingMessages();
+            return Content("Sending messages started");
         }
 
         [Route("stop")]
-        public void StopResponsing()
+        public IActionResult StopResponsing()
         {
             response.StopResponsing();
+            return Content("Sending messages stoped");
         }
     }
 }

@@ -34,7 +34,7 @@ namespace TrimedBot
         {
             services.AddDbContext<DB>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("SQL"));
+                options.UseSqlServer(Configuration.GetConnectionString("HostSQL"));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddServices();
@@ -45,18 +45,16 @@ namespace TrimedBot
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
+          
                 app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
+            
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseStaticFiles();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

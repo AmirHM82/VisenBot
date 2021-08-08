@@ -9,36 +9,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
+using TrimedBot.DAL.Context;
 
 namespace TrimedBot.Controllers
 {
-    [ApiController]
-    [Route("api/telegramapi")]
+    [Route("telegram")]
     public class TelegramApiController : Controller
     {
         private IServiceProvider provider;
         private IConfiguration configuration;
+        private DB db;
 
-        public TelegramApiController(IServiceProvider provider, IConfiguration configuration)
+        public TelegramApiController(IServiceProvider provider, IConfiguration configuration, DB db)
         {
             this.provider = provider;
             this.configuration = configuration;
+            this.db = db;
         }
 
-        [Route("set")]
-        public async Task<IActionResult> Set()
+        [Route("webhook/set/{token}")]
+        public async Task<IActionResult> SetWebhook(string token)
         {
             var bot = provider.GetRequiredService<BotServices>();
-            await bot.SetWebhookAsync($"{configuration.GetConnectionString("AppHTTPSAddress")}/api/telegramapi/new/{Guid.NewGuid()}");
+            try
+            {
+                await bot.SetWebhookAsync($"{configuration["AppHTTPSAddress"]}/telegram/update/new/{token}");
+            }
+            catch (Exception ex)
+            {
+                return Content($"Error: {ex.Message}");
+            }
+            return Content("url is: " + (await bot.GetWebhookInfoAsync()).Url);
+        }
+
+        [Route("webhook/delete")]
+        public async Task<IActionResult> DeleteWebhook()
+        {
+            var bot = provider.GetRequiredService<BotServices>();
+            await bot.DeleteWebhookAsync();
             return Ok();
         }
 
         [HttpPost]
-        [Route(nameof(New) + "/{id}")]
-        public async Task<ActionResult> New(string id)
+        [Route("update/new/{token}")]
+        //[Route("update/new")]
+        public async Task<IActionResult> New(string token, Update update)
         {
-            Update update = new();
             try
             {
                 using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -48,13 +67,11 @@ namespace TrimedBot.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
-                return new EmptyResult();
+                return Content($"Error: {e.Message}");
             }
             var updateServices = provider.GetRequiredService<UpdateServices>();
             await updateServices.ProcessUpdate(provider, update);
             return Ok();
         }
-        //"{\"update_id\":369291325,\"message\":{\"message_id\":4327,\"from\":{\"id\":326683896,\"is_bot\":false,\"first_name\":\"AmirHM\",\"username\":\"AmirHM000\",\"language_code\":\"en\"},\"date\":1627233412,\"chat\":{\"id\":326683896,\"type\":\"private\",\"username\":\"AmirHM000\",\"first_name\":\"AmirHM\"},\"text\":\"/start\",\"entities\":[{\"type\":\"bot_command\",\"offset\":0,\"length\":6}]}}"
     }
 }

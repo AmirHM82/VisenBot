@@ -35,12 +35,14 @@ namespace TrimedBot.Core.Commands.Message
             {
                 await new TempMessages(objectBox).Delete();
 
+                List<Processor> messages = new();
                 if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Member)
-                    await new Medias(objectBox).SendPrivate(pageNum);
+                    messages.AddRange(await new Medias(objectBox).GetPrivate(pageNum));
                 else if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin || objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager)
-                    await new Medias(objectBox).SendPublic(pageNum);
+                    messages.AddRange(await new Medias(objectBox).GetPublic(pageNum));
 
-                new NPMessage(objectBox).Send(pageNum, Category);
+                messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, Category));
+                new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
             }
         }
 

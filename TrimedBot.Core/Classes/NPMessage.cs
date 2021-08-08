@@ -25,30 +25,52 @@ namespace TrimedBot.Core.Classes
 
         public void Send(int pageNumber, string category)
         {
-            if (objectBox.User.UserPlace != UserPlace.NoWhere)
+            if (pageNumber > 0)
             {
-                if (pageNumber > 0)
+                var npMessage = new NPResponseProcessor()
                 {
-                    var npMessage = new NPResponseProcessor()
-                    {
-                        PageNumber = pageNumber,
-                        Keyboard = Keyboard.NPKeyboard(pageNumber, category),
-                        ReceiverId = objectBox.User.UserId
-                    };
+                    PageNumber = pageNumber,
+                    Keyboard = Keyboard.NPKeyboard(pageNumber, category),
+                    ReceiverId = objectBox.User.UserId
+                };
 
-                    var textMessage = new TextResponseProcessor()
-                    {
-                        Text = "Here you are.",
-                        ReceiverId = objectBox.User.UserId,
-                        Keyboard = Keyboard.CancelKeyboard(),
-                        IsDeletable = true
-                    };
+                var textMessage = new TextResponseProcessor()
+                {
+                    Text = "Here you are.",
+                    ReceiverId = objectBox.User.UserId,
+                    Keyboard = Keyboard.CancelKeyboard(),
+                    IsDeletable = true
+                };
 
-                    new MultiProcessor
-                        (new List<Processor>() { npMessage, textMessage })
-                        .AddThisMessageToService(objectBox.Provider);
-                }
+                new MultiProcessor
+                    (new List<Processor>() { npMessage, textMessage })
+                    .AddThisMessageToService(objectBox.Provider);
             }
+        }
+
+        public List<Processor> CreateNP(int pageNumber, string category)
+        {
+            if (pageNumber > 0)
+            {
+                var npMessage = new NPResponseProcessor()
+                {
+                    PageNumber = pageNumber,
+                    Keyboard = Keyboard.NPKeyboard(pageNumber, category),
+                    ReceiverId = objectBox.User.UserId
+                };
+
+                var textMessage = new TextResponseProcessor()
+                {
+                    Text = "Here you are.",
+                    ReceiverId = objectBox.User.UserId,
+                    Keyboard = Keyboard.CancelKeyboard(),
+                    IsDeletable = true
+                };
+
+                return new List<Processor>() { npMessage, textMessage };
+            }
+
+            return null;
         }
     }
 }

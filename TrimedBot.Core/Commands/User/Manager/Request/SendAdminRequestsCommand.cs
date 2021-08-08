@@ -28,9 +28,11 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
 
         public async Task Do()
         {
+            List<Processor> messages = new();
             await new TempMessages(objectBox).Delete();
-            await new AdminRequests(objectBox).Send(pageNum);
-            new NPMessage(objectBox).Send(pageNum, $"{CallbackSection.Admin}/{CallbackSection.Request}");
+            messages.AddRange(await new AdminRequests(objectBox).CreateSendMessages(pageNum));
+            messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, $"{CallbackSection.Admin}/{CallbackSection.Request}"));
+            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

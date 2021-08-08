@@ -16,8 +16,6 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
     public class RefuseAdminRequestCommand : ICommand
     {
         private ObjectBox objectBox;
-        protected IUser userServices;
-        protected ITempMessage tempMessageServices;
         private string id;
         private int messageId;
 
@@ -30,6 +28,9 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
 
         public async Task Do()
         {
+            IUser userServices = objectBox.Provider.GetRequiredService<IUser>();
+            ITempMessage tempMessageServices = objectBox.Provider.GetRequiredService<ITempMessage>();
+
             List<Processor> messages = new();
             if (objectBox.User.Access == Access.Manager)
             {

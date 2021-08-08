@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrimedBot.Core.Classes;
+using TrimedBot.Core.Classes.Processors;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Sections;
 
@@ -22,9 +24,11 @@ namespace TrimedBot.Core.Commands.User.All
 
         public async Task Do()
         {
+            List<Processor> messages = new List<Processor>();
             await new TempMessages(objectBox).Delete();
-            await new Medias(objectBox).SendPrivate(pageNum);
-            new NPMessage(objectBox).Send(pageNum, CallbackSection.Post);
+            messages.AddRange(await new Medias(objectBox).GetPrivate(pageNum));
+            messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Post));
+            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

@@ -2,6 +2,9 @@
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Sections;
 using TrimedBot.Core.Classes;
+using System.Collections.Generic;
+using TrimedBot.Core.Classes.Processors;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 
 namespace TrimedBot.Core.Commands.User.Manager.Request
 {
@@ -20,9 +23,11 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
         {
             if (pageNumber > 0)
             {
+                List<Processor> messages = new();
                 await new TempMessages(objectBox).Delete();
-                await new Admins(objectBox).Send(pageNumber);
-                new NPMessage(objectBox).Send(pageNumber, CallbackSection.Admin);
+                messages.AddRange(await new Admins(objectBox).CreateSendMessages(pageNumber));
+                messages.AddRange(new NPMessage(objectBox).CreateNP(pageNumber, CallbackSection.Admin));
+                new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
             }
         }
 
