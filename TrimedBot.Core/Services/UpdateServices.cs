@@ -27,12 +27,12 @@ namespace TrimedBot.Core.Services
                 case UpdateType.Message:
                     //if (update.Message.Chat.Type == ChatType.Private &&
                     //    (update.Message.Type == MessageType.Text || update.Message.Type == MessageType.Video || update.Message.Type == MessageType.Photo))
-                    {
-                        await objectBox.AssignUser(update.Message.From);
-                        objectBox.AssignKeyboard(objectBox.User.Access);
-                        request = new MessageInput(objectBox, update.Message);
-                        await request.Response();
-                    }
+                    //{
+                    //}
+                    await objectBox.AssignUser(update.Message.From);
+                    objectBox.AssignKeyboard(objectBox.User.Access);
+                    request = new MessageInput(objectBox, update.Message);
+                    await request.Response();
                     break;
                 case UpdateType.InlineQuery:
                     await objectBox.AssignUser(update.InlineQuery.From);

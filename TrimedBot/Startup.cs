@@ -45,9 +45,9 @@ namespace TrimedBot
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-          
-                app.UseDeveloperExceptionPage();
-            
+
+            app.UseDeveloperExceptionPage();
+
             //app.UseHttpsRedirection();
 
             app.UseRouting();

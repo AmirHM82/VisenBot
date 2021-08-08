@@ -25,5 +25,9 @@ namespace TrimedBot.Core.Classes
             "/SendMessageToAll Send a message to all users.";
 
         public const string Access_Denied = "You don't have access to do that.";
+
+        public const string User_Banned = "Admin banned u. Bot won't answer ur requests till u unbanned.\nSend /Chatwithadmin if u wanna talk to an admin.";
+
+        public const string User_Unbanned = "Congratulations. You unbanned.";
     }
 }

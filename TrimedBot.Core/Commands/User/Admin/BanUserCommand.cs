@@ -7,6 +7,8 @@ using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes;
 
 namespace TrimedBot.Core.Commands.User.Admin
 {
@@ -33,6 +35,12 @@ namespace TrimedBot.Core.Commands.User.Admin
                     user.IsBanned = true;
                     userServices.Update(user);
                     await userServices.SaveAsync();
+
+                    new TextResponseProcessor()
+                    {
+                        ReceiverId = user.UserId,
+                        Text = Sentences.User_Banned
+                    }.AddThisMessageToService(objectBox.Provider);
                 }
             }
         }
@@ -47,6 +55,12 @@ namespace TrimedBot.Core.Commands.User.Admin
                     user.IsBanned = false;
                     userServices.Update(user);
                     await userServices.SaveAsync();
+
+                    new TextResponseProcessor()
+                    {
+                        ReceiverId = user.UserId,
+                        Text = Sentences.User_Unbanned
+                    }.AddThisMessageToService(objectBox.Provider);
                 }
             }
         }
