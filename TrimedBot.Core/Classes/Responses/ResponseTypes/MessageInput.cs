@@ -9,7 +9,6 @@ using TrimedBot.Core.Commands.Post;
 using TrimedBot.Core.Commands.Post.Add;
 using TrimedBot.Core.Commands.Post.Edit;
 using TrimedBot.Core.Commands.Service.Settings;
-using TrimedBot.Core.Commands.Service.Temp;
 using TrimedBot.Core.Commands.User.All;
 using TrimedBot.Core.Commands.User.Manager.Message;
 using TrimedBot.Core.Commands.User.Manager.Request;
@@ -23,6 +22,7 @@ using TrimedBot.DAL.Entities;
 using TrimedBot.DAL.Sections;
 using TrimedBot.Core.Classes;
 using Microsoft.Extensions.Caching.Distributed;
+using TrimedBot.Core.Commands.Service.Tags;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -49,13 +49,12 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case "/start":
                     cmds.Add(new StartCommand(objectBox).Do);
                     break;
+                case "/addvideo":
                 case "add new video":
                     cmds.Add(new AddNewPostCommand(objectBox).Do);
                     break;
                 case "/myvideos":
                 case "my videos":
-                    //cmds.Add(new SendPrivateMediasCommand(objectBox, 1).Do);
-                    //cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
                     cmds.Add(new MyVideosCommand(objectBox, 1).Do);
                     break;
                 case "send admin request":
@@ -72,8 +71,6 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case "posts":
                 case "/posts":
-                    //cmds.Add(new SendPublicMediasCommand(objectBox, 1).Do);
-                    //cmds.Add(new SendNPMessageCommand(objectBox, 1, CallbackSection.Post).Do);
                     cmds.Add(new PostsCommand(objectBox).Do);
                     break;
                 case "search in posts":
@@ -87,6 +84,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case "settings":
                 case "/Settings":
                     cmds.Add(new OpenSettingsMenuCommand(objectBox).Do);
+                    break;
+                case "tags":
+                case "/tags":
+                    cmds.Add(new TagsCommand(1, objectBox).Do);
                     break;
                 case "send message to all":
                 case "/SendMessageToAll":
@@ -109,22 +110,19 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         public async Task ResponseVideo(Video video, string caption)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
-            switch (user.UserPlace)
+            switch (user.UserLocation)
             {
-                case UserPlace.AddMedia_SendMedia:
+                case UserLocation.AddMedia_SendMedia:
                     cmds.Add(new AddMediaRecieveVideoCommand(objectBox, video).Do);
                     break;
-                case UserPlace.EditMedia_Video:
+                case UserLocation.EditMedia_Video:
                     cmds.Add(new EditMediaChangeVideoCommand(objectBox, video).Do);
                     break;
-                case UserPlace.Send_Message_ToSomeone:
-                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                case UserLocation.Send_Message_ToSomeone:
                     cmds.Add(new SendVideoToSomeOneCommand(objectBox, video, caption).Do);
                     break;
-                case UserPlace.Send_Message_ToAll:
+                case UserLocation.Send_Message_ToAll:
                     cmds.Add(new SendVideoToAllCommand(objectBox, video, message.Caption).Do);
-                    break;
-                default:
                     break;
             }
             foreach (var cmd in cmds)
@@ -136,34 +134,36 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         public async Task ResponseMessage(Message message)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
-            switch (user.UserPlace)
+            switch (user.UserLocation)
             {
-                case UserPlace.AddMedia_SendTitle:
+                case UserLocation.AddMedia_SendTitle:
                     cmds.Add(new AddMediaRecieveTitleCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.AddMedia_SendCaption:
+                case UserLocation.AddMedia_SendCaption:
                     cmds.Add(new AddMediaRecieveCaptionCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.EditMedia_Title:
+                case UserLocation.EditMedia_Title:
                     cmds.Add(new EditMediaChangeTitleCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.EditMedia_Caption:
+                case UserLocation.EditMedia_Caption:
                     cmds.Add(new EditMediaChangeCaptionCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.Settings_Menu:
+                case UserLocation.Settings_Menu:
                     cmds.Add(new SettingsMenuCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.Settings_PerMemberAdsPrice:
-                case UserPlace.Settings_BasicAdsPrice:
-                case UserPlace.Settings_NumberOfAdsPerDay:
+                case UserLocation.Settings_PerMemberAdsPrice:
+                case UserLocation.Settings_BasicAdsPrice:
+                case UserLocation.Settings_NumberOfAdsPerDay:
                     cmds.Add(new SetSettingsCommand(objectBox, message.Text).Do);
                     break;
-                case UserPlace.Send_Message_ToSomeone:
-                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                case UserLocation.Send_Message_ToSomeone:
                     cmds.Add(new SendMessageToSomeOneCommand(objectBox, message).Do);
                     break;
-                case UserPlace.Send_Message_ToAll:
+                case UserLocation.Send_Message_ToAll:
                     cmds.Add(new SendMessageToAllCommand(objectBox, message).Do);
+                    break;
+                case UserLocation.Add_General_Tag:
+                    cmds.Add(new AddTagCommand(objectBox, message.Text).Do);
                     break;
             }
             foreach (var cmd in cmds)
@@ -174,22 +174,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 
         public async Task ResponseCancel()
         {
-            if (user.UserPlace != UserPlace.NoWhere)
-            {
-                List<Func<Task>> cmds = new List<Func<Task>>();
-                cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
-                cmds.Add(new CancelCommand(objectBox).Do);
-                foreach (var cmd in cmds)
-                {
-                    await cmd();
-                }
-            }
-            else new TextResponseProcessor()
-            {
-                ReceiverId = objectBox.User.UserId,
-                Text = "You are in home page.",
-                Keyboard = objectBox.Keyboard
-            }.AddThisMessageToService(objectBox.Provider);
+            await new CancelCommand(objectBox).Do();
         }
 
         public override async Task Action()
@@ -198,9 +183,9 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             {
                 case Telegram.Bot.Types.Enums.MessageType.Text:
                     string command = message.Text.ToLower();
-                    if (command == "/cancel" || command == "cancel") { await ResponseCancel(); return; }
-                    if (user.UserPlace == UserPlace.NoWhere) { await ResponseCommand(command); return; }
-                    await ResponseMessage(message);
+                    if (user.UserLocation == UserLocation.NoWhere) { await ResponseCommand(command); }
+                    else if (command == "/cancel" || command == "cancel") { await ResponseCancel(); }
+                    else await ResponseMessage(message);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Video:
                     await ResponseVideo(message.Video, message.Caption);
@@ -214,16 +199,16 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             }
         }
 
+        //Idk why but just don't delete it
         private async Task ResponsePhoto(PhotoSize[] photo, string caption)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
-            switch (user.UserPlace)
+            switch (user.UserLocation)
             {
-                case UserPlace.Send_Message_ToSomeone:
-                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                case UserLocation.Send_Message_ToSomeone:
                     cmds.Add(new SendPhotoToSomeOneCommand(objectBox, photo, caption).Do);
                     break;
-                case UserPlace.Send_Message_ToAll:
+                case UserLocation.Send_Message_ToAll:
                     cmds.Add(new SendPhotoToAllCommand(objectBox, message.Photo, message.Caption).Do);
                     break;
             }
@@ -236,13 +221,12 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         private async Task ResponseOther(Message message)
         {
             List<Func<Task>> cmds = new List<Func<Task>>();
-            switch (user.UserPlace)
+            switch (user.UserLocation)
             {
-                case UserPlace.Send_Message_ToSomeone:
-                    cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                case UserLocation.Send_Message_ToSomeone:
                     cmds.Add(new SendMessageToSomeOneCommand(objectBox, message).Do);
                     break;
-                case UserPlace.Send_Message_ToAll:
+                case UserLocation.Send_Message_ToAll:
                     cmds.Add(new SendMessageToAllCommand(objectBox, message).Do);
                     break;
             }

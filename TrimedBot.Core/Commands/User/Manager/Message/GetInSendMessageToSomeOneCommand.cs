@@ -25,14 +25,13 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
             this.userId = userId;
         }
 
-        public async Task Do()
+        public Task Do()
         {
             if (objectBox.User.Access != Access.Member)
             {
-                objectBox.User.UserPlace = UserPlace.Send_Message_ToSomeone;
+                objectBox.User.UserLocation = UserLocation.Send_Message_ToSomeone;
                 objectBox.User.Temp = userId;
-                userServices.Update(objectBox.User);
-                await userServices.SaveAsync();
+                objectBox.UpdateUserInfo();
                 new TextResponseProcessor()
                 {
                     ReceiverId = objectBox.User.UserId,
@@ -47,6 +46,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                     Text = Sentences.Access_Denied,
                     Keyboard = objectBox.Keyboard
                 }.AddThisMessageToService(objectBox.Provider);
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

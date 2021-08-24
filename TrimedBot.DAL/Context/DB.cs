@@ -20,5 +20,6 @@ namespace TrimedBot.DAL.Context
         public DbSet<TempMessage> TempMessages { get; set; }
         public DbSet<Settings> Settings { get; set; }
         public DbSet<Banner> Banners { get; set; }
+        public DbSet<Tag> Tags { get; set; }
     }
 }

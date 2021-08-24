@@ -18,6 +18,7 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Context;
 using TrimedBot.DAL.Entities;
 using Microsoft.Extensions.Caching.Distributed;
+using TrimedBot.DAL;
 
 namespace TrimedBot
 {
@@ -34,7 +35,7 @@ namespace TrimedBot
         {
             services.AddDbContext<DB>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("HostSQL"));
+                options.UseSqlServer(Configuration.GetConnectionString("SQL"));
             }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
             services.AddServices();
@@ -61,7 +62,9 @@ namespace TrimedBot
                 endpoints.MapDefaultControllerRoute();
             });
 
-            //app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
+            //Migrate.Entities(app.ApplicationServices);
+
+            app.ApplicationServices.GetRequiredService<BotServices>().StartReceiving();
             app.ApplicationServices.GetRequiredService<ResponseService>().StartProccesingMessages();
         }
     }
@@ -77,6 +80,7 @@ namespace TrimedBot
             services.AddTransient<ITempMessage, TempMessageServices>();
             services.AddTransient<ISettings, SettingsServices>();
             services.AddTransient<IBanner, BannerServices>();
+            services.AddTransient<ITag, TagService>();
             services.AddScoped<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();

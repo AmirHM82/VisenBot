@@ -28,10 +28,10 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
             this.caption = caption;
         }
 
-        public Task Do()
+        public async Task Do()
         {
-            photo.SendPhoto(caption, long.Parse(objectBox.User.Temp), objectBox);
-            return Task.CompletedTask;
+            await new TempMessages(objectBox).Delete();
+            photo.SendPhoto(caption, long.Parse(objectBox.User.Temp), objectBox);            
         }
 
         public Task UnDo()

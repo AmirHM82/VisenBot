@@ -24,7 +24,7 @@ namespace TrimedBot.Core.Commands.User.All
             //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
-        public async Task Do()
+        public Task Do()
         {
             if (objectBox.User.Access != Access.Member)
             {
@@ -35,7 +35,8 @@ namespace TrimedBot.Core.Commands.User.All
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
 
-                objectBox.User.UserPlace = UserPlace.Search_Users;
+                objectBox.User.UserLocation = UserLocation.Search_Users;
+                objectBox.UpdateUserInfo();
                 //userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Users);
                 //await userServices.SaveAsync();
             }
@@ -45,6 +46,7 @@ namespace TrimedBot.Core.Commands.User.All
                 Text = Sentences.Access_Denied,
                 Keyboard = objectBox.Keyboard
             };
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

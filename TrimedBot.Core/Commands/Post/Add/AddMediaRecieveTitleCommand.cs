@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             this.title = title;
         }
 
-        public async Task Do()
+        public Task Do()
         {
             new TextResponseProcessor()
             {
@@ -35,9 +35,11 @@ namespace TrimedBot.Core.Commands.Post.Add
             }.AddThisMessageToService(objectBox.Provider);
 
             objectBox.User.Temp = title;
-            objectBox.User.UserPlace = UserPlace.AddMedia_SendCaption;
-            userServices.Update(objectBox.User);
-            await userServices.SaveAsync();
+            objectBox.User.UserLocation = UserLocation.AddMedia_SendCaption;
+            objectBox.UpdateUserInfo();
+            //userServices.Update(objectBox.User);
+            //await userServices.SaveAsync();
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

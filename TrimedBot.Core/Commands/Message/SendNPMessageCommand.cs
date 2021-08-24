@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.Message
 
         public Task Do()
         {
-            if (objectBox.User.UserPlace != DAL.Enums.UserPlace.NoWhere)
+            if (objectBox.User.UserLocation != DAL.Enums.UserLocation.NoWhere)
             {
                 if (pageNumber > 0)
                 {

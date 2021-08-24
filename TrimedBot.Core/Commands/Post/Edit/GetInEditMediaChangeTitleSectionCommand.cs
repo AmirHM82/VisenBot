@@ -25,18 +25,18 @@ namespace TrimedBot.Core.Commands.Post.Edit
             this.id = id;
         }
 
-        public async Task Do()
+        public Task Do()
         {
-            objectBox.User.UserPlace = UserPlace.EditMedia_Title;
+            objectBox.User.UserLocation = UserLocation.EditMedia_Title;
             objectBox.User.Temp = id;
-            userServices.Update(objectBox.User);
-            await userServices.SaveAsync();
+            objectBox.UpdateUserInfo();
             new TextResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Send new title:",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

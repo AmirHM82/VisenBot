@@ -25,9 +25,9 @@ namespace TrimedBot.Core.Services
         public static string Token { get; set; }
         public IServiceProvider provider;
 
-        public BotServices(IConfiguration config, IServiceProvider provider) : base(config["Token"]/*, new WebProxy("", )*/)
+        public BotServices(IConfiguration config, IServiceProvider provider) : base(config["TokenBetaV"]/*, new WebProxy("", )*/)
         {
-            Token = config["Token"];
+            Token = config["TokenBetaV"];
             this.provider = provider;
             //OnUpdate += BotServices_OnUpdate;
         }

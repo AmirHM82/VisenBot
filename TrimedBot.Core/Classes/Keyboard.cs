@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
+using TrimedBot.DAL.Entities;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Sections;
 
@@ -20,6 +23,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Add new video") },
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
+            new[] {new KeyboardButton("Tags") },
             new[] {new KeyboardButton("Search in posts") }
         }, true);
 
@@ -29,6 +33,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
             new[] {new KeyboardButton("Admins") },
+            new[] {new KeyboardButton("Tags") },
             new[] {new KeyboardButton("admin requests") },
             new[] {new KeyboardButton("Search in posts") },
             new[] {new KeyboardButton("Search in users") },
@@ -108,13 +113,15 @@ namespace TrimedBot.Core.Classes
         public static InlineKeyboardMarkup DeclinedPublicMediaKeyboard(Guid mediaId) => new InlineKeyboardMarkup(new[]
         {
             InlineKeyboardButton.WithCallbackData("Confirm", $"{CallbackSection.Post}/{CallbackSection.Confirm}/{mediaId}"),
-            InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{mediaId}")
+            InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{mediaId}"),
+            InlineKeyboardButton.WithCallbackData("Properties", $"{CallbackSection.Post}/{CallbackSection.Properties}/{mediaId}")
         });
 
         public static InlineKeyboardMarkup ConfirmedPublicMediaKeyboard(Guid mediaId) => new InlineKeyboardMarkup(new[]
         {
             InlineKeyboardButton.WithCallbackData("Decline", $"{CallbackSection.Post}/{CallbackSection.Confirm}/{mediaId}"),
-            InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{mediaId}")
+            InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Delete}/{mediaId}"),
+            InlineKeyboardButton.WithCallbackData("Properties", $"{CallbackSection.Post}/{CallbackSection.Properties}/{mediaId}")
         });
 
         public static InlineKeyboardMarkup NPKeyboard(int pageNumber, string category)
@@ -165,6 +172,64 @@ namespace TrimedBot.Core.Classes
                     : InlineKeyboardButton.WithCallbackData("Ban", $"{CallbackSection.User}/{CallbackSection.Ban}/{Id}")
                     };
             return new InlineKeyboardMarkup(new[] { t1, t2, t3 });
+        }
+
+        public static InlineKeyboardMarkup Tag(Tag tag)
+        {
+            InlineKeyboardButton[] result =
+            {
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}"),
+                InlineKeyboardButton.WithCallbackData("Edit", $"{CallbackSection.Tag}/{CallbackSection.Edit}/{tag.Id}")
+            };
+
+            return new InlineKeyboardMarkup(result);
+        }
+
+        public static InlineKeyboardMarkup AddTag()
+        {
+            InlineKeyboardButton[] result =
+            {
+                InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.Tag}/{CallbackSection.Add}")
+            };
+
+            return new InlineKeyboardMarkup(result);
+        }
+
+        public static InlineKeyboardMarkup AddPostsTag(Guid postId)
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Add}/{postId}")
+            };
+
+            InlineKeyboardButton[] k2 =
+            {
+                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+            };
+
+            return new InlineKeyboardMarkup(new[] { k1, k2 });
+        }
+
+        public static InlineKeyboardMarkup PostProperties(Guid postId)
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Edit title", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Title}/{postId}"),
+                InlineKeyboardButton.WithCallbackData("Edit caption", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Caption}/{postId}"),
+                InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{postId}")
+            };
+
+            InlineKeyboardButton[] k2 =
+            {
+                InlineKeyboardButton.WithCallbackData("Edit tags", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Next}/1")
+            };
+
+            InlineKeyboardButton[] k3 =
+            {
+                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+            };
+
+            return new InlineKeyboardMarkup(new[] { k1, k2, k3 });
         }
     }
 }

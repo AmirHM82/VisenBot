@@ -19,18 +19,18 @@ namespace TrimedBot.Core.Commands.User.All
     {
         protected IUser userServices;
         protected ObjectBox objectBox;
-        private ChosenInlineResult result;
+        private long userId;
 
-        public ChosenInlineSearchInUsersCommand(ObjectBox objectBox, ChosenInlineResult result)
+        public ChosenInlineSearchInUsersCommand(ObjectBox objectBox, long userId)
         {
             this.objectBox = objectBox;
             userServices = objectBox.Provider.GetRequiredService<IUser>();
-            this.result = result;
+            this.userId = userId;
         }
 
         public async Task Do()
         {
-            var selectedUser = await userServices.FindAsync(long.Parse(result.ResultId));
+            var selectedUser = await userServices.FindAsync(userId);
             if (selectedUser != null)
             {
                 new TextResponseProcessor()

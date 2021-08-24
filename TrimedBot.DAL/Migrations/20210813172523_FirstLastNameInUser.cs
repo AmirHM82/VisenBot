@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace TrimedBot.DAL.Migrations
 {
-    public partial class habsbahsvdhasvd : Migration
+    public partial class FirstLastNameInUser : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,19 @@ namespace TrimedBot.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Settings", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,7 +73,9 @@ namespace TrimedBot.DAL.Migrations
                     RequestDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsBanned = table.Column<bool>(type: "bit", nullable: false),
                     Temp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,10 +86,9 @@ namespace TrimedBot.DAL.Migrations
                 name: "Banners",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageFileId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BannerFileId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsPaid = table.Column<bool>(type: "bit", nullable: false),
                     ShowDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -113,61 +127,6 @@ namespace TrimedBot.DAL.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Texts",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Category = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PageNumber = table.Column<int>(type: "int", nullable: false),
-                    RecieverId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ParseMode = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    KeyboardType = table.Column<byte>(type: "tinyint", nullable: false),
-                    AutoDelete = table.Column<bool>(type: "bit", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Texts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Texts_Users_RecieverId",
-                        column: x => x.RecieverId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Videos",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MediaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    RecieverId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    ParseMode = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    KeyboardType = table.Column<byte>(type: "tinyint", nullable: false),
-                    AutoDelete = table.Column<bool>(type: "bit", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Videos", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Videos_Medias_MediaId",
-                        column: x => x.MediaId,
-                        principalTable: "Medias",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Videos_Users_RecieverId",
-                        column: x => x.RecieverId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Banners_UserId",
                 table: "Banners",
@@ -177,21 +136,6 @@ namespace TrimedBot.DAL.Migrations
                 name: "IX_Medias_UserId",
                 table: "Medias",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Texts_RecieverId",
-                table: "Texts",
-                column: "RecieverId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Videos_MediaId",
-                table: "Videos",
-                column: "MediaId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Videos_RecieverId",
-                table: "Videos",
-                column: "RecieverId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -200,22 +144,19 @@ namespace TrimedBot.DAL.Migrations
                 name: "Banners");
 
             migrationBuilder.DropTable(
+                name: "Medias");
+
+            migrationBuilder.DropTable(
                 name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "TempMessages");
 
             migrationBuilder.DropTable(
-                name: "Texts");
-
-            migrationBuilder.DropTable(
                 name: "Tokens");
-
-            migrationBuilder.DropTable(
-                name: "Videos");
-
-            migrationBuilder.DropTable(
-                name: "Medias");
 
             migrationBuilder.DropTable(
                 name: "Users");

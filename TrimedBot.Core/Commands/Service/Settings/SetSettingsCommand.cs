@@ -36,15 +36,15 @@ namespace TrimedBot.Core.Commands.Service.Settings
                 decimal number = decimal.Parse(message);
                 if (number > 0)
                 {
-                    switch (objectBox.User.UserPlace)
+                    switch (objectBox.User.UserLocation)
                     {
-                        case UserPlace.Settings_PerMemberAdsPrice:
+                        case UserLocation.Settings_PerMemberAdsPrice:
                             objectBox.Settings.PerMemberAdsPrice = number;
                             break;
-                        case UserPlace.Settings_BasicAdsPrice:
+                        case UserLocation.Settings_BasicAdsPrice:
                             objectBox.Settings.BasicAdsPrice = number;
                             break;
-                        case UserPlace.Settings_NumberOfAdsPerDay:
+                        case UserLocation.Settings_NumberOfAdsPerDay:
                             objectBox.Settings.NumberOfAdsPerDay = (byte)number;
                             break;
                     }

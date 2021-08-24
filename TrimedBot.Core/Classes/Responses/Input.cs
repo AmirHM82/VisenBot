@@ -30,7 +30,7 @@ namespace TrimedBot.Core.Classes.Responses
                 if (!objectBox.User.IsBanned)
                 {
                     await Action();
-                    await objectBox.UpdateUserInfo();
+                    await objectBox.UpdateDatabaseUserInfo();
                     Statue = true;
                 }
             }

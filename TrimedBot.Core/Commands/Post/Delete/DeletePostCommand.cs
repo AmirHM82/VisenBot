@@ -31,9 +31,9 @@ namespace TrimedBot.Core.Commands.Post.Delete
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Member || 
-                objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin || 
-                objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager)
+            if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Member || 
+                objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin || 
+                objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager)
             {
                 List<Processor> messages = new();
                 messages.Add(new DeleteProcessor()

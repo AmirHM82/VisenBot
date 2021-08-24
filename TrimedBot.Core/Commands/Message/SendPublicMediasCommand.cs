@@ -58,9 +58,10 @@ namespace TrimedBot.Core.Commands.Message
                         new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
 
-                        objectBox.User.UserPlace = objectBox.User.Access == Access.Admin
-                           ? UserPlace.SeeAddedVideos_Admin
-                           : UserPlace.SeeAddedVideos_Manager;
+                        objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
+                           ? UserLocation.SeeAddedVideos_Admin
+                           : UserLocation.SeeAddedVideos_Manager;
+                        objectBox.UpdateUserInfo();
                         //userServices.ChangeUserPlace(objectBox.User, a);
                         //await userServices.SaveAsync();
                     }

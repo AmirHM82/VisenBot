@@ -45,7 +45,8 @@ namespace TrimedBot.Core.Classes
                     }
                     new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
-                    objectBox.User.UserPlace = UserPlace.SeeAdminRequests_Manager;
+                    objectBox.User.UserLocation = UserLocation.SeeAdminRequests_Manager;
+                    objectBox.UpdateUserInfo();
                 }
                 else new TextResponseProcessor()
                 {
@@ -60,8 +61,9 @@ namespace TrimedBot.Core.Classes
             }.AddThisMessageToService(objectBox.Provider);
         }
 
-        public async Task<List<Processor>> CreateSendMessages(int pageNum)
+        public async Task<Tuple<List<Processor>, bool>> CreateSendMessages(int pageNum)
         {
+            bool needNP = false;
             List<Processor> messages = new();
             if (objectBox.User.Access == Access.Manager)
             {
@@ -80,7 +82,10 @@ namespace TrimedBot.Core.Classes
                         });
                     }
 
-                    objectBox.User.UserPlace = UserPlace.SeeAdminRequests_Manager;
+                    objectBox.User.UserLocation = UserLocation.SeeAdminRequests_Manager;
+                    objectBox.UpdateUserInfo();
+
+                    needNP = true;
                 }
                 else messages.Add(new TextResponseProcessor()
                 {
@@ -94,7 +99,7 @@ namespace TrimedBot.Core.Classes
                 Text = Sentences.Access_Denied
             });
 
-            return messages;
+            return new Tuple<List<Processor>, bool>(messages, needNP);
         }
     }
 }

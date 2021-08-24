@@ -51,7 +51,8 @@ namespace TrimedBot.Core.Commands.Message
                         }.AddThisMessageToService(objectBox.Provider);
                     }
 
-                    objectBox.User.UserPlace = UserPlace.SeeAddedVideos_Member;
+                    objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
+                    objectBox.UpdateUserInfo();
                     //userServices.Update(objectBox.User);
                     //await userServices.SaveAsync();
                 }

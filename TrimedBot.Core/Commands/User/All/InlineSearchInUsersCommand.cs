@@ -15,18 +15,20 @@ namespace TrimedBot.Core.Commands.User.All
     {
         private ObjectBox objectBox;
         protected IUser userServices;
-        private InlineQuery query;
+        private string userName;
+        private string queryId;
 
-        public InlineSearchInUsersCommand(ObjectBox objectBox, InlineQuery query)
+        public InlineSearchInUsersCommand(ObjectBox objectBox, string userName, string queryId)
         {
             this.objectBox = objectBox;
             userServices = objectBox.Provider.GetRequiredService<IUser>();
-            this.query = query;
+            this.queryId = queryId;
+            this.userName = userName;
         }
 
         public async Task Do()
         {
-            var seletedUsers = await userServices.Search(query.Query);
+            var seletedUsers = await userServices.Search(userName);
             if (seletedUsers.Length != 0)
             {
                 var results = new InlineQueryResultArticle[seletedUsers.Length];
@@ -38,7 +40,7 @@ namespace TrimedBot.Core.Commands.User.All
 
                 new InlineQueryProcessor()
                 {
-                    Id = query.Id,
+                    Id = queryId,
                     Results = results
                 }.AddThisMessageToService(objectBox.Provider);
             }

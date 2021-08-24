@@ -11,6 +11,7 @@ using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
+using TrimedBot.DAL.Entities;
 using TrimedBot.DAL.Enums;
 
 namespace TrimedBot.Core.Classes
@@ -42,7 +43,7 @@ namespace TrimedBot.Core.Classes
                 Text = "No posts found",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);
-        } 
+        }
 
         public void SendPublic(DAL.Entities.Media media)
         {

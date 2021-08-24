@@ -87,7 +87,7 @@ namespace TrimedBot.Core.Services
                 user = new User
                 {
                     Id = Guid.NewGuid(),
-                    UserPlace = UserPlace.NoWhere,
+                    UserLocation = UserLocation.NoWhere,
                     Access = Access.Member,
                     IsSentAdminRequest = false,
                     StartDate = DateTime.UtcNow,
@@ -132,7 +132,7 @@ namespace TrimedBot.Core.Services
                             user.Temp = null;
                             break;
                         case UserResetSection.UserPlace:
-                            user.UserPlace = UserPlace.NoWhere;
+                            user.UserLocation = UserLocation.NoWhere;
                             break;
                         default:
                             break;
@@ -167,35 +167,33 @@ namespace TrimedBot.Core.Services
             });
         }
 
-        public void ChangeUserPlace(User user, UserPlace userPlace)
+        public void ChangeUserPlace(User user, UserLocation userPlace)
         {
-            user.UserPlace = userPlace;
+            user.UserLocation = userPlace;
             Update(user);
         }
 
-        public Task<User> FindOrAddAsync(Telegram.Bot.Types.User user)
+        public async Task<User> FindOrAddAsync(Telegram.Bot.Types.User user)
         {
-            return Task.Run(async () =>
+            var foundUser = await FindAsync(user.Id);
+            if (foundUser == null)
             {
-                var foundUser = await FindAsync(user.Id);
-                if (foundUser == null)
+                foundUser = new User
                 {
-                    foundUser = new User
-                    {
-                        Id = Guid.NewGuid(),
-                        Access = Access.Member,
-                        IsSentAdminRequest = false,
-                        IsBanned = false,
-                        StartDate = DateTime.UtcNow,
-                        UserId = user.Id,
-                        UserPlace = UserPlace.NoWhere,
-                        UserName = user.Username
-                    };
-                    await AddAsync(foundUser);
-                }
+                    Id = Guid.NewGuid(),
+                    Access = Access.Member,
+                    IsSentAdminRequest = false,
+                    IsBanned = false,
+                    StartDate = DateTime.UtcNow,
+                    UserId = user.Id,
+                    UserLocation = UserLocation.NoWhere,
+                    UserName = user.Username
+                };
+                await AddAsync(foundUser);
+                await SaveAsync();
+            }
 
-                return foundUser;
-            });
+            return foundUser;
         }
 
         public Task<User[]> Search(string userName)
@@ -214,6 +212,11 @@ namespace TrimedBot.Core.Services
                 var userIds = await _context.Users.Select(x => x.UserId).ToArrayAsync();
                 return userIds;
             });
+        }
+
+        public void Dispose()
+        {
+            _context.Dispose();
         }
     }
 }

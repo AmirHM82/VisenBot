@@ -8,32 +8,42 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes;
+using Telegram.Bot.Types;
 
 namespace TrimedBot.Core.Commands.User.All
 {
     public class CancelCommand : ICommand
     {
-        protected IUser userServices;
         protected ObjectBox objectBox;
 
         public CancelCommand(ObjectBox objectBox)
         {
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
             this.objectBox = objectBox;
         }
 
         public async Task Do()
         {
-            new TextResponseProcessor()
+            if (objectBox.User.UserLocation != UserLocation.NoWhere)
+            {
+                await new TempMessages(objectBox).Delete();
+
+                new TextResponseProcessor()
+                {
+                    ReceiverId = objectBox.User.UserId,
+                    Text = "Canceled",
+                    Keyboard = objectBox.Keyboard
+                }.AddThisMessageToService(objectBox.Provider);
+
+                objectBox.User.UserLocation = UserLocation.NoWhere;
+                objectBox.UpdateUserInfo();
+            }
+            else new TextResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
-                Text = "Canceled",
+                Text = "You are in home page.",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);
-
-            objectBox.User.UserPlace = UserPlace.NoWhere;
-            userServices.Update(objectBox.User);
-            await userServices.SaveAsync();
         }
 
         public Task UnDo()

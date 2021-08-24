@@ -34,7 +34,8 @@ namespace TrimedBot.Core.Commands.Post
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
 
-            objectBox.User.UserPlace = UserPlace.AddMedia_SendTitle;
+            objectBox.User.UserLocation = UserLocation.AddMedia_SendTitle;
+            objectBox.UpdateUserInfo();
             //userServices.Update(objectBox.User);
             //await userServices.SaveAsync();
         }

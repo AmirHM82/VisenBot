@@ -8,6 +8,7 @@ using TrimedBot.Core.Commands.User.All;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
+using TrimedBot.Core.Commands.Post.Tag;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -28,10 +29,12 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         {
             List<Func<Task>> cmds = new();
             if (inlineQuery.Query != null && inlineQuery.Query != "")
-                if (user.UserPlace == UserPlace.Search_Users)
-                    cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery).Do);
-                else
-                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery).Do);
+                if (user.UserLocation == UserLocation.Search_Users)
+                    cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                else if (user.UserLocation == UserLocation.Search_Posts)
+                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                else if (user.UserLocation == UserLocation.Search_Posts_Tag)
+                    cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
 
             foreach (var x in cmds)
             {

@@ -23,7 +23,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Settings
             //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
-        public async Task Do()
+        public Task Do()
         {
             if (objectBox.User.Access == Access.Manager)
             {
@@ -34,10 +34,12 @@ namespace TrimedBot.Core.Commands.User.Manager.Settings
                     Keyboard = Keyboard.SettingsKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
 
-                objectBox.User.UserPlace = UserPlace.Settings_Menu;
+                objectBox.User.UserLocation = UserLocation.Settings_Menu;
+                objectBox.UpdateUserInfo();
                 //userServices.ChangeUserPlace(objectBox.User, UserPlace.Settings_Menu);
                 //await userServices.SaveAsync();
             }
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

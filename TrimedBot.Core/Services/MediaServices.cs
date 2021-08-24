@@ -88,10 +88,10 @@ namespace TrimedBot.Core.Services
 
         public Task<Media[]> GetMediasAsync(User user)
         {
-                var m = _db.Medias.Where(x => x.User.Id == user.Id).OrderByDescending(x => x.AddDate).ToArrayAsync();
-                if (m == null)
-                    m = _db.Medias.OrderByDescending(x => x.AddDate).ToArrayAsync();
-                return m;
+            var m = _db.Medias.Where(x => x.User.Id == user.Id).OrderByDescending(x => x.AddDate).ToArrayAsync();
+            if (m == null)
+                m = _db.Medias.OrderByDescending(x => x.AddDate).ToArrayAsync();
+            return m;
         }
 
         public Task<Media[]> GetNotConfirmedPostsAsync(int pageNumber)
@@ -120,16 +120,24 @@ namespace TrimedBot.Core.Services
             await _db.SaveChangesAsync();
         }
 
-        public Task<Media[]> SearchAsync(Guid userId, string caption)
+        public async Task<Media[]> SearchAsync(Guid userId, string caption)
         {
-                return _db.Medias.Where(x => (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == userId))
-                    .OrderByDescending(x => x.AddDate).ToArrayAsync();
+            Media[] result;
+            if (caption == null || caption == "")
+                result = await _db.Medias.Where(x =>
+                x.IsConfirmed == true || x.User.Id == userId)
+                    .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
+            else
+                result = await _db.Medias.Where(x =>
+                (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == userId))
+                    .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
+            return result;
         }
 
         public Task<Media[]> GetMediasAsync(User user, int pageNumber)
         {
-                return _db.Medias.Where(x => x.User == user)
-                    .OrderByDescending(x => x.AddDate).Skip((--pageNumber) * 5).Take(5).ToArrayAsync();
+            return _db.Medias.Where(x => x.User == user)
+                .OrderByDescending(x => x.AddDate).Skip((--pageNumber) * 5).Take(5).ToArrayAsync();
         }
 
         public Task<Media[]> GetUsersMediasAsync(Guid userId, string fileId, int pageNumber)
@@ -153,6 +161,11 @@ namespace TrimedBot.Core.Services
         public void Update(Media media)
         {
             _db.Medias.Update(media);
+        }
+
+        public void Dispose()
+        {
+            _db.Dispose();
         }
     }
 }

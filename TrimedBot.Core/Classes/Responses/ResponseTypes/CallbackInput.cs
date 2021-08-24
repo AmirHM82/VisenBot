@@ -8,7 +8,6 @@ using TrimedBot.Core.Commands.objectBox.User.Manager.Request;
 using TrimedBot.Core.Commands.Post;
 using TrimedBot.Core.Commands.Post.Delete;
 using TrimedBot.Core.Commands.Post.Edit;
-using TrimedBot.Core.Commands.Service.Temp;
 using TrimedBot.Core.Commands.User.Admin;
 using TrimedBot.Core.Commands.User.Manager;
 using TrimedBot.Core.Commands.User.Manager.Message;
@@ -18,6 +17,10 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.DAL.Sections;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Commands.Service.Tags;
+using TrimedBot.Core.Commands.User.All;
+using TrimedBot.Core.Commands.Post.Properties;
+using TrimedBot.Core.Commands.Post.Tag;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -49,7 +52,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     switch (data.Dequeue())
                     {
                         case CallbackSection.Edit:
-                            cmds.Add(new DeleteTempMessagesCommand(objectBox).Do);
+                            cmds.Add(new TempMessages(objectBox).Delete);
                             switch (data.Dequeue())
                             {
                                 case CallbackSection.Title:
@@ -71,6 +74,21 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             break;
                         case CallbackSection.Decline:
                             cmds.Add(new DeclinePostCommand(objectBox, data.Dequeue(), callbackQuery.Message.MessageId).Do);
+                            break;
+                        case CallbackSection.Properties:
+                            cmds.Add(new PostPropertiesCommand(Guid.Parse(data.Dequeue()), objectBox).Do);
+                            break;
+                            case CallbackSection.Tag:
+                            switch (data.Dequeue())
+                            {
+                                case CallbackSection.Add:
+                                    cmds.Add(new AddPostsTagCommand(objectBox, Guid.Parse(data.Dequeue())).Do);
+                                    break;
+                                case CallbackSection.Next:
+                                case CallbackSection.Previous:
+                                    cmds.Add(new PostsTagsCommand(objectBox, int.Parse(data.Dequeue())).Do);
+                                    break;
+                            }
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:
@@ -114,10 +132,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     switch (data.Dequeue())
                     {
                         case CallbackSection.Ban:
-                            cmds.Add(new BanUserCommand(objectBox, Guid.Parse(data.Dequeue())).Do);
+                            cmds.Add(new BanUserCommand(objectBox, Guid.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
                             break;
                         case CallbackSection.Unban:
-                            cmds.Add(new BanUserCommand(objectBox, Guid.Parse(data.Dequeue())).UnDo);
+                            cmds.Add(new BanUserCommand(objectBox, Guid.Parse(data.Dequeue()), callbackQuery.Message.MessageId).UnDo);
                             break;
                         case CallbackSection.Send:
                             switch (data.Dequeue())
@@ -129,7 +147,26 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             break;
                     }
                     break;
-                default:
+                case CallbackSection.Tag:
+                    switch (data.Dequeue())
+                    {
+                        case CallbackSection.Add:
+                            cmds.Add(new GetInAddTagSectionCommand(objectBox).Do);
+                            break;
+                        case CallbackSection.Edit:
+                            cmds.Add(new GetInEditTagSectionCommand(objectBox, int.Parse(data.Dequeue())).Do);
+                            break;
+                        case CallbackSection.Delete:
+                            cmds.Add(new DeleteTagCommand(objectBox, int.Parse(data.Dequeue())).Do);
+                            break;
+                        case CallbackSection.Next:
+                        case CallbackSection.Previous:
+                            cmds.Add(new TagsCommand(int.Parse(data.Dequeue()), objectBox).Do);
+                            break;
+                    }
+                    break;
+                case CallbackSection.Cancel:
+                    cmds.Add(new CancelCommand(objectBox).Do);
                     break;
             }
 

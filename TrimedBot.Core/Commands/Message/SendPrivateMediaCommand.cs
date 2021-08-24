@@ -33,7 +33,8 @@ namespace TrimedBot.Core.Commands.Message
                     ReceiverId = objectBox.User.UserId,
                     Text = $"{media.Title}\n{media.Caption}",
                     Keyboard = Keyboard.PrivateMediaKeyboard(media.Id),
-                    IsDeletable = true
+                    IsDeletable = true,
+                    Video = media.FileId
                 }.AddThisMessageToService(objectBox.Provider);
             }
             else new TextResponseProcessor()

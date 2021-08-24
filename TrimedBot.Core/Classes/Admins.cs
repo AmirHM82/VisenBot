@@ -44,7 +44,8 @@ namespace TrimedBot.Core.Classes
                         }
                         new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
-                        objectBox.User.UserPlace = UserPlace.SeeAdmins_Manager;
+                        objectBox.User.UserLocation = UserLocation.SeeAdmins_Manager;
+                        objectBox.UpdateUserInfo();
                     }
                     else new TextResponseProcessor()
                     {
@@ -60,9 +61,10 @@ namespace TrimedBot.Core.Classes
             }.AddThisMessageToService(objectBox.Provider);
         }
 
-        public async Task<List<Processor>> CreateSendMessages(int pageNumber)
+        public async Task<Tuple<List<Processor>, bool>> CreateSendMessages(int pageNumber)
         {
-                        List<Processor> messages = new();
+            bool needNP = false;
+            List<Processor> messages = new();
             if (objectBox.User.Access == Access.Manager)
             {
                 if (pageNumber > 0)
@@ -73,16 +75,22 @@ namespace TrimedBot.Core.Classes
                     {
                         for (int i = 0; i < admins.Length; i++)
                         {
+                            string userInfo = "";
+                            if (admins[i].UserName != null || admins[i].UserName != "") userInfo += $"Username: {admins[i].UserName}\n";
+                            if (admins[i].FirstName != null && admins[i].FirstName != "") userInfo += $"Firstname: {admins[i].FirstName}\n";
+                            if (admins[i].LastName != null && admins[i].LastName != "") userInfo += $"Lastname: {admins[i].LastName}";
                             messages.Add(new TextResponseProcessor()
                             {
                                 ReceiverId = objectBox.User.UserId,
-                                Text = $"UserName: {admins[i].UserName} \n Start date: {admins[i].StartDate}",
+                                Text = $"{userInfo} \n Start date: {admins[i].StartDate}",
                                 Keyboard = Keyboard.AdminDelete(admins[i].Id),
                                 IsDeletable = true
                             });
                         }
 
-                        objectBox.User.UserPlace = UserPlace.SeeAdmins_Manager;
+                        objectBox.User.UserLocation = UserLocation.SeeAdmins_Manager;
+                        objectBox.UpdateUserInfo();
+                        needNP = true;
                     }
                     else messages.Add(new TextResponseProcessor()
                     {
@@ -97,7 +105,7 @@ namespace TrimedBot.Core.Classes
                 Text = Sentences.Access_Denied
             });
 
-            return messages;
+            return new Tuple<List<Processor>, bool>(messages, needNP);
         }
     }
 }

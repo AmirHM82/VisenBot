@@ -9,6 +9,7 @@ using TrimedBot.Core.Commands.User.All;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
+using TrimedBot.Core.Commands.Post.Tag;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -29,13 +30,16 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         {
             List<Func<Task>> cmds = new();
 
-            switch (user.UserPlace)
+            switch (user.UserLocation)
             {
-                case UserPlace.Search_Posts:
+                case UserLocation.Search_Posts:
                     cmds.Add(new SendSearchedPostsCommand(objectBox, Guid.Parse(chosenInlineResult.ResultId)).Do);
                     break;
-                case UserPlace.Search_Users:
-                    cmds.Add(new ChosenInlineSearchInUsersCommand(objectBox, chosenInlineResult).Do);
+                case UserLocation.Search_Users:
+                    cmds.Add(new ChosenInlineSearchInUsersCommand(objectBox, long.Parse(chosenInlineResult.ResultId)).Do);
+                    break;
+                case UserLocation.Search_Posts_Tag:
+                    cmds.Add(new ChosenPostsTagsCommand(objectBox, int.Parse(chosenInlineResult.ResultId)).Do);
                     break;
             }
 

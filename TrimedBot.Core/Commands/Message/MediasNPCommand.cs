@@ -33,15 +33,26 @@ namespace TrimedBot.Core.Commands.Message
         {
             if (pageNum > 0)
             {
+                bool needNP = false;
                 await new TempMessages(objectBox).Delete();
 
                 List<Processor> messages = new();
-                if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Member)
-                    messages.AddRange(await new Medias(objectBox).GetPrivate(pageNum));
-                else if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin || objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager)
-                    messages.AddRange(await new Medias(objectBox).GetPublic(pageNum));
+                if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Member)
+                {
+                    var tuple = await new Medias(objectBox).GetPrivate(pageNum);
+                    messages.AddRange(tuple.Item1);
+                    needNP = tuple.Item2;
+                }
+                else if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin || objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager)
+                {
+                    var tuple = await new Medias(objectBox).GetPublic(pageNum);
+                    messages.AddRange(tuple.Item1);
+                    needNP = tuple.Item2;
+                }
 
-                messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, Category));
+                if (needNP)
+                    messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, Category));
+
                 new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
             }
         }

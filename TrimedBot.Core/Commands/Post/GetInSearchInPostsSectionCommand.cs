@@ -23,7 +23,7 @@ namespace TrimedBot.Core.Commands.Post
             //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
-        public async Task Do()
+        public Task Do()
         {
             new TextResponseProcessor()
             {
@@ -32,9 +32,11 @@ namespace TrimedBot.Core.Commands.Post
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
 
-            objectBox.User.UserPlace = UserPlace.Search_Posts;
+            objectBox.User.UserLocation = UserLocation.Search_Posts;
+            objectBox.UpdateUserInfo();
             //userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Posts);
             //await userServices.SaveAsync();
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

@@ -34,9 +34,9 @@ namespace TrimedBot.Core.Commands.Post
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             List<Processor> messages = new();
-            if (objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Admin ||
-                objectBox.User.UserPlace == UserPlace.SeeAddedVideos_Manager ||
-                objectBox.User.UserPlace == UserPlace.Search_Posts)
+            if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin ||
+                objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager ||
+                objectBox.User.UserLocation == UserLocation.Search_Posts)
             {
                 var media = await mediaServices.FindAsync(Guid.Parse(id));
                 if (media != null)

@@ -15,18 +15,20 @@ namespace TrimedBot.Core.Commands.Post
     public class SearchInMediasCommand : ICommand
     {
         private ObjectBox objectBox;
-        private InlineQuery query;
+        private string caption;
+        private string queryId;
 
-        public SearchInMediasCommand(ObjectBox objectBox, InlineQuery query)
+        public SearchInMediasCommand(ObjectBox objectBox, string caption, string queryId)
         {
             this.objectBox = objectBox;
-            this.query = query;
+            this.caption = caption;
+            this.queryId = queryId;
         }
 
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            var videos = await mediaServices.SearchAsync(objectBox.User.Id, query.Query.ToLower());
+            var videos = await mediaServices.SearchAsync(objectBox.User.Id, caption.ToLower());
 
             if (videos != null)
             {
@@ -39,7 +41,7 @@ namespace TrimedBot.Core.Commands.Post
 
                 new InlineQueryProcessor()
                 {
-                    Id = query.Id,
+                    Id = queryId,
                     Results = results
                 }.AddThisMessageToService(objectBox.Provider);
             }

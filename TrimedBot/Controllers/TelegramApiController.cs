@@ -58,20 +58,24 @@ namespace TrimedBot.Controllers
         //[Route("update/new")]
         public async Task<IActionResult> New(string token, Update update)
         {
-            try
+            if (token == configuration["Token"])
             {
-                using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+                try
                 {
-                    update = JsonConvert.DeserializeObject<Update>(await reader.ReadToEndAsync());
+                    using (StreamReader reader = new StreamReader(Request.Body, Encoding.UTF8))
+                    {
+                        update = JsonConvert.DeserializeObject<Update>(await reader.ReadToEndAsync());
+                    }
                 }
+                catch (Exception e)
+                {
+                    return Content($"Error: {e.Message}");
+                }
+                var updateServices = provider.GetRequiredService<UpdateServices>();
+                await updateServices.ProcessUpdate(provider, update);
+                return Ok();
             }
-            catch (Exception e)
-            {
-                return Content($"Error: {e.Message}");
-            }
-            var updateServices = provider.GetRequiredService<UpdateServices>();
-            await updateServices.ProcessUpdate(provider, update);
-            return Ok();
+            else return Content("Token is not true.");
         }
     }
 }

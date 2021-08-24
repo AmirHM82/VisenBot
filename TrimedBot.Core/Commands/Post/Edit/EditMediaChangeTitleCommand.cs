@@ -8,6 +8,7 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes;
 
 namespace TrimedBot.Core.Commands.Post.Edit
 {
@@ -36,7 +37,11 @@ namespace TrimedBot.Core.Commands.Post.Edit
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);
 
-            await userServices.Reset(objectBox.User, new UserResetSection[] { UserResetSection.Temp, UserResetSection.UserPlace });
+
+            objectBox.User.Temp = null;
+            objectBox.User.UserLocation = UserLocation.NoWhere;
+            objectBox.UpdateUserInfo();
+            //await userServices.Reset(objectBox.User, new UserResetSection[] { UserResetSection.Temp, UserResetSection.UserPlace });
         }
 
         public Task UnDo()

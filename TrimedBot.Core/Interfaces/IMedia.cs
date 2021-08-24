@@ -6,7 +6,7 @@ using TrimedBot.DAL.Entities;
 
 namespace TrimedBot.Core.Interfaces
 {
-    public interface IMedia
+    public interface IMedia : IDisposable
     {
         Task AddAsync(Media track);
         void Edit(Media track);

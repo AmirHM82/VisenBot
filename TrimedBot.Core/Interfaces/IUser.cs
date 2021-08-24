@@ -7,7 +7,7 @@ using TrimedBot.DAL.Entities;
 
 namespace TrimedBot.Core.Interfaces
 {
-    public interface IUser
+    public interface IUser : IDisposable
     {
         Task AddAsync(User user);
         Task SaveAsync();
@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Interfaces
         Task Reset(User user, params UserResetSection[] sections);
         void SendAdminRequest(User user);
         Task<User> DeleteAdmin(Guid id);
-        void ChangeUserPlace(User user, UserPlace userPlace);
+        void ChangeUserPlace(User user, UserLocation userPlace);
         Task<User[]> Search(string userName);
         Task<long[]> GetUserIds();
     }

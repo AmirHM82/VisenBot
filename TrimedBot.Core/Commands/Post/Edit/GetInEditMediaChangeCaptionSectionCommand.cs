@@ -25,12 +25,11 @@ namespace TrimedBot.Core.Commands.Post.Edit
             this.id = id;
         }
 
-        public async Task Do()
+        public Task Do()
         {
-            objectBox.User.UserPlace = UserPlace.EditMedia_Caption;
+            objectBox.User.UserLocation = UserLocation.EditMedia_Caption;
             objectBox.User.Temp = id;
-            userServices.Update(objectBox.User);
-            await userServices.SaveAsync();
+            objectBox.UpdateUserInfo();
 
             new TextResponseProcessor()
             {
@@ -38,6 +37,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
                 Text = "Send new caption:",
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
+            return Task.CompletedTask;
         }
 
         public Task UnDo()

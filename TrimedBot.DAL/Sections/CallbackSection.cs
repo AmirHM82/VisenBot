@@ -14,11 +14,11 @@ namespace TrimedBot.DAL.Sections
         public const string Delete = "D";
         public const string Add = "Add";
         public const string Next = "N";
-        public const string Previous = "P";
+        public const string Previous = "Pre";
         public const string Post = "Po";
         public const string Edit = "E";
-        public const string Title = "T";
-        public const string Caption = "Ca";
+        public const string Title = "Ti";
+        public const string Caption = "Cap";
         public const string Video = "V";
         public const string Decline = "Dec";
         public const string Confirm = "Co";
@@ -27,5 +27,8 @@ namespace TrimedBot.DAL.Sections
         public const string Unban = "UB";
         public const string Send = "S";
         public const string Message = "M";
+        public const string Tag = "Ta";
+        public const string Properties = "Pro";
+        public const string Cancel = "Can";
     }
 }

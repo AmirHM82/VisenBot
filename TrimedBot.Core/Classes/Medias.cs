@@ -45,7 +45,8 @@ namespace TrimedBot.Core.Classes
                         });
                     }
                     new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
-                    objectBox.User.UserPlace = UserPlace.SeeAddedVideos_Member;
+                    objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
+                    objectBox.UpdateUserInfo();
                 }
                 else new TextResponseProcessor()
                 {
@@ -55,8 +56,9 @@ namespace TrimedBot.Core.Classes
             }
         }
 
-        public async Task<List<Processor>> GetPrivate(int pageNum)
+        public async Task<Tuple<List<Processor>, bool>> GetPrivate(int pageNum)
         {
+            bool needNP = false;
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             List<Processor> messages = new();
 
@@ -76,16 +78,25 @@ namespace TrimedBot.Core.Classes
                             Video = medias[i].FileId
                         });
                     }
-                    objectBox.User.UserPlace = UserPlace.SeeAddedVideos_Member;
-                }
-                else messages.Add(new TextResponseProcessor()
-                {
-                    ReceiverId = objectBox.User.UserId,
-                    Text = "There is no videos."
-                });
-            }
 
-            return messages;
+                    objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
+                    objectBox.UpdateUserInfo();
+                    needNP = true;
+                }
+                else
+                {
+                    messages.Add(new TextResponseProcessor()
+                    {
+                        ReceiverId = objectBox.User.UserId,
+                        Text = "There is no videos.",
+                        Keyboard = objectBox.Keyboard
+                    });
+
+                    objectBox.User.UserLocation = UserLocation.NoWhere;
+                    objectBox.UpdateUserInfo();
+                }
+            }
+            return new Tuple<List<Processor>, bool>(messages, needNP);
         }
 
         public async Task SendPublic(int pageNum)
@@ -114,9 +125,10 @@ namespace TrimedBot.Core.Classes
                         new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
 
-                        objectBox.User.UserPlace = objectBox.User.Access == Access.Admin
-                           ? UserPlace.SeeAddedVideos_Admin
-                           : UserPlace.SeeAddedVideos_Manager;
+                        objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
+                           ? UserLocation.SeeAddedVideos_Admin
+                           : UserLocation.SeeAddedVideos_Manager;
+                        objectBox.UpdateUserInfo();
                     }
                     else new TextResponseProcessor()
                     {
@@ -127,8 +139,9 @@ namespace TrimedBot.Core.Classes
             }
         }
 
-        public async Task<List<Processor>> GetPublic(int pageNum)
+        public async Task<Tuple<List<Processor>, bool>> GetPublic(int pageNum)
         {
+            bool needNP = false;
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             List<Processor> messages = new();
             if (objectBox.User.Access == Access.Admin || objectBox.User.Access == Access.Manager)
@@ -150,19 +163,27 @@ namespace TrimedBot.Core.Classes
                             });
                         }
 
-
-                        objectBox.User.UserPlace = objectBox.User.Access == Access.Admin
-                           ? UserPlace.SeeAddedVideos_Admin
-                           : UserPlace.SeeAddedVideos_Manager;
+                        objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
+                           ? UserLocation.SeeAddedVideos_Admin
+                           : UserLocation.SeeAddedVideos_Manager;
+                        objectBox.UpdateUserInfo();
+                        needNP = true;
                     }
-                    else messages.Add(new TextResponseProcessor()
+                    else
                     {
-                        ReceiverId = objectBox.User.UserId,
-                        Text = "No medias found."
-                    });
+                        messages.Add(new TextResponseProcessor()
+                        {
+                            ReceiverId = objectBox.User.UserId,
+                            Text = "No medias found.",
+                            Keyboard = objectBox.Keyboard
+                        });
+
+                        objectBox.User.UserLocation = UserLocation.NoWhere;
+                        objectBox.UpdateUserInfo();
+                    }
                 }
             }
-            return messages;
+            return new Tuple<List<Processor>, bool>(messages, needNP);
         }
     }
 }

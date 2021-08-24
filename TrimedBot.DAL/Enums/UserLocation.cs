@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrimedBot.DAL.Enums
 {
-    public enum UserPlace : int
+    public enum UserLocation : int
     {
         NoWhere = 0,
         AddMedia_SendTitle = 1,
@@ -27,6 +27,10 @@ namespace TrimedBot.DAL.Enums
         Settings_NumberOfAdsPerDay = 17,
         Settings_ChangeSearchedUsersPic = 18,
         Send_Message_ToSomeone = 19,
-        Send_Message_ToAll = 20
+        Send_Message_ToAll = 20,
+        See_All_Tags = 21,
+        See_Posts_Tags = 22,
+        Add_General_Tag = 23,
+        Search_Posts_Tag = 24
     }
 }

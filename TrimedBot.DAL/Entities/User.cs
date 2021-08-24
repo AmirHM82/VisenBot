@@ -12,7 +12,7 @@ namespace TrimedBot.DAL.Entities
         [Key]
         public Guid Id { get; set; }
         public long UserId { get; set; }
-        public UserPlace UserPlace { get; set; }
+        public UserLocation UserLocation { get; set; }
         public ICollection<Media> Medias { get; set; }
         public Access Access { get; set; }
         public DateTime StartDate { get; set; }
@@ -21,6 +21,8 @@ namespace TrimedBot.DAL.Entities
         public bool IsBanned { get; set; }
         public string Temp { get; set; }
         public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public ICollection<Banner> Banners { get; set; }
     }
 }

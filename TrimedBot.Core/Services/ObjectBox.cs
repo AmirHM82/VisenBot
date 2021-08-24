@@ -15,9 +15,8 @@ namespace TrimedBot.Core.Services
 {
     public class ObjectBox
     {
-        public bool IsUserChanged { get; set; }
-        private User _user;
-        public User User { get => _user; set { _user = value; IsUserChanged = true; } }
+        public bool IsUserInfoChanged { get; set; }
+        public User User { get; set; }
         public ReplyKeyboardMarkup Keyboard { get; set; }
         public Settings Settings { get; set; }
 
@@ -32,12 +31,25 @@ namespace TrimedBot.Core.Services
         {
             IUser userServices = Provider.GetRequiredService<IUser>();
             var NewOrFoundedUser = await userServices.FindOrAddAsync(user);
+
+            bool IsChanged = false;
             if (NewOrFoundedUser.UserName != user.Username)
             {
                 NewOrFoundedUser.UserName = user.Username;
-                userServices.Update(NewOrFoundedUser);
+                IsChanged = true;
             }
-            await userServices.SaveAsync();
+            else if (NewOrFoundedUser.FirstName != user.FirstName)
+            {
+                NewOrFoundedUser.FirstName = user.FirstName;
+                IsChanged = true;
+            }
+            else if (NewOrFoundedUser.LastName != user.LastName)
+            {
+                NewOrFoundedUser.LastName = user.LastName;
+                IsChanged = true;
+            }
+
+            if (IsChanged) IsUserInfoChanged = true;
             User = NewOrFoundedUser;
         }
 
@@ -55,15 +67,5 @@ namespace TrimedBot.Core.Services
         }
 
         public void AssignKeyboard(Access access) => Keyboard = Classes.Keyboard.GetSpecificKeyboard(access);
-
-        public async Task UpdateUserInfo()
-        {
-            if (IsUserChanged)
-            {
-                var userServices = Provider.GetRequiredService<IUser>();
-                userServices.Update(User);
-                await userServices.SaveAsync();
-            }
-        }
     }
 }

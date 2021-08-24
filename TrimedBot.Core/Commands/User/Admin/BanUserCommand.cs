@@ -17,12 +17,14 @@ namespace TrimedBot.Core.Commands.User.Admin
         protected IUser userServices;
         private ObjectBox objectBox;
         private Guid id;
+        public int MessageId;
 
-        public BanUserCommand(ObjectBox objectBox, Guid id)
+        public BanUserCommand(ObjectBox objectBox, Guid id, int messageId)
         {
             this.objectBox = objectBox;
             this.id = id;
             userServices = objectBox.Provider.GetRequiredService<IUser>();
+            MessageId = messageId;
         }
 
         public async Task Do()
@@ -35,6 +37,13 @@ namespace TrimedBot.Core.Commands.User.Admin
                     user.IsBanned = true;
                     userServices.Update(user);
                     await userServices.SaveAsync();
+
+                    new EditInlineKeyboardResponseProcessor()
+                    {
+                        ReceiverId = objectBox.User.UserId,
+                        MessageId = MessageId,
+                        Keyboard = Keyboard.ManageUser(user.Id, user.UserId, user.Access, user.IsBanned)
+                    }.AddThisMessageToService(objectBox.Provider);
 
                     new TextResponseProcessor()
                     {
@@ -55,6 +64,13 @@ namespace TrimedBot.Core.Commands.User.Admin
                     user.IsBanned = false;
                     userServices.Update(user);
                     await userServices.SaveAsync();
+
+                    new EditInlineKeyboardResponseProcessor()
+                    {
+                        ReceiverId = objectBox.User.UserId,
+                        MessageId = MessageId,
+                        Keyboard = Keyboard.ManageUser(user.Id, user.UserId, user.Access, user.IsBanned)
+                    }.AddThisMessageToService(objectBox.Provider);
 
                     new TextResponseProcessor()
                     {

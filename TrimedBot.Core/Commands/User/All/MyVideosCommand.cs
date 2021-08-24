@@ -24,10 +24,14 @@ namespace TrimedBot.Core.Commands.User.All
 
         public async Task Do()
         {
+            bool needNP = false;
             List<Processor> messages = new List<Processor>();
             await new TempMessages(objectBox).Delete();
-            messages.AddRange(await new Medias(objectBox).GetPrivate(pageNum));
-            messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Post));
+            var tuple = await new Medias(objectBox).GetPrivate(pageNum);
+            messages.AddRange(tuple.Item1);
+            needNP = tuple.Item2;
+            if (needNP)
+                messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Post));
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 

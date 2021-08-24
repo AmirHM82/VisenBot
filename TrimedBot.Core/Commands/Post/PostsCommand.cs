@@ -22,9 +22,13 @@ namespace TrimedBot.Core.Commands.Post
 
         public async Task Do()
         {
+            bool needNP = false;
             List<Processor> messages = new();
-            messages.AddRange(await new Medias(objectBox).GetPublic(1));
-            messages.AddRange(new NPMessage(objectBox).CreateNP(1, CallbackSection.Post));
+            var tuple = await new Medias(objectBox).GetPublic(1);
+            messages.AddRange(tuple.Item1);
+            needNP = tuple.Item2;
+            if (needNP)
+                messages.AddRange(new NPMessage(objectBox).CreateNP(1, CallbackSection.Post));
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
