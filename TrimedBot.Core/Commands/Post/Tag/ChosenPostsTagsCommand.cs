@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrimedBot.Core.Classes;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 
@@ -26,11 +28,25 @@ namespace TrimedBot.Core.Commands.Post.Tag
             var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
 
             var tag = await tagService.FindAsync(tagId);
-            var media = await mediaService.FindAsync(Guid.Parse(objectBox.User.Temp));
+            var postId = Guid.Parse(objectBox.User.Temp);
+            var media = await mediaService.FindAsync(postId);
 
-            tag.Medias.Add(media);
-            tagService.Update(tag);
-            await tagService.SaveAsync();
+            if (!media.Tags.Contains(tag))
+            {
+                media.Tags.Add(tag);
+                mediaService.Update(media);
+                await mediaService.SaveAsync();
+            }
+
+            new VideoResponseProcessor()
+            {
+                IsDeletable = true,
+                Keyboard = Keyboard.PostProperties(postId),
+                ReceiverId = objectBox.User.UserId,
+                Text = $"{media.Title} - {media.Caption}",
+                Video = media.FileId
+            }.AddThisMessageToService(objectBox.Provider);
+
         }
 
         public Task UnDo()

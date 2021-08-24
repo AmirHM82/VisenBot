@@ -16,30 +16,18 @@ namespace TrimedBot.Core.Commands.Post.Tag
     public class PostsTagsCommand : ICommand
     {
         private ObjectBox objectBox;
-        private int pageNum;
 
-        public PostsTagsCommand(ObjectBox objectBox, int pageNum)
+        public PostsTagsCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-            this.pageNum = pageNum;
         }
 
         public async Task Do()
         {
-            if (pageNum > 0)
-            {
-                bool needNP = false;
-                await new TempMessages(objectBox).Delete();
+            await new TempMessages(objectBox).Delete();
+            var messages = await new Tags(objectBox).GetMessages(Guid.Parse(objectBox.User.Temp));
 
-                List<Processor> processList = new List<Processor>();
-                var tuple = await new Tags(objectBox).GetMessages(Guid.Parse(objectBox.User.Temp), pageNum);
-                processList.AddRange(tuple.Item1);
-                needNP = tuple.Item2;
-                if (needNP)
-                    processList.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Tag));
-
-                new MultiProcessor(processList).AddThisMessageToService(objectBox.Provider);
-            }
+            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

@@ -76,13 +76,13 @@ namespace TrimedBot.Core.Classes
                         for (int i = 0; i < admins.Length; i++)
                         {
                             string userInfo = "";
-                            if (admins[i].UserName != null || admins[i].UserName != "") userInfo += $"Username: {admins[i].UserName}\n";
+                            if (admins[i].UserName != null && admins[i].UserName != "") userInfo += $"Username: {admins[i].UserName}\n";
                             if (admins[i].FirstName != null && admins[i].FirstName != "") userInfo += $"Firstname: {admins[i].FirstName}\n";
                             if (admins[i].LastName != null && admins[i].LastName != "") userInfo += $"Lastname: {admins[i].LastName}";
                             messages.Add(new TextResponseProcessor()
                             {
                                 ReceiverId = objectBox.User.UserId,
-                                Text = $"{userInfo} \n Start date: {admins[i].StartDate}",
+                                Text = $"{userInfo}\n\nStart date: {admins[i].StartDate}",
                                 Keyboard = Keyboard.AdminDelete(admins[i].Id),
                                 IsDeletable = true
                             });

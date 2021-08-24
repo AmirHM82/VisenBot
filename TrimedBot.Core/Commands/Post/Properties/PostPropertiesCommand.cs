@@ -29,12 +29,13 @@ namespace TrimedBot.Core.Commands.Post.Properties
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             var media = await mediaServices.FindAsync(postId);
 
-            new TextResponseProcessor()
+            new VideoResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
                 Keyboard = Keyboard.PostProperties(postId),
                 Text = $"{media.Title} - {media.Caption}",
-                IsDeletable = true
+                IsDeletable = true,
+                Video = media.FileId
             }.AddThisMessageToService(objectBox.Provider);
 
             objectBox.User.Temp = postId.ToString();

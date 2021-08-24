@@ -44,20 +44,9 @@ namespace TrimedBot.Core.Services
             return await db.Tags.FirstOrDefaultAsync(x => x.Id == tagId);
         }
 
-        public async Task<Tag> FindIncludeMediaAsync(int tagId)
-        {
-            return await db.Tags.Include(x => x.Medias).FirstOrDefaultAsync(x => x.Id == tagId);
-        }
-
         public async Task<List<Tag>> GetTagsAsync(int pageNum)
         {
             return await db.Tags.Skip((pageNum - 1) * 5).Take(5).ToListAsync();
-        }
-
-        public async Task<List<Tag>> GetTagsAsync(Guid postId, int pageNum)
-        {
-            return await db.Tags.Include(x => x.Medias)/*.Where(x => x.Medias.Id == postId)*/
-                .Skip((pageNum - 1) * 5).Take(5).ToListAsync();
         }
 
         public async Task SaveAsync()
@@ -68,11 +57,6 @@ namespace TrimedBot.Core.Services
         public async Task<List<Tag>> Search(string name)
         {
             return await db.Tags.Where(x => x.Name.Contains(name)).ToListAsync();
-        }
-
-        public async Task<List<Tag>> Search(Guid postId, string name)
-        {
-            return await db.Tags.Include(x => x.Medias).Where(x => x.Name.Contains(name)/* && x.Medias.Id == postId*/).ToListAsync();
         }
 
         public void Update(Tag tag)

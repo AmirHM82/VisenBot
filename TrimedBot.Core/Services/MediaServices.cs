@@ -78,7 +78,7 @@ namespace TrimedBot.Core.Services
 
         public Task<Media> FindAsync(Guid id)
         {
-            return _db.Medias.Include(x => x.User).FirstOrDefaultAsync(t => t.Id == id);
+            return _db.Medias.Include(x => x.User).Include(x => x.Tags).FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public Task<Media> FindAsync(string Id)

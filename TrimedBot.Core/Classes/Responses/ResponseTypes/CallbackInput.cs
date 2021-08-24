@@ -84,9 +84,11 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                                 case CallbackSection.Add:
                                     cmds.Add(new AddPostsTagCommand(objectBox, Guid.Parse(data.Dequeue())).Do);
                                     break;
+                                case CallbackSection.Delete:
+                                    break;
                                 case CallbackSection.Next:
                                 case CallbackSection.Previous:
-                                    cmds.Add(new PostsTagsCommand(objectBox, int.Parse(data.Dequeue())).Do);
+                                    cmds.Add(new PostsTagsCommand(objectBox).Do);
                                     break;
                             }
                             break;
@@ -153,11 +155,8 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                         case CallbackSection.Add:
                             cmds.Add(new GetInAddTagSectionCommand(objectBox).Do);
                             break;
-                        case CallbackSection.Edit:
-                            cmds.Add(new GetInEditTagSectionCommand(objectBox, int.Parse(data.Dequeue())).Do);
-                            break;
                         case CallbackSection.Delete:
-                            cmds.Add(new DeleteTagCommand(objectBox, int.Parse(data.Dequeue())).Do);
+                            cmds.Add(new DeleteTagCommand(objectBox, int.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:

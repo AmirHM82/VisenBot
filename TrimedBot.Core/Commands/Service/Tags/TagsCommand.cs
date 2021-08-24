@@ -26,20 +26,28 @@ namespace TrimedBot.Core.Commands.Service.Tags
 
         public async Task Do()
         {
-            if (pageNum > 0)
+            List<Processor> processList = new List<Processor>();
+            if (objectBox.User.Access == DAL.Enums.Access.Manager)
             {
-                bool needNP = false;
-                await new TempMessages(objectBox).Delete();
+                if (pageNum > 0)
+                {
+                    bool needNP = false;
+                    await new TempMessages(objectBox).Delete();
 
-                List<Processor> processList = new List<Processor>();
-                var tuple = await new Classes.Tags(objectBox).GetMessages(pageNum);
-                processList.AddRange(tuple.Item1);
-                needNP = tuple.Item2;
-                if (needNP)
-                    processList.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Tag));
-
-                new MultiProcessor(processList).AddThisMessageToService(objectBox.Provider);
+                    var tuple = await new Classes.Tags(objectBox).GetMessages(pageNum);
+                    processList.AddRange(tuple.Item1);
+                    needNP = tuple.Item2;
+                    if (needNP)
+                        processList.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Tag));
+                }
             }
+            else processList.Add(new TextResponseProcessor()
+            {
+                ReceiverId = objectBox.User.UserId,
+                Keyboard = objectBox.Keyboard,
+                Text = Sentences.Access_Denied
+            });
+            new MultiProcessor(processList).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

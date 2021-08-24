@@ -23,7 +23,6 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Add new video") },
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
-            new[] {new KeyboardButton("Tags") },
             new[] {new KeyboardButton("Search in posts") }
         }, true);
 
@@ -178,8 +177,17 @@ namespace TrimedBot.Core.Classes
         {
             InlineKeyboardButton[] result =
             {
-                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}"),
-                InlineKeyboardButton.WithCallbackData("Edit", $"{CallbackSection.Tag}/{CallbackSection.Edit}/{tag.Id}")
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}")
+            };
+
+            return new InlineKeyboardMarkup(result);
+        }
+
+        public static InlineKeyboardMarkup PostsTag(Tag tag)
+        {
+            InlineKeyboardButton[] result =
+            {
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}")
             };
 
             return new InlineKeyboardMarkup(result);
@@ -187,12 +195,17 @@ namespace TrimedBot.Core.Classes
 
         public static InlineKeyboardMarkup AddTag()
         {
-            InlineKeyboardButton[] result =
+            InlineKeyboardButton[] k1 =
             {
                 InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.Tag}/{CallbackSection.Add}")
             };
 
-            return new InlineKeyboardMarkup(result);
+            InlineKeyboardButton[] k2 =
+            {
+                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+            };
+
+            return new InlineKeyboardMarkup(new[] { k1, k2 });
         }
 
         public static InlineKeyboardMarkup AddPostsTag(Guid postId)

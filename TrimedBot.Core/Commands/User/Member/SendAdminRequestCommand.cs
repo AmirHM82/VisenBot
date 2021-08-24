@@ -9,6 +9,7 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes;
 
 namespace TrimedBot.Core.Commands.User.Member
 {
@@ -29,6 +30,7 @@ namespace TrimedBot.Core.Commands.User.Member
             if (objectBox.User.Access == Access.Member && objectBox.User.IsSentAdminRequest == false)
             {
                 objectBox.User.IsSentAdminRequest = true;
+                objectBox.UpdateUserInfo();
                 //userServices.SendAdminRequest(objectBox.User);
                 //await userServices.SaveAsync();
                 message = new TextResponseProcessor()

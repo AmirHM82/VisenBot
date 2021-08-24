@@ -69,12 +69,15 @@ namespace TrimedBot.Core.Classes
             return new Tuple<List<Processor>, bool>(result, needNP);
         }
 
-        public async Task<Tuple<List<Processor>, bool>> GetMessages(Guid postId, int pageNum)
+        public async Task<List<Processor>> GetMessages(Guid postId)
         {
-            bool needNP = false;
             List<Processor> result = new List<Processor>();
-            var tagService = objectBox.Provider.GetRequiredService<ITag>();
-            var tags = await tagService.GetTagsAsync(postId, pageNum);
+            //var tagService = objectBox.Provider.GetRequiredService<ITag>();
+            //var tags = await tagService.GetTagsAsync(postId, pageNum);
+
+            var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
+            var media = await mediaService.FindAsync(postId);
+            var tags = media.Tags;
 
 
             if (tags.Count > 0)
@@ -92,30 +95,25 @@ namespace TrimedBot.Core.Classes
                     result.Add(new TextResponseProcessor()
                     {
                         IsDeletable = true,
-                        Keyboard = Keyboard.Tag(t),
+                        Keyboard = Keyboard.PostsTag(t),
                         ReceiverId = objectBox.User.UserId,
                         Text = t.Name
                     });
                 }
-                needNP = true;
             }
 
-            if (tags.Count < 5)
+            result.Add(new TextResponseProcessor()
             {
-                result.Add(new TextResponseProcessor()
-                {
-                    IsDeletable = true,
-                    Keyboard = Keyboard.AddPostsTag(postId),
-                    ReceiverId = objectBox.User.UserId,
-                    Text = "Press add for add a new tag"
-                });
-                needNP = false;
-            }
+                IsDeletable = true,
+                Keyboard = Keyboard.AddPostsTag(postId),
+                ReceiverId = objectBox.User.UserId,
+                Text = "Press add for add a new tag"
+            });
 
             objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
             objectBox.UpdateUserInfo();
 
-            return new Tuple<List<Processor>, bool>(result, needNP);
+            return result;
         }
     }
 }

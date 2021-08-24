@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 
@@ -13,20 +14,31 @@ namespace TrimedBot.Core.Commands.Service.Tags
     {
         private ObjectBox objectBox;
         private int tagId;
+        private int messageId;
 
-        public DeleteTagCommand(ObjectBox objectBox, int tagId)
+        public DeleteTagCommand(ObjectBox objectBox, int tagId, int messageId)
         {
             this.objectBox = objectBox;
             this.tagId = tagId;
+            this.messageId = messageId;
         }
 
         public async Task Do()
         {
             var tagsService = objectBox.Provider.GetRequiredService<ITag>();
-            await tagsService.Delete(tagId);
-            await tagsService.SaveAsync();
+            var tempService = objectBox.Provider.GetRequiredService<ITempMessage>();
 
-            //Edit inline keyboard
+            await tagsService.Delete(tagId);
+            await tempService.Delete(objectBox.User.UserId, messageId);
+
+            await tagsService.SaveAsync();
+            await tempService.SaveAsync();
+
+            new DeleteProcessor()
+            {
+                UserId = objectBox.User.UserId,
+                MessageId = messageId
+            }.AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()
