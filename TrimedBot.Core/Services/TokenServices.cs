@@ -25,8 +25,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Token> GetToken()
         {
-            Token token = await _db.Tokens.SingleOrDefaultAsync();
-            return token;
+            return await _db.Tokens.FirstOrDefaultAsync();
         }
 
         public void Remove(Token token)
@@ -34,14 +33,14 @@ namespace TrimedBot.Core.Services
             _db.Tokens.Remove(token);
         }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
 
-        public async Task<bool> Verify(Guid TokenCode)
+        public async Task<bool> Verify(string Code)
         {
-            Token token = await _db.Tokens.SingleOrDefaultAsync(x => x.TokenCode.Equals(TokenCode));
+            Token token = await _db.Tokens.SingleOrDefaultAsync(x => x.Code.Equals(Code));
             //_db.Entry(token).State = EntityState.Deleted;
             if (token != null)
                 return true;

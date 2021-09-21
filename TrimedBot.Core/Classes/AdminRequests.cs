@@ -45,7 +45,7 @@ namespace TrimedBot.Core.Classes
                     }
                     new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
-                    objectBox.User.UserLocation = UserLocation.SeeAdminRequests_Manager;
+                    objectBox.User.UserState = UserState.SeeAdminRequests_Manager;
                     objectBox.UpdateUserInfo();
                 }
                 else new TextResponseProcessor()
@@ -82,8 +82,8 @@ namespace TrimedBot.Core.Classes
                         });
                     }
 
-                    objectBox.User.UserLocation = UserLocation.SeeAdminRequests_Manager;
-                    objectBox.UpdateUserInfo();
+                    //objectBox.User.UserLocation = UserLocation.SeeAdminRequests_Manager;
+                    //objectBox.UpdateUserInfo();
 
                     needNP = true;
                 }

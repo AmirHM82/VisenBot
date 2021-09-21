@@ -21,5 +21,7 @@ namespace TrimedBot.DAL.Context
         public DbSet<Settings> Settings { get; set; }
         public DbSet<Banner> Banners { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Channel> Channels { get; set; }
+        public DbSet<ChannelPost> ChannelPosts { get; set; }
     }
 }

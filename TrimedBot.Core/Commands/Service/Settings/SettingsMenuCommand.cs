@@ -46,15 +46,15 @@ namespace TrimedBot.Core.Commands.Service.Settings
                     switch (command.ToLower())
                     {
                         case "permemberadsprice":
-                            userServices.ChangeUserPlace(objectBox.User, UserLocation.Settings_PerMemberAdsPrice);
+                            userServices.ChangeUserPlace(objectBox.User, UserState.Settings_PerMemberAdsPrice);
                             value = objectBox.Settings.PerMemberAdsPrice;
                             break;
                         case "basicadsprice":
-                            userServices.ChangeUserPlace(objectBox.User, UserLocation.Settings_BasicAdsPrice);
+                            userServices.ChangeUserPlace(objectBox.User, UserState.Settings_BasicAdsPrice);
                             value = objectBox.Settings.BasicAdsPrice;
                             break;
                         case "numberofadsperday":
-                            userServices.ChangeUserPlace(objectBox.User, UserLocation.Settings_NumberOfAdsPerDay);
+                            userServices.ChangeUserPlace(objectBox.User, UserState.Settings_NumberOfAdsPerDay);
                             value = objectBox.Settings.NumberOfAdsPerDay;
                             break;
                     }
@@ -74,7 +74,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

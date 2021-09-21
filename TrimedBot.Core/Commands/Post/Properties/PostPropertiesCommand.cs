@@ -1,12 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading.Tasks;
 using TrimedBot.Core.Classes;
-using TrimedBot.Core.Classes.Processors.ProcessorTypes;
-using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 
 namespace TrimedBot.Core.Commands.Post.Properties
@@ -24,19 +18,13 @@ namespace TrimedBot.Core.Commands.Post.Properties
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Delete();
+            objectBox.IsNeedDeleteTemps = true;
 
-            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            var media = await mediaServices.FindAsync(postId);
-
-            new VideoResponseProcessor()
-            {
-                ReceiverId = objectBox.User.UserId,
-                Keyboard = Keyboard.PostProperties(postId),
-                Text = $"{media.Title} - {media.Caption}",
-                IsDeletable = true,
-                Video = media.FileId
-            }.AddThisMessageToService(objectBox.Provider);
+            var sender = new Media(objectBox);
+            if (objectBox.User.LastUserState == DAL.Enums.UserState.SeePublicAddedVideos)
+                await sender.SendPublic(postId, true);
+            else
+                await sender.SendPrivate(postId, true);
 
             objectBox.User.Temp = postId.ToString();
             objectBox.UpdateUserInfo();
@@ -44,7 +32,7 @@ namespace TrimedBot.Core.Commands.Post.Properties
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

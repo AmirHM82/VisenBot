@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
             {
                 bool needNP = false;
                 List<Processor> messages = new();
-                await new TempMessages(objectBox).Delete();
+                //await new TempMessages(objectBox).Delete();
                 var tuple = await new Admins(objectBox).CreateSendMessages(pageNumber);
                 messages.AddRange(tuple.Item1);
                 needNP = tuple.Item2;

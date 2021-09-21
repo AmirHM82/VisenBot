@@ -34,21 +34,21 @@ namespace TrimedBot.Core.Commands.Message
             if (pageNum > 0)
             {
                 bool needNP = false;
-                await new TempMessages(objectBox).Delete();
+                //await new TempMessages(objectBox).Delete();
+                objectBox.IsNeedDeleteTemps = true;
 
                 List<Processor> messages = new();
-                if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Member)
-                {
-                    var tuple = await new Medias(objectBox).GetPrivate(pageNum);
-                    messages.AddRange(tuple.Item1);
-                    needNP = tuple.Item2;
-                }
-                else if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin || objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager)
-                {
-                    var tuple = await new Medias(objectBox).GetPublic(pageNum);
-                    messages.AddRange(tuple.Item1);
-                    needNP = tuple.Item2;
-                }
+                Tuple<List<Processor>, bool> tuple = null;
+                //if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Member)
+                if (objectBox.User.Temp == "SendPrivateMedias")
+                    tuple = await new Medias(objectBox).GetPrivate(pageNum);
+                //else if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin || 
+                //    objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager)
+                else if (objectBox.User.Temp == "SendPublicMedias")
+                    tuple = await new Medias(objectBox).GetPublic(pageNum);
+
+                messages.AddRange(tuple.Item1);
+                needNP = tuple.Item2;
 
                 if (needNP)
                     messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, Category));
@@ -59,7 +59,7 @@ namespace TrimedBot.Core.Commands.Message
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

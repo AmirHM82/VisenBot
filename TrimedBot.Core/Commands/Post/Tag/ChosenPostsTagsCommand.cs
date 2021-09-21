@@ -24,6 +24,8 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public async Task Do()
         {
+            objectBox.IsNeedDeleteTemps = true;
+
             var tagService = objectBox.Provider.GetRequiredService<ITag>();
             var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
 
@@ -38,12 +40,18 @@ namespace TrimedBot.Core.Commands.Post.Tag
                 await mediaService.SaveAsync();
             }
 
+            StringBuilder tags = new StringBuilder();
+            foreach (var item in media.Tags)
+            {
+                tags.Append($"{item.Name} ");
+            }
+
             new VideoResponseProcessor()
             {
                 IsDeletable = true,
-                Keyboard = Keyboard.PostProperties(postId),
+                Keyboard = Keyboard.PublicPostProperties(postId, true),
                 ReceiverId = objectBox.User.UserId,
-                Text = $"{media.Title} - {media.Caption}",
+                Text = $"{media.Title} - {media.Caption}\nTags: {tags}",
                 Video = media.FileId
             }.AddThisMessageToService(objectBox.Provider);
 
@@ -51,7 +59,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

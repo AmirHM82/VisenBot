@@ -19,7 +19,7 @@ namespace TrimedBot.Core.Services
         {
             var objectBox = provider.GetRequiredService<ObjectBox>();
 
-            Input request;
+            Input request = null;
             await objectBox.AssignSettings();
 
             try
@@ -34,29 +34,29 @@ namespace TrimedBot.Core.Services
                         await objectBox.AssignUser(update.Message.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new MessageInput(objectBox, update.Message);
-                        await request.Response();
                         break;
                     case UpdateType.InlineQuery:
                         await objectBox.AssignUser(update.InlineQuery.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new InlineInput(objectBox, update.InlineQuery);
-                        await request.Response();
                         break;
                     case UpdateType.ChosenInlineResult:
                         await objectBox.AssignUser(update.ChosenInlineResult.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new ChosenInlineInput(objectBox, update.ChosenInlineResult);
-                        await request.Response();
                         break;
                     case UpdateType.CallbackQuery:
                         await objectBox.AssignUser(update.CallbackQuery.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new CallbackInput(objectBox, update.CallbackQuery);
-                        await request.Response();
                         break;
-                    default:
-                        return;
+                    case UpdateType.ChannelPost:
+                        await objectBox.AssignChannel(update.ChannelPost.Chat);
+                        request = new ChannelPostInput(objectBox, update.ChannelPost);
+                        break;
                 }
+
+                if (request is not null) await request.Response();
             }
             catch (Exception e)
             {

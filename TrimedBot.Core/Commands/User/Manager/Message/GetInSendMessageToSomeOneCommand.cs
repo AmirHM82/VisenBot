@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
         {
             if (objectBox.User.Access != Access.Member)
             {
-                objectBox.User.UserLocation = UserLocation.Send_Message_ToSomeone;
+                objectBox.User.UserState = UserState.Send_Message_ToSomeone;
                 objectBox.User.Temp = userId;
                 objectBox.UpdateUserInfo();
                 new TextResponseProcessor()
@@ -51,7 +51,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

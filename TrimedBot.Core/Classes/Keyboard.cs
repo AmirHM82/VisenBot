@@ -32,17 +32,21 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
             new[] {new KeyboardButton("Admins") },
-            new[] {new KeyboardButton("Tags") },
             new[] {new KeyboardButton("admin requests") },
             new[] {new KeyboardButton("Search in posts") },
             new[] {new KeyboardButton("Search in users") },
             new[] {new KeyboardButton("Settings") },
-            new[] {new KeyboardButton("Send message to all") }
+            new[] {new KeyboardButton("Send message to admins") },
+            new[] {new KeyboardButton("Send message to all") },
+            new[] {new KeyboardButton("Census") }
         }, true);
 
         public static ReplyKeyboardMarkup SettingsKeyboard() => new ReplyKeyboardMarkup(new KeyboardButton[][]
         {
+            new[] {new KeyboardButton("Tags") },
+            new[] {new KeyboardButton("Channels") },
             new[] {new KeyboardButton("Ads properties")},
+            new[] {new KeyboardButton("Token")},
             new[] { new KeyboardButton("Cancel") }
         }, true);
 
@@ -96,9 +100,11 @@ namespace TrimedBot.Core.Classes
         {
             InlineKeyboardButton[] t1 =
             {
-                InlineKeyboardButton.WithCallbackData("Edit title", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Title}/{MediaId}"),
-                InlineKeyboardButton.WithCallbackData("Edit caption", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Caption}/{MediaId}"),
-                InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{MediaId}")
+                //InlineKeyboardButton.WithCallbackData("Edit title", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Title}/{MediaId}"),
+                //InlineKeyboardButton.WithCallbackData("Edit caption", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Caption}/{MediaId}"),
+                //InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{MediaId}")
+            
+                InlineKeyboardButton.WithCallbackData("Properties", $"{CallbackSection.Post}/{CallbackSection.Properties}/{MediaId}")
             };
 
             InlineKeyboardButton[] t2 =
@@ -134,7 +140,12 @@ namespace TrimedBot.Core.Classes
                 InlineKeyboardButton.WithCallbackData("Previous", $"{category}/{CallbackSection.Previous}/{previousPage}")
             };
 
-            return new InlineKeyboardMarkup(new[] { t1 });
+            InlineKeyboardButton[] t2 =
+            {
+                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+            };
+
+            return new InlineKeyboardMarkup(new[] { t1, t2 });
         }
 
         public static InlineKeyboardMarkup AdminRequest(long userId) => new InlineKeyboardMarkup(new[]
@@ -200,12 +211,7 @@ namespace TrimedBot.Core.Classes
                 InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.Tag}/{CallbackSection.Add}")
             };
 
-            InlineKeyboardButton[] k2 =
-            {
-                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
-            };
-
-            return new InlineKeyboardMarkup(new[] { k1, k2 });
+            return new InlineKeyboardMarkup(k1);
         }
 
         public static InlineKeyboardMarkup AddPostsTag(Guid postId)
@@ -223,7 +229,31 @@ namespace TrimedBot.Core.Classes
             return new InlineKeyboardMarkup(new[] { k1, k2 });
         }
 
-        public static InlineKeyboardMarkup PostProperties(Guid postId)
+        public static InlineKeyboardMarkup PrivatePostProperties(Guid postId, bool HasCancel)
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Edit title", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Title}/{postId}"),
+                InlineKeyboardButton.WithCallbackData("Edit caption", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Caption}/{postId}"),
+                InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{postId}")
+            };
+
+            if (HasCancel)
+            {
+                InlineKeyboardButton[] k2 =
+                {
+                    InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+                };
+
+                return new InlineKeyboardMarkup(new[] { k1, k2 });
+            }
+            else
+            {
+                return new InlineKeyboardMarkup(new[] { k1 });
+            }
+        }
+
+        public static InlineKeyboardMarkup PublicPostProperties(Guid postId, bool HasCancel)
         {
             InlineKeyboardButton[] k1 =
             {
@@ -237,12 +267,40 @@ namespace TrimedBot.Core.Classes
                 InlineKeyboardButton.WithCallbackData("Edit tags", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Next}/1")
             };
 
-            InlineKeyboardButton[] k3 =
+            if (HasCancel)
             {
-                InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+                InlineKeyboardButton[] k3 =
+                {
+                    InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+                };
+
+                return new InlineKeyboardMarkup(new[] { k1, k2, k3 });
+            }
+            else
+            {
+                return new InlineKeyboardMarkup(new[] { k1, k2 });
+            }
+        }
+
+        public static InlineKeyboardMarkup Channel(DAL.Entities.Channel channel)
+        {
+            InlineKeyboardButton[] result =
+            {
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Channel}/{CallbackSection.Delete}/{channel.Id}")
             };
 
-            return new InlineKeyboardMarkup(new[] { k1, k2, k3 });
+            return new InlineKeyboardMarkup(result);
         }
+
+        public static InlineKeyboardMarkup AddChannel()
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.Channel}/{CallbackSection.Add}")
+            };
+
+            return new InlineKeyboardMarkup(k1);
+        }
+
     }
 }

@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

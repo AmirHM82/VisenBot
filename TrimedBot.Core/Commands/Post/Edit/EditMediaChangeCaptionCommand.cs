@@ -9,6 +9,7 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Classes;
+using TrimedBot.Core.Classes.Processors;
 
 namespace TrimedBot.Core.Commands.Post.Edit
 {
@@ -27,24 +28,39 @@ namespace TrimedBot.Core.Commands.Post.Edit
 
         public async Task Do()
         {
+            List<Processor> processes = new();
+
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            await mediaServices.ChangeCaption(Guid.Parse(objectBox.User.Temp), newCaption);
-            new TextResponseProcessor()
+            var media = await mediaServices.ChangeCaption(Guid.Parse(objectBox.User.Temp), newCaption);
+
+            processes.Add(new TextResponseProcessor()
+            {
+                Keyboard = objectBox.Keyboard,
+                ReceiverId = objectBox.User.UserId,
+                Text = "Edited"
+            });
+
+            var state = objectBox.User.LastUserState;
+            processes.Add(new VideoResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
-                Text = "Edited",
-                Keyboard = objectBox.Keyboard
-            }.AddThisMessageToService(objectBox.Provider);
+                Keyboard = state == UserState.SeePublicAddedVideos ? Keyboard.PublicPostProperties(media.Id, true) : Keyboard.PrivatePostProperties(media.Id, true),
+                Text = $"{media.Title} - {media.Caption}",
+                Video = media.FileId,
+                IsDeletable = true
+            });
 
+            objectBox.IsNeedDeleteTemps = true;
             objectBox.User.Temp = null;
-            objectBox.User.UserLocation = UserLocation.NoWhere;
+            objectBox.User.UserState = UserState.NoWhere;
             objectBox.UpdateUserInfo();
-            //await userServices.Reset(objectBox.User, new UserResetSection[] { UserResetSection.Temp, UserResetSection.UserPlace });
+
+            new MultiProcessor(processes).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

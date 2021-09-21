@@ -35,13 +35,15 @@ namespace TrimedBot.Core.Commands.Service.Tags
                 Text = "Tag added"
             }.AddThisMessageToService(objectBox.Provider);
 
-            objectBox.User.UserLocation = DAL.Enums.UserLocation.NoWhere;
+            await new TagsCommand(1, objectBox).Do();
+
+            objectBox.User.UserState = DAL.Enums.UserState.NoWhere;
             objectBox.UpdateUserInfo();
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

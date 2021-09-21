@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Context;
 using TrimedBot.DAL.Entities;
+using TrimedBot.DAL.Enums;
 
 namespace TrimedBot.Core.Services
 {
@@ -51,7 +52,7 @@ namespace TrimedBot.Core.Services
         public async Task<List<TempMessage>> GetAndDeleteAsync(long userId)
         {
 
-            var messages = await _db.TempMessages.Where(x => x.UserId == userId).ToListAsync();
+            var messages = await _db.TempMessages.Where(x => x.ChatId == userId/* && x.Type == TempType.User*/).ToListAsync();
             foreach (var msg in messages)
             {
                 _db.Entry(msg).State = EntityState.Deleted;
@@ -69,7 +70,7 @@ namespace TrimedBot.Core.Services
             //    return message;
             //});
 
-            return _db.TempMessages.FirstOrDefaultAsync(x => x.UserId == userId && x.MessageId == messageId);
+            return _db.TempMessages.FirstOrDefaultAsync(x => x.ChatId == userId && x.MessageId == messageId);
         }
 
         public void Delete(TempMessage tempMessage)
@@ -77,13 +78,10 @@ namespace TrimedBot.Core.Services
             _db.TempMessages.Remove(tempMessage);
         }
 
-        public Task Delete(long userId, int messageId)
+        public async Task Delete(long userId, int messageId)
         {
-            return Task.Run(async () =>
-            {
                 var tempMessage = await FindAsync(userId, messageId);
                 Delete(tempMessage);
-            });
         }
 
         public Task AddAsync(TempMessage tempMessages)
@@ -93,6 +91,16 @@ namespace TrimedBot.Core.Services
                 if (tempMessages != null)
                     _db.TempMessages.AddAsync(tempMessages);
             });
+        }
+
+        public async Task<List<TempMessage>> GetAndDeleteAsync(long chatId, TempType type)
+        {
+            var messages = await _db.TempMessages.Where(x => x.ChatId == chatId && x.Type == type).ToListAsync();
+            foreach (var msg in messages)
+            {
+                _db.Entry(msg).State = EntityState.Deleted;
+            }
+            return messages;
         }
     }
 }

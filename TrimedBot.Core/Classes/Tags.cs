@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Classes
                 result.Add(new TextResponseProcessor()
                 {
                     IsDeletable = true,
-                    Keyboard = Keyboard.CancelKeyboard(),
+                    //Keyboard = Keyboard.CancelKeyboard(),
                     ReceiverId = objectBox.User.UserId,
                     Text = "Tags:"
                 });
@@ -53,6 +53,13 @@ namespace TrimedBot.Core.Classes
                 }
                 needNP = true;
             }
+            else result.Add(new TextResponseProcessor()
+            {
+                IsDeletable = true,
+                //Keyboard = Keyboard.CancelKeyboard(),
+                ReceiverId = objectBox.User.UserId,
+                Text = "There is no tag"
+            });
 
             if (tags.Count < 5)
                 result.Add(new TextResponseProcessor()
@@ -60,11 +67,11 @@ namespace TrimedBot.Core.Classes
                     IsDeletable = true,
                     Keyboard = Keyboard.AddTag(),
                     ReceiverId = objectBox.User.UserId,
-                    Text = "Press add for add a new tag"
+                    Text = "Press add to add a new tag"
                 });
 
-            objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
-            objectBox.UpdateUserInfo();
+            //objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
+            //objectBox.UpdateUserInfo();
 
             return new Tuple<List<Processor>, bool>(result, needNP);
         }
@@ -85,7 +92,6 @@ namespace TrimedBot.Core.Classes
                 result.Add(new TextResponseProcessor()
                 {
                     IsDeletable = true,
-                    Keyboard = Keyboard.CancelKeyboard(),
                     ReceiverId = objectBox.User.UserId,
                     Text = "Tags:"
                 });
@@ -110,8 +116,8 @@ namespace TrimedBot.Core.Classes
                 Text = "Press add for add a new tag"
             });
 
-            objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
-            objectBox.UpdateUserInfo();
+            //objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
+            //objectBox.UpdateUserInfo();
 
             return result;
         }

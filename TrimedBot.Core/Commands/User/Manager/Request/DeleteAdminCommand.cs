@@ -39,7 +39,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
                 messages.Add(new TextResponseProcessor()
                 {
                     ReceiverId = dadmin.UserId,
-                    Text = "Manager deleted you from admins.",
+                    Text = Sentences.Admin_Deleted,
                     Keyboard = Keyboard.StartKeyboard_Member()
                 });
                 dadmin.Access = Access.Member;
@@ -65,7 +65,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

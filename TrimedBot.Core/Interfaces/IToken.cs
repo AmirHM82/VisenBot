@@ -10,8 +10,8 @@ namespace TrimedBot.Core.Interfaces
     {
         Task Add(Token token);        
         Task<Token> GetToken();
-        void Save();
+        Task SaveAsync();
         void Remove(Token token);
-        Task<bool> Verify(Guid TokenCode);
+        Task<bool> Verify(string Code);
     }
 }

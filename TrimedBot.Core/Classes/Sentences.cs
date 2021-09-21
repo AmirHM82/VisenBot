@@ -32,5 +32,17 @@ namespace TrimedBot.Core.Classes
         public const string User_Banned = "Admin banned u. Bot won't answer ur requests till u unbanned.\nSend /chatwithadmin if u wanna talk to an admin.";
 
         public const string User_Unbanned = "Congratulations. You unbanned.";
+
+        public const string Admin_Deleted = "Manager deleted you from admins.";
+
+        public const string Admin_Request_Accepted = "Your admin request accepted.";
+
+        public const string Admin_Request_Refused = "Your admin request refused";
+
+        public const string Channel_Add_Guide = "To add a new channel first get a token from bot via /token command or token button on keyboard.\n" +
+            "Then make sure ur bot is admin in the channel.\n" +
+            "After that send the token in the channel.\n";
+
+        public const string Bot_Not_Available = "Sorry we are working on something; bot is not available for a few moments.\nUr state will be save u can resume ur work.";
     }
 }

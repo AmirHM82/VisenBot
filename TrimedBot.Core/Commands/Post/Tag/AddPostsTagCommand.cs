@@ -22,14 +22,15 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public Task Do()
         {
-            objectBox.User.UserLocation = DAL.Enums.UserLocation.Search_Posts_Tag;
+            objectBox.User.UserState = DAL.Enums.UserState.Search_Posts_Tag;
             objectBox.User.Temp = postId.ToString();
             objectBox.UpdateUserInfo();
 
             new TextResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
-                Text = "Search name of the tag in inline mode & choose it"
+                Text = "Search name of the tag in inline mode & choose it",
+                Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
 
             return Task.CompletedTask;
@@ -37,7 +38,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

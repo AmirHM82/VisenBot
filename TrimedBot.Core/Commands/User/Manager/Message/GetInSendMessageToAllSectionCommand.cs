@@ -26,16 +26,15 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public Task Do()
         {
-            if (objectBox.User.Access != Access.Member)
+            if (objectBox.User.Access == Access.Manager)
             {
-                objectBox.User.UserLocation = UserLocation.Send_Message_ToAll;
+                objectBox.User.UserState = UserState.Send_Message_ToAll;
                 objectBox.UpdateUserInfo();
-                //userServices.Update(objectBox.User);
-                //await userServices.SaveAsync();
+
                 new TextResponseProcessor()
                 {
                     ReceiverId = objectBox.User.UserId,
-                    Text = "Send your message:",
+                    Text = "Send your messages:",
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
             }
@@ -50,7 +49,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

@@ -27,18 +27,20 @@ namespace TrimedBot.Core.Classes.Responses
         {
             try
             {
-                if (!objectBox.User.IsBanned)
-                {
-                    await Action();
-                    await objectBox.UpdateDatabaseUserInfo();
-                    Statue = true;
-                }
+                await Action();
+                await objectBox.DeleteTemps(objectBox.ChatId);
+                await objectBox.UpdateDatabaseUserInfo();
+                await objectBox.UpdateDatabaseChannelInfo();
+                Statue = true;
             }
             catch (Exception e)
             {
                 "Input:".LogError();
                 e.Message.LogError();
+                if (e.InnerException is not null)
+                    e.InnerException.Message.LogError();
                 Statue = false;
+                throw;
             }
         }
     }

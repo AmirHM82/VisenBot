@@ -33,7 +33,12 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 
             if (IsDeletable)
             {
-                await tempService.AddAsync(new TempMessage { MessageId = SentMessage.MessageId, UserId = ReceiverId });
+                await tempService.AddAsync(new TempMessage
+                {
+                    MessageId = SentMessage.MessageId,
+                    ChatId = ReceiverId,
+                    Type = DAL.Enums.TempType.User
+                });
                 await tempService.SaveAsync();
             }
         }

@@ -34,50 +34,41 @@ namespace TrimedBot.Core.Commands.Post
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             List<Processor> messages = new();
-            if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin ||
-                objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager ||
-                objectBox.User.UserLocation == UserLocation.Search_Posts)
+            var media = await mediaServices.FindAsync(Guid.Parse(id));
+            if (media != null)
             {
-                var media = await mediaServices.FindAsync(Guid.Parse(id));
-                if (media != null)
+                if (!media.IsConfirmed)
                 {
-                    if (!media.IsConfirmed)
+                    messages.Add(new VideoResponseProcessor()
                     {
-                        messages.Add(new VideoResponseProcessor()
-                        {
-                            ReceiverId = media.User.UserId,
-                            Text = $"{media.Title} - {media.Caption}\nThis post confirmed by an admin.",
-                            Video = media.FileId
-                        });
-                        mediaServices.Confirm(media);
-                        await mediaServices.SaveAsync();
-                    }
-                }
-
-                messages.Add(new DeleteProcessor()
-                {
-                    UserId = objectBox.User.UserId,
-                    MessageId = messageId
-                });
-                var m = await tempMessageServices.FindAsync(objectBox.User.UserId, messageId);
-                if (m != null)
-                {
-                    tempMessageServices.Delete(m);
-                    await tempMessageServices.SaveAsync();
+                        ReceiverId = media.User.UserId,
+                        Text = $"{media.Title} - {media.Caption}\nThis post confirmed by an admin.",
+                        Video = media.FileId
+                    });
+                    mediaServices.Confirm(media);
+                    await mediaServices.SaveAsync();
                 }
             }
-            else
-                messages.Add(new TextResponseProcessor()
-                {
-                    ReceiverId = objectBox.User.UserId,
-                    Text = Sentences.Access_Denied
-                });
+
+            await new Classes.Media(objectBox).SendToChannels(media);
+
+            messages.Add(new DeleteProcessor()
+            {
+                UserId = objectBox.User.UserId,
+                MessageId = messageId
+            });
+            var m = await tempMessageServices.FindAsync(objectBox.User.UserId, messageId);
+            if (m != null)
+            {
+                tempMessageServices.Delete(m);
+                await tempMessageServices.SaveAsync();
+            }
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

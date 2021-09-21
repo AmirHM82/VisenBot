@@ -46,7 +46,7 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
                 messages.Add(new TextResponseProcessor()
                 {
                     ReceiverId = RefusedUser.UserId,
-                    Text = "Your request refused"
+                    Text = Sentences.Admin_Request_Refused
                 });
             }
             else
@@ -60,7 +60,7 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

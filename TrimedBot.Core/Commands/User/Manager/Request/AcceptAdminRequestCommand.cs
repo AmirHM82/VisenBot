@@ -47,7 +47,8 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
                 messages.Add(new TextResponseProcessor()
                 {
                     ReceiverId = AcceptedUser.UserId,
-                    Text = "Your admin request accepted. Use /start to see your new keyboard"
+                    Text = Sentences.Admin_Request_Accepted,
+                    Keyboard = Keyboard.StartKeyboard_Admin()
                 });
             }
             else
@@ -61,7 +62,7 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

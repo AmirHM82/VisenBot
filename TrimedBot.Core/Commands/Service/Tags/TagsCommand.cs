@@ -32,7 +32,8 @@ namespace TrimedBot.Core.Commands.Service.Tags
                 if (pageNum > 0)
                 {
                     bool needNP = false;
-                    await new TempMessages(objectBox).Delete();
+                    //await new TempMessages(objectBox).Delete();
+                    objectBox.IsNeedDeleteTemps = true;
 
                     var tuple = await new Classes.Tags(objectBox).GetMessages(pageNum);
                     processList.AddRange(tuple.Item1);
@@ -52,7 +53,7 @@ namespace TrimedBot.Core.Commands.Service.Tags
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

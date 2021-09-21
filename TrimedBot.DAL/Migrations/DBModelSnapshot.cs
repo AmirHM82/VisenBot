@@ -47,6 +47,55 @@ namespace TrimedBot.DAL.Migrations
                     b.ToTable("Banners");
                 });
 
+            modelBuilder.Entity("TrimedBot.DAL.Entities.Channel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<long>("ChatId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("State")
+                        .HasColumnType("tinyint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Channels");
+                });
+
+            modelBuilder.Entity("TrimedBot.DAL.Entities.ChannelPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("ChannelId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("MediaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChannelId");
+
+                    b.HasIndex("MediaId");
+
+                    b.ToTable("ChannelPosts");
+                });
+
             modelBuilder.Entity("TrimedBot.DAL.Entities.Media", b =>
                 {
                     b.Property<Guid>("Id")
@@ -88,6 +137,9 @@ namespace TrimedBot.DAL.Migrations
                     b.Property<decimal>("BasicAdsPrice")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<bool>("IsResponsingAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<byte>("NumberOfAdsPerDay")
                         .HasColumnType("tinyint");
 
@@ -126,11 +178,14 @@ namespace TrimedBot.DAL.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long>("ChatId")
+                        .HasColumnType("bigint");
+
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<byte>("Type")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
@@ -139,11 +194,18 @@ namespace TrimedBot.DAL.Migrations
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.Token", b =>
                 {
-                    b.Property<Guid>("TokenCode")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.HasKey("TokenCode");
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Tokens");
                 });
@@ -169,6 +231,9 @@ namespace TrimedBot.DAL.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("LastUserState")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("RequestDate")
                         .HasColumnType("datetime2");
 
@@ -181,11 +246,11 @@ namespace TrimedBot.DAL.Migrations
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("UserLocation")
-                        .HasColumnType("int");
-
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserState")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -199,6 +264,19 @@ namespace TrimedBot.DAL.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TrimedBot.DAL.Entities.ChannelPost", b =>
+                {
+                    b.HasOne("TrimedBot.DAL.Entities.Channel", null)
+                        .WithMany("ChannelPosts")
+                        .HasForeignKey("ChannelId");
+
+                    b.HasOne("TrimedBot.DAL.Entities.Media", "Media")
+                        .WithMany()
+                        .HasForeignKey("MediaId");
+
+                    b.Navigation("Media");
                 });
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.Media", b =>
@@ -215,6 +293,11 @@ namespace TrimedBot.DAL.Migrations
                     b.HasOne("TrimedBot.DAL.Entities.Media", null)
                         .WithMany("Tags")
                         .HasForeignKey("MediaId");
+                });
+
+            modelBuilder.Entity("TrimedBot.DAL.Entities.Channel", b =>
+                {
+                    b.Navigation("ChannelPosts");
                 });
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.Media", b =>

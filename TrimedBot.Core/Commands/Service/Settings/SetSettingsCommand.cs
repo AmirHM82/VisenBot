@@ -36,15 +36,15 @@ namespace TrimedBot.Core.Commands.Service.Settings
                 decimal number = decimal.Parse(message);
                 if (number > 0)
                 {
-                    switch (objectBox.User.UserLocation)
+                    switch (objectBox.User.UserState)
                     {
-                        case UserLocation.Settings_PerMemberAdsPrice:
+                        case UserState.Settings_PerMemberAdsPrice:
                             objectBox.Settings.PerMemberAdsPrice = number;
                             break;
-                        case UserLocation.Settings_BasicAdsPrice:
+                        case UserState.Settings_BasicAdsPrice:
                             objectBox.Settings.BasicAdsPrice = number;
                             break;
-                        case UserLocation.Settings_NumberOfAdsPerDay:
+                        case UserState.Settings_NumberOfAdsPerDay:
                             objectBox.Settings.NumberOfAdsPerDay = (byte)number;
                             break;
                     }
@@ -77,7 +77,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

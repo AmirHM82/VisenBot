@@ -28,17 +28,22 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 
         public override async Task Action()
         {
+            if (!objectBox.User.IsBanned) await ResponseChosenInline(chosenInlineResult);
+        }
+
+        public async Task ResponseChosenInline(ChosenInlineResult chosenInlineResult)
+        {
             List<Func<Task>> cmds = new();
 
-            switch (user.UserLocation)
+            switch (user.UserState)
             {
-                case UserLocation.Search_Posts:
+                case UserState.Search_Posts:
                     cmds.Add(new SendSearchedPostsCommand(objectBox, Guid.Parse(chosenInlineResult.ResultId)).Do);
                     break;
-                case UserLocation.Search_Users:
+                case UserState.Search_Users:
                     cmds.Add(new ChosenInlineSearchInUsersCommand(objectBox, long.Parse(chosenInlineResult.ResultId)).Do);
                     break;
-                case UserLocation.Search_Posts_Tag:
+                case UserState.Search_Posts_Tag:
                     cmds.Add(new ChosenPostsTagsCommand(objectBox, int.Parse(chosenInlineResult.ResultId)).Do);
                     break;
             }

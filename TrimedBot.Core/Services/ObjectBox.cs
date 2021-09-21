@@ -10,13 +10,18 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
+using Telegram.Bot.Types;
 
 namespace TrimedBot.Core.Services
 {
     public class ObjectBox
     {
         public bool IsUserInfoChanged { get; set; }
-        public User User { get; set; }
+        public bool IsChannelInfoChanged { get; set; }
+        public bool IsNeedDeleteTemps {  get; set; }
+        public long ChatId { get; set; }
+        public DAL.Entities.User User { get; set; }
+        public Channel Channel { get; set; }
         public ReplyKeyboardMarkup Keyboard { get; set; }
         public Settings Settings { get; set; }
 
@@ -30,7 +35,17 @@ namespace TrimedBot.Core.Services
         public async Task AssignUser(Telegram.Bot.Types.User user)
         {
             IUser userServices = Provider.GetRequiredService<IUser>();
-            var NewOrFoundedUser = await userServices.FindOrAddAsync(user);
+            var u = new DAL.Entities.User
+            {
+                Access = Access.Member,
+                IsSentAdminRequest = false,
+                IsBanned = false,
+                StartDate = DateTime.UtcNow,
+                UserId = user.Id,
+                UserState = UserState.NoWhere,
+                UserName = user.Username
+            };
+            var NewOrFoundedUser = await userServices.FindOrAddAsync(u);
 
             bool IsChanged = false;
             if (NewOrFoundedUser.UserName != user.Username)
@@ -51,6 +66,29 @@ namespace TrimedBot.Core.Services
 
             if (IsChanged) IsUserInfoChanged = true;
             User = NewOrFoundedUser;
+            ChatId = NewOrFoundedUser.UserId;
+        }
+
+        public async Task AssignChannel(Chat chat)
+        {
+            var channelServices = Provider.GetRequiredService<IChannel>();
+            var channel = new Channel
+            {
+                ChatId = chat.Id,
+                Name = chat.Title
+            };
+            var NewOrFoundedUser = await channelServices.FindOrAddAsync(channel);
+
+            bool IsChanged = false;
+            if (NewOrFoundedUser.Name != chat.Title)
+            {
+                NewOrFoundedUser.Name = chat.Title;
+                IsChanged = true;
+            }
+
+            if (IsChanged) IsChannelInfoChanged = true;
+            Channel = NewOrFoundedUser;
+            ChatId = NewOrFoundedUser.ChatId;
         }
 
         public async Task AssignSettings()

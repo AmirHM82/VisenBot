@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
@@ -27,24 +28,12 @@ namespace TrimedBot.Core.Classes
         {
             if (pageNumber > 0)
             {
-                var npMessage = new NPResponseProcessor()
+                new NPResponseProcessor()
                 {
                     PageNumber = pageNumber,
                     Keyboard = Keyboard.NPKeyboard(pageNumber, category),
                     ReceiverId = objectBox.User.UserId
-                };
-
-                var textMessage = new TextResponseProcessor()
-                {
-                    Text = "Here you are.",
-                    ReceiverId = objectBox.User.UserId,
-                    Keyboard = Keyboard.CancelKeyboard(),
-                    IsDeletable = true
-                };
-
-                new MultiProcessor
-                    (new List<Processor>() { npMessage, textMessage })
-                    .AddThisMessageToService(objectBox.Provider);
+                }.AddThisMessageToService(objectBox.Provider);
             }
         }
 
@@ -59,15 +48,7 @@ namespace TrimedBot.Core.Classes
                     ReceiverId = objectBox.User.UserId
                 };
 
-                var textMessage = new TextResponseProcessor()
-                {
-                    Text = "Here you are.",
-                    ReceiverId = objectBox.User.UserId,
-                    Keyboard = Keyboard.CancelKeyboard(),
-                    IsDeletable = true
-                };
-
-                return new List<Processor>() { npMessage, textMessage };
+                return new List<Processor>() { npMessage };
             }
 
             return null;

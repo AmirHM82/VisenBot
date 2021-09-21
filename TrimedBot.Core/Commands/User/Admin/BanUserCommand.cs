@@ -38,7 +38,7 @@ namespace TrimedBot.Core.Commands.User.Admin
                     userServices.Update(user);
                     await userServices.SaveAsync();
 
-                    new EditInlineKeyboardResponseProcessor()
+                    new EditInlineKeyboardProcessor()
                     {
                         ReceiverId = objectBox.User.UserId,
                         MessageId = MessageId,
@@ -65,7 +65,7 @@ namespace TrimedBot.Core.Commands.User.Admin
                     userServices.Update(user);
                     await userServices.SaveAsync();
 
-                    new EditInlineKeyboardResponseProcessor()
+                    new EditInlineKeyboardProcessor()
                     {
                         ReceiverId = objectBox.User.UserId,
                         MessageId = MessageId,

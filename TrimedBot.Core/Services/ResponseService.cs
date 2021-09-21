@@ -15,12 +15,10 @@ namespace TrimedBot.Core.Services
     public class ResponseService
     {
         private IServiceProvider provider;
-        private ILogger<ResponseService> logger;
 
-        public ResponseService(IServiceProvider provider, ILogger<ResponseService> logger)
+        public ResponseService(IServiceProvider provider)
         {
             this.provider = provider;
-            this.logger = logger;
         }
 
         public bool State { get; set; }
@@ -132,6 +130,13 @@ namespace TrimedBot.Core.Services
         public void AddFailed(Processor processor)
         {
             if (processor is not null) Faileds.Enqueue(processor);
+        }
+
+        public bool IsExist(Processor processor)
+        {
+            bool result = false;
+            if (Messages.Equals(processor)) result = true;
+            return result;
         }
     }
 }

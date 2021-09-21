@@ -10,6 +10,8 @@ using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
+using TrimedBot.DAL.Entities;
+using TrimedBot.DAL.Enums;
 
 namespace TrimedBot.Core.Classes
 {
@@ -24,10 +26,9 @@ namespace TrimedBot.Core.Classes
             tempMessageServices = objectBox.Provider.GetRequiredService<ITempMessage>();
         }
 
-
-        public async Task Delete()
+        public async Task Delete(long chatId)
         {
-            var tempMessages = await tempMessageServices.GetAndDeleteAsync(objectBox.User.UserId);
+            var tempMessages = await tempMessageServices.GetAndDeleteAsync(chatId);
             await tempMessageServices.SaveAsync();
             List<Processor> processes = new();
             if (tempMessages != null)
@@ -37,16 +38,34 @@ namespace TrimedBot.Core.Classes
                     processes.Add(new DeleteProcessor()
                     {
                         MessageId = item.MessageId,
-                        UserId = item.UserId
+                        UserId = item.ChatId
                     });
                 }
                 new MultiProcessor(processes).AddThisMessageToService(objectBox.Provider);
             }
         }
 
-        public Task Add(params TempMessages[] temps)
+        public async Task Add(List<TempMessage> temps)
         {
-            return Task.CompletedTask;
+            await tempMessageServices.AddAsync(temps);
+            await tempMessageServices.SaveAsync();
+        }
+
+        public async Task Add(TempMessage temp)
+        {
+            await tempMessageServices.AddAsync(temp);
+            await tempMessageServices.SaveAsync();
+        }
+    }
+
+    public static class StaticTempMessages
+    {
+        public static async Task DeleteTemps(this ObjectBox objectBox, long chatId)
+        {
+            if (objectBox.IsNeedDeleteTemps)
+            {
+                await new TempMessages(objectBox).Delete(chatId);
+            }
         }
     }
 }

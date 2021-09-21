@@ -17,18 +17,17 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
     public class SendMessageToAllCommand : ICommand
     {
         private ObjectBox objectBox;
-        protected IUser userServices;
         private Telegram.Bot.Types.Message message;
 
         public SendMessageToAllCommand(ObjectBox objectBox, Telegram.Bot.Types.Message message)
         {
             this.objectBox = objectBox;
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
             this.message = message;
         }
 
         public async Task Do()
         {
+            var userServices = objectBox.Provider.GetRequiredService<IUser>();
             var userIds = await userServices.GetUserIds();
             if (userIds.Length != 0)
             {
@@ -41,7 +40,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

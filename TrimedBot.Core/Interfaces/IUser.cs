@@ -13,10 +13,11 @@ namespace TrimedBot.Core.Interfaces
         Task SaveAsync();
         Task<User> FindAsync(Guid id);
         Task<User> FindAsync(long id);
-        Task<User> FindOrAddAsync(Telegram.Bot.Types.User user);
+        Task<User> FindOrAddAsync(User user);
         Task<List<User>> GetUsersAsync();
         Task<User[]> GetUsersWithAdminRequestAsync(int pageNumber);
         Task<User[]> GetAdminsAsync(int pageNumber);
+        Task<List<User>> GetAllAdminsAsync();
         void Update(User user);
         void Remove(User user);
         Task<User> CheckUserAsync(long id);
@@ -25,7 +26,7 @@ namespace TrimedBot.Core.Interfaces
         Task Reset(User user, params UserResetSection[] sections);
         void SendAdminRequest(User user);
         Task<User> DeleteAdmin(Guid id);
-        void ChangeUserPlace(User user, UserLocation userPlace);
+        void ChangeUserPlace(User user, UserState userPlace);
         Task<User[]> Search(string userName);
         Task<long[]> GetUserIds();
     }

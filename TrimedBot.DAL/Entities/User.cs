@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using TrimedBot.DAL.Enums;
@@ -10,9 +11,11 @@ namespace TrimedBot.DAL.Entities
     public class User
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public long UserId { get; set; }
-        public UserLocation UserLocation { get; set; }
+        public UserState UserState { get; set; }
+        public UserState LastUserState { get; set; }
         public ICollection<Media> Medias { get; set; }
         public Access Access { get; set; }
         public DateTime StartDate { get; set; }

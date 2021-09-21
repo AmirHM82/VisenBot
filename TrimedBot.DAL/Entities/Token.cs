@@ -9,6 +9,8 @@ namespace TrimedBot.DAL.Entities
     public class Token
     {
         [Key]
-        public Guid TokenCode { get; set; }
+        public int Id { get; set; }
+        public string Code { get; set; }
+        public DateTime ExpireDate { get; set; }
     }
 }

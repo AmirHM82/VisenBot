@@ -15,12 +15,10 @@ namespace TrimedBot.Core.Commands.User.Manager.Settings
     public class OpenSettingsMenuCommand : ICommand
     {
         private ObjectBox objectBox;
-        //protected IUser userServices;
 
         public OpenSettingsMenuCommand(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-            //userServices = objectBox.Provider.GetRequiredService<IUser>();
         }
 
         public Task Do()
@@ -34,17 +32,15 @@ namespace TrimedBot.Core.Commands.User.Manager.Settings
                     Keyboard = Keyboard.SettingsKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
 
-                objectBox.User.UserLocation = UserLocation.Settings_Menu;
-                objectBox.UpdateUserInfo();
-                //userServices.ChangeUserPlace(objectBox.User, UserPlace.Settings_Menu);
-                //await userServices.SaveAsync();
+                //objectBox.User.UserState = UserState.Settings_Menu; //We need some changes in settings
+                //objectBox.UpdateUserInfo();
             }
             return Task.CompletedTask;
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

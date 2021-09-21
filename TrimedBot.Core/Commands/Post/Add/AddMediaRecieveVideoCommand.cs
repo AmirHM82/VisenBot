@@ -51,17 +51,20 @@ namespace TrimedBot.Core.Commands.Post.Add
                 };
 
                 string[] TitleCaption = objectBox.User.Temp.Split("*");
-                await mediaServices.AddAsync(new Media
+                var media = new Media
                 {
                     Title = TitleCaption[0],
                     Caption = TitleCaption[1],
                     FileId = video.FileId,
                     User = objectBox.User,
                     AddDate = DateTime.UtcNow
-                });
+                };
+                await mediaServices.AddAsync(media);
                 await mediaServices.SaveAsync();
 
-                await userServices.Reset(objectBox.User, new UserResetSection[] { UserResetSection.Temp, UserResetSection.UserPlace });
+                objectBox.User.Temp = null;
+                objectBox.User.UserState = UserState.NoWhere;
+                objectBox.UpdateUserInfo();
             }
             message.AddThisMessageToService(objectBox.Provider);
         }

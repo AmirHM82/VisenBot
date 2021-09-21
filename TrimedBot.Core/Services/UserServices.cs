@@ -87,7 +87,7 @@ namespace TrimedBot.Core.Services
                 user = new User
                 {
                     Id = Guid.NewGuid(),
-                    UserLocation = UserLocation.NoWhere,
+                    UserState = UserState.NoWhere,
                     Access = Access.Member,
                     IsSentAdminRequest = false,
                     StartDate = DateTime.UtcNow,
@@ -132,7 +132,7 @@ namespace TrimedBot.Core.Services
                             user.Temp = null;
                             break;
                         case UserResetSection.UserPlace:
-                            user.UserLocation = UserLocation.NoWhere;
+                            user.UserState = UserState.NoWhere;
                             break;
                         default:
                             break;
@@ -167,29 +167,19 @@ namespace TrimedBot.Core.Services
             });
         }
 
-        public void ChangeUserPlace(User user, UserLocation userPlace)
+        public void ChangeUserPlace(User user, UserState userPlace)
         {
-            user.UserLocation = userPlace;
+            user.UserState = userPlace;
             Update(user);
         }
 
-        public async Task<User> FindOrAddAsync(Telegram.Bot.Types.User user)
+        public async Task<User> FindOrAddAsync(User user)
         {
-            var foundUser = await FindAsync(user.Id);
+            var foundUser = await FindAsync(user.UserId);
             if (foundUser == null)
             {
-                foundUser = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Access = Access.Member,
-                    IsSentAdminRequest = false,
-                    IsBanned = false,
-                    StartDate = DateTime.UtcNow,
-                    UserId = user.Id,
-                    UserLocation = UserLocation.NoWhere,
-                    UserName = user.Username
-                };
-                await AddAsync(foundUser);
+                foundUser = user;
+                await AddAsync(user);
                 await SaveAsync();
             }
 
@@ -217,6 +207,11 @@ namespace TrimedBot.Core.Services
         public void Dispose()
         {
             _context.Dispose();
+        }
+
+        public async Task<List<User>> GetAllAdminsAsync()
+        {
+            return await _context.Users.Where(x => x.Access == Access.Admin).ToListAsync();
         }
     }
 }

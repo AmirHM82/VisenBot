@@ -24,7 +24,9 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Delete();
+            //await new TempMessages(objectBox).Delete();
+            //objectBox.IsNeedDeleteTemps = false;
+
             var messages = await new Tags(objectBox).GetMessages(Guid.Parse(objectBox.User.Temp));
 
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
@@ -32,7 +34,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

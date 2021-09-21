@@ -34,9 +34,9 @@ namespace TrimedBot.Core.Commands.Post
         {
             List<Processor> messages = new();
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>(); ;
-            if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin ||
-                objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager ||
-                objectBox.User.UserLocation == UserLocation.Search_Posts)
+            //if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin ||
+            //    objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager ||
+            //    objectBox.User.UserLocation == UserLocation.Search_Posts)
             {
                 var media = await mediaServices.FindAsync(Guid.Parse(id));
                 if (media != null)
@@ -66,18 +66,18 @@ namespace TrimedBot.Core.Commands.Post
                     await tempMessageServices.SaveAsync();
                 }
             }
-            else
-                messages.Add(new TextResponseProcessor()
-                {
-                    ReceiverId = objectBox.User.UserId,
-                    Text = Sentences.Access_Denied
-                });
+            //else
+            //    messages.Add(new TextResponseProcessor()
+            //    {
+            //        ReceiverId = objectBox.User.UserId,
+            //        Text = Sentences.Access_Denied
+            //    });
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

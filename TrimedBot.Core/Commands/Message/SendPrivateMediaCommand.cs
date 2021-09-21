@@ -32,7 +32,9 @@ namespace TrimedBot.Core.Commands.Message
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = $"{media.Title}\n{media.Caption}",
-                    Keyboard = Keyboard.PrivateMediaKeyboard(media.Id),
+                    Keyboard = objectBox.User.Access == DAL.Enums.Access.Member ? 
+                    Keyboard.PrivateMediaKeyboard(media.Id) : 
+                    Keyboard.PrivateMediaKeyboard(media.Id),
                     IsDeletable = true,
                     Video = media.FileId
                 }.AddThisMessageToService(objectBox.Provider);

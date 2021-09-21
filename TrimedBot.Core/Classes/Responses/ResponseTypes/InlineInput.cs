@@ -27,14 +27,19 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 
         public override async Task Action()
         {
+            if (!objectBox.User.IsBanned) await ResponseInline(inlineQuery);
+        }
+
+        public async Task ResponseInline(InlineQuery inlineQuery)
+        {
             List<Func<Task>> cmds = new();
             if (inlineQuery.Query != null && inlineQuery.Query != "")
-                if (user.UserLocation == UserLocation.Search_Users)
+                if (user.UserState == UserState.Search_Users)
                     cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                else if (user.UserLocation == UserLocation.Search_Posts)
-                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                else if (user.UserLocation == UserLocation.Search_Posts_Tag)
+                else if (user.UserState == UserState.Search_Posts_Tag)
                     cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                else /*if (user.UserLocation == UserLocation.Search_Posts)*/
+                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
 
             foreach (var x in cmds)
             {

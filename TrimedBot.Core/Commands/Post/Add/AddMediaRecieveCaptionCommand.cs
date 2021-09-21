@@ -35,7 +35,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             }.AddThisMessageToService(objectBox.Provider);
 
             objectBox.User.Temp = $"{objectBox.User.Temp}*{Caption}";
-            objectBox.User.UserLocation = UserLocation.AddMedia_SendMedia;
+            objectBox.User.UserState = UserState.AddMedia_SendMedia;
             objectBox.UpdateUserInfo();
             //userServices.Update(objectBox.User);
             //await userServices.SaveAsync();

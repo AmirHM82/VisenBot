@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30804.86
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31521.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot", "TrimedBot\TrimedBot.csproj", "{C2720F7C-33EE-41AD-9422-5E77FC316889}"
 EndProject
@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.Core", "TrimedBot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.ConsoleApp", "TrimedBot.ConsoleApp\TrimedBot.ConsoleApp.csproj", "{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.gRPC", "TrimedBot.gRPC\TrimedBot.gRPC.csproj", "{C895E3E9-32AD-4007-BC3F-53D444373E15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.DatabasesInterface", "TrimedBot.DatabasesInterface\TrimedBot.DatabasesInterface.csproj", "{9FC1C43A-0FE0-46B1-A281-189909898996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.Tests", "TrimedBot.Tests\TrimedBot.Tests.csproj", "{9D3E77D8-503C-446D-87E9-3A10EA21EE14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.Tests", "TrimedBot.Tests\TrimedBot.Tests.csproj", "{F5516B98-66B0-4F61-937B-C8109DF4BCDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E91A447E-9B65-4CD5-8060-CB4F5FC2489A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C895E3E9-32AD-4007-BC3F-53D444373E15}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D3E77D8-503C-446D-87E9-3A10EA21EE14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D3E77D8-503C-446D-87E9-3A10EA21EE14}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D3E77D8-503C-446D-87E9-3A10EA21EE14}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D3E77D8-503C-446D-87E9-3A10EA21EE14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC1C43A-0FE0-46B1-A281-189909898996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC1C43A-0FE0-46B1-A281-189909898996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC1C43A-0FE0-46B1-A281-189909898996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC1C43A-0FE0-46B1-A281-189909898996}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5516B98-66B0-4F61-937B-C8109DF4BCDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5516B98-66B0-4F61-937B-C8109DF4BCDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5516B98-66B0-4F61-937B-C8109DF4BCDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5516B98-66B0-4F61-937B-C8109DF4BCDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

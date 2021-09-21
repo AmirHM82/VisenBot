@@ -8,6 +8,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using TrimedBot.Core.Classes.Processors.ProcessorTypes.Channel;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
@@ -21,39 +22,6 @@ namespace TrimedBot.Core.Classes
         public Medias(ObjectBox objectBox)
         {
             this.objectBox = objectBox;
-        }
-
-        public async Task SendPrivate(int pageNum)
-        {
-            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-
-            if (pageNum > 0)
-            {
-                var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum);
-                if (medias.Length != 0)
-                {
-                    List<Processor> messages = new();
-                    for (int i = 0; i < medias.Length; i++)
-                    {
-                        messages.Add(new VideoResponseProcessor()
-                        {
-                            Text = $"{medias[i].Title}\n{medias[i].Caption}",
-                            Keyboard = Keyboard.PrivateMediaKeyboard(medias[i].Id),
-                            ReceiverId = objectBox.User.UserId,
-                            IsDeletable = true,
-                            Video = medias[i].FileId
-                        });
-                    }
-                    new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
-                    objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
-                    objectBox.UpdateUserInfo();
-                }
-                else new TextResponseProcessor()
-                {
-                    ReceiverId = objectBox.User.UserId,
-                    Text = "There is no videos."
-                }.AddThisMessageToService(objectBox.Provider);
-            }
         }
 
         public async Task<Tuple<List<Processor>, bool>> GetPrivate(int pageNum)
@@ -79,7 +47,8 @@ namespace TrimedBot.Core.Classes
                         });
                     }
 
-                    objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
+                    //objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
+                    objectBox.User.Temp = "SendPrivateMedias";
                     objectBox.UpdateUserInfo();
                     needNP = true;
                 }
@@ -92,51 +61,11 @@ namespace TrimedBot.Core.Classes
                         Keyboard = objectBox.Keyboard
                     });
 
-                    objectBox.User.UserLocation = UserLocation.NoWhere;
-                    objectBox.UpdateUserInfo();
+                    //objectBox.User.UserLocation = UserLocation.NoWhere;
+                    //objectBox.UpdateUserInfo();
                 }
             }
             return new Tuple<List<Processor>, bool>(messages, needNP);
-        }
-
-        public async Task SendPublic(int pageNum)
-        {
-            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            if (objectBox.User.Access == Access.Admin || objectBox.User.Access == Access.Manager)
-            {
-                if (pageNum > 0)
-                {
-                    var medias = await mediaServices.GetNotConfirmedPostsAsync(pageNum);
-                    if (medias.Length > 0)
-                    {
-                        List<Processor> messages = new();
-                        for (int i = 0; i < medias.Length; i++)
-                        {
-                            messages.Add(new VideoResponseProcessor()
-                            {
-                                ReceiverId = objectBox.User.UserId,
-                                Video = medias[i].FileId,
-                                Text = $"{medias[i].Title}\n{medias[i].Caption}",
-                                Keyboard = Keyboard.DeclinedPublicMediaKeyboard(medias[i].Id),
-                                IsDeletable = true
-                            });
-                        }
-
-                        new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
-
-
-                        objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
-                           ? UserLocation.SeeAddedVideos_Admin
-                           : UserLocation.SeeAddedVideos_Manager;
-                        objectBox.UpdateUserInfo();
-                    }
-                    else new TextResponseProcessor()
-                    {
-                        ReceiverId = objectBox.User.UserId,
-                        Text = "No medias found."
-                    }.AddThisMessageToService(objectBox.Provider);
-                }
-            }
         }
 
         public async Task<Tuple<List<Processor>, bool>> GetPublic(int pageNum)
@@ -153,19 +82,27 @@ namespace TrimedBot.Core.Classes
                     {
                         for (int i = 0; i < medias.Length; i++)
                         {
+                            StringBuilder tags = new StringBuilder();
+                            if (medias[i].Tags is not null)
+                                foreach (var item in medias[i].Tags)
+                                {
+                                    tags.Append($"{item.Name} ");
+                                }
+
                             messages.Add(new VideoResponseProcessor()
                             {
                                 ReceiverId = objectBox.User.UserId,
                                 Video = medias[i].FileId,
-                                Text = $"{medias[i].Title}\n{medias[i].Caption}",
+                                Text = $"{medias[i].Title}\n{medias[i].Caption}\nTags: {tags}",
                                 Keyboard = Keyboard.DeclinedPublicMediaKeyboard(medias[i].Id),
                                 IsDeletable = true
                             });
                         }
 
-                        objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
-                           ? UserLocation.SeeAddedVideos_Admin
-                           : UserLocation.SeeAddedVideos_Manager;
+                        //objectBox.User.UserLocation = objectBox.User.Access == Access.Admin
+                        //   ? UserLocation.SeeAddedVideos_Admin
+                        //   : UserLocation.SeeAddedVideos_Manager;
+                        objectBox.User.Temp = "SendPublicMedias";
                         objectBox.UpdateUserInfo();
                         needNP = true;
                     }
@@ -178,12 +115,38 @@ namespace TrimedBot.Core.Classes
                             Keyboard = objectBox.Keyboard
                         });
 
-                        objectBox.User.UserLocation = UserLocation.NoWhere;
+                        objectBox.User.UserState = UserState.NoWhere;
                         objectBox.UpdateUserInfo();
                     }
                 }
             }
             return new Tuple<List<Processor>, bool>(messages, needNP);
+        }
+
+        public async Task<List<Processor>> GetMediasForChannel()
+        {
+            List<Processor> messages = new List<Processor>();
+
+            var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
+            var medias = await mediaService.GetConfirmedMedias();
+
+            foreach (var m in medias)
+            {
+                StringBuilder tags = new StringBuilder();
+                foreach (var item in m.Tags)
+                {
+                    tags.Append($"{item.Name} ");
+                }
+
+                string text = $"{m.Title} - {m.Caption}\nTags: {tags}";
+                messages.Add(new ChannelVideoProcessor()
+                {
+                    ReceiverId = objectBox.ChatId,
+                    Text = text,
+                    Video = m.FileId
+                });
+            }
+            return messages;
         }
     }
 }

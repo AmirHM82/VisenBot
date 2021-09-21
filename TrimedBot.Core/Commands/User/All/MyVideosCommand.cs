@@ -26,18 +26,21 @@ namespace TrimedBot.Core.Commands.User.All
         {
             bool needNP = false;
             List<Processor> messages = new List<Processor>();
-            await new TempMessages(objectBox).Delete();
+            //await new TempMessages(objectBox).Delete();
             var tuple = await new Medias(objectBox).GetPrivate(pageNum);
             messages.AddRange(tuple.Item1);
             needNP = tuple.Item2;
             if (needNP)
                 messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Post));
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+
+            objectBox.User.LastUserState = DAL.Enums.UserState.SeePrivateAddedVideos;
+            objectBox.UpdateUserInfo();
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

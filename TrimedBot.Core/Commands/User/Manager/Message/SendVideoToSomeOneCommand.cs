@@ -30,13 +30,14 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Delete();
+            //await new TempMessages(objectBox).Delete();
+            objectBox.IsNeedDeleteTemps = true;
             video.SendVideo(caption, long.Parse(objectBox.User.Temp), objectBox);
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

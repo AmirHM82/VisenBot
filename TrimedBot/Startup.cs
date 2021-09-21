@@ -81,6 +81,7 @@ namespace TrimedBot
             services.AddTransient<ISettings, SettingsServices>();
             services.AddTransient<IBanner, BannerServices>();
             services.AddTransient<ITag, TagService>();
+            services.AddTransient<IChannel, ChannelService>();
             services.AddScoped<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();

@@ -24,31 +24,23 @@ namespace TrimedBot.Core.Commands.User.All
 
         public async Task Do()
         {
-            if (objectBox.User.UserLocation != UserLocation.NoWhere)
-            {
-                await new TempMessages(objectBox).Delete();
+            //await new TempMessages(objectBox).Delete();
+            objectBox.IsNeedDeleteTemps = true;
 
-                new TextResponseProcessor()
-                {
-                    ReceiverId = objectBox.User.UserId,
-                    Text = "Canceled",
-                    Keyboard = objectBox.Keyboard
-                }.AddThisMessageToService(objectBox.Provider);
-
-                objectBox.User.UserLocation = UserLocation.NoWhere;
-                objectBox.UpdateUserInfo();
-            }
-            else new TextResponseProcessor()
+            new TextResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
-                Text = "You are in home page.",
+                Text = "Canceled",
                 Keyboard = objectBox.Keyboard
             }.AddThisMessageToService(objectBox.Provider);
+
+            objectBox.User.UserState = UserState.NoWhere;
+            objectBox.UpdateUserInfo();
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

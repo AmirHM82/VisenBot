@@ -35,7 +35,7 @@ namespace TrimedBot.Core.Commands.User.All
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
 
-                objectBox.User.UserLocation = UserLocation.Search_Users;
+                objectBox.User.UserState = UserState.Search_Users;
                 objectBox.UpdateUserInfo();
                 //userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Users);
                 //await userServices.SaveAsync();
@@ -51,7 +51,7 @@ namespace TrimedBot.Core.Commands.User.All
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

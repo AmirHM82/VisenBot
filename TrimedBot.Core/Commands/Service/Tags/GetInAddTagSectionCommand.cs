@@ -20,7 +20,8 @@ namespace TrimedBot.Core.Commands.Service.Tags
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Delete();
+            //await new TempMessages(objectBox).Delete();
+            objectBox.IsNeedDeleteTemps = false;
 
             new TextResponseProcessor()
             {
@@ -29,13 +30,13 @@ namespace TrimedBot.Core.Commands.Service.Tags
                 Text = "Send name of the tag"
             }.AddThisMessageToService(objectBox.Provider);
 
-            objectBox.User.UserLocation = DAL.Enums.UserLocation.Add_General_Tag;
+            objectBox.User.UserState = DAL.Enums.UserState.Add_General_Tag;
             objectBox.UpdateUserInfo();
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

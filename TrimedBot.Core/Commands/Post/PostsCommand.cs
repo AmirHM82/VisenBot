@@ -24,12 +24,16 @@ namespace TrimedBot.Core.Commands.Post
         {
             bool needNP = false;
             List<Processor> messages = new();
+            //await new TempMessages(objectBox).Delete();
             var tuple = await new Medias(objectBox).GetPublic(1);
             messages.AddRange(tuple.Item1);
             needNP = tuple.Item2;
             if (needNP)
                 messages.AddRange(new NPMessage(objectBox).CreateNP(1, CallbackSection.Post));
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+
+            objectBox.User.LastUserState = DAL.Enums.UserState.SeePublicAddedVideos;
+            objectBox.UpdateUserInfo();
         }
 
         public Task UnDo()

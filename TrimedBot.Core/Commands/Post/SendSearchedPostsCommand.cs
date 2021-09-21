@@ -29,9 +29,11 @@ namespace TrimedBot.Core.Commands.Post
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             var media = await mediaServices.FindAsync(id);
             if (media.User.Id == objectBox.User.Id)
-                await new SendPrivateMediaCommand(objectBox, media).Do();
+                //await new SendPrivateMediaCommand(objectBox, media).Do();
+                new Classes.Media(objectBox).SendPrivate(media);
             else if (objectBox.User.Access == Access.Admin || objectBox.User.Access == Access.Manager)
-                await new SendPublicMediaCommand(objectBox, media).Do();
+                //await new SendPublicMediaCommand(objectBox, media).Do();
+                new Classes.Media(objectBox).SendPublic(media);
             else
             {
                 new VideoResponseProcessor()
@@ -47,7 +49,7 @@ namespace TrimedBot.Core.Commands.Post
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

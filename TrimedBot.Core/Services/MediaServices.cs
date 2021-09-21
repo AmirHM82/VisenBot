@@ -17,52 +17,40 @@ namespace TrimedBot.Core.Services
             _db = db;
         }
 
-        public Task AddAsync(Media track)
+        public async Task AddAsync(Media track)
         {
-            return Task.Run(async () =>
-            {
-                _db.Entry(track.User).State = EntityState.Unchanged;
-                await _db.Medias.AddAsync(track);
-            });
+            _db.Entry(track.User).State = EntityState.Unchanged;
+            await _db.Medias.AddAsync(track);
         }
 
-        public Task<Media> ChangeTitle(Guid Id, string Title)
+        public async Task<Media> ChangeTitle(Guid Id, string Title)
         {
-            return Task.Run(async () =>
-            {
-                Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
-                media.Title = Title;
-                media.IsConfirmed = false;
-                _db.Medias.Update(media);
-                await _db.SaveChangesAsync();
-                return media;
-            });
+            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            media.Title = Title;
+            media.IsConfirmed = false;
+            _db.Medias.Update(media);
+            await _db.SaveChangesAsync();
+            return media;
         }
 
-        public Task<Media> ChangeCaption(Guid Id, string Caption)
+        public async Task<Media> ChangeCaption(Guid Id, string Caption)
         {
-            return Task.Run(async () =>
-            {
-                Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
-                media.Caption = Caption;
-                media.IsConfirmed = false;
-                _db.Medias.Update(media);
-                await _db.SaveChangesAsync();
-                return media;
-            });
+            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            media.Caption = Caption;
+            media.IsConfirmed = false;
+            _db.Medias.Update(media);
+            await _db.SaveChangesAsync();
+            return media;
         }
 
-        public Task<Media> ChangeVideo(Guid Id, string FileId)
+        public async Task<Media> ChangeVideo(Guid Id, string FileId)
         {
-            return Task.Run(async () =>
-            {
-                Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
-                media.FileId = FileId;
-                media.IsConfirmed = false;
-                _db.Medias.Update(media);
-                await _db.SaveChangesAsync();
-                return media;
-            });
+            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            media.FileId = FileId;
+            media.IsConfirmed = false;
+            _db.Medias.Update(media);
+            await _db.SaveChangesAsync();
+            return media;
         }
 
         public void Confirm(Media media)
@@ -97,7 +85,7 @@ namespace TrimedBot.Core.Services
         public Task<Media[]> GetNotConfirmedPostsAsync(int pageNumber)
         {
             return _db.Medias.Where(x => x.IsConfirmed == false).Include(x => x.User)
-                    .OrderByDescending(x => x.AddDate).Skip(--pageNumber * 5).Take(5).ToArrayAsync();
+                    .OrderBy(x => x.AddDate).Skip(--pageNumber * 5).Take(5).ToArrayAsync();
         }
 
         public void Remove(Media media)
@@ -105,30 +93,27 @@ namespace TrimedBot.Core.Services
             _db.Medias.Remove(media);
         }
 
-        public Task<Media> Remove(string Id)
+        public async Task<Media> Remove(string Id)
         {
-            return Task.Run(async () =>
-            {
-                var m = await _db.Medias.FirstOrDefaultAsync(t => t.Id.ToString() == Id);
-                _db.Medias.Remove(m);
-                return m;
-            });
+            var m = await _db.Medias.FirstOrDefaultAsync(t => t.Id.ToString() == Id);
+            _db.Medias.Remove(m);
+            return m;
         }
 
-        public async Task SaveAsync()
+        public Task SaveAsync()
         {
-            await _db.SaveChangesAsync();
+            return _db.SaveChangesAsync();
         }
 
-        public async Task<Media[]> SearchAsync(Guid userId, string caption)
+        public Task<Media[]> SearchAsync(Guid userId, string caption)
         {
-            Media[] result;
+            Task<Media[]> result;
             if (caption == null || caption == "")
-                result = await _db.Medias.Where(x =>
+                result = _db.Medias.Where(x =>
                 x.IsConfirmed == true || x.User.Id == userId)
                     .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
             else
-                result = await _db.Medias.Where(x =>
+                result = _db.Medias.Where(x =>
                 (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == userId))
                     .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
             return result;
@@ -166,6 +151,16 @@ namespace TrimedBot.Core.Services
         public void Dispose()
         {
             _db.Dispose();
+        }
+
+        public Task<List<Media>> GetConfirmedMedias()
+        {
+            return _db.Medias.Include(x => x.Tags).Where(x => x.IsConfirmed == true).ToListAsync();
+        }
+
+        public Task<Media> GetAsync(string fileId)
+        {
+            return _db.Medias.Where(x => x.FileId == fileId).FirstOrDefaultAsync();
         }
     }
 }

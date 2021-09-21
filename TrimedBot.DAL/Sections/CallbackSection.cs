@@ -30,5 +30,6 @@ namespace TrimedBot.DAL.Sections
         public const string Tag = "Ta";
         public const string Properties = "Pro";
         public const string Cancel = "Can";
+        public const string Channel = "Ch";
     }
 }

@@ -9,40 +9,53 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using Telegram.Bot.Types;
+using TrimedBot.Core.Classes.Processors;
 
 namespace TrimedBot.Core.Commands.Post.Edit
 {
     public class GetInEditMediaChangeCaptionSectionCommand : ICommand
     {
         private ObjectBox objectBox;
-        protected IUser userServices;
         private string id;
+        private int messageId;
 
-        public GetInEditMediaChangeCaptionSectionCommand(ObjectBox objectBox, string id)
+        public GetInEditMediaChangeCaptionSectionCommand(ObjectBox objectBox, string id, int messageId)
         {
             this.objectBox = objectBox;
-            userServices = objectBox.Provider.GetRequiredService<IUser>();
             this.id = id;
+            this.messageId = messageId;
         }
 
         public Task Do()
         {
-            objectBox.User.UserLocation = UserLocation.EditMedia_Caption;
+            objectBox.User.UserState = UserState.EditMedia_Caption;
             objectBox.User.Temp = id;
             objectBox.UpdateUserInfo();
 
-            new TextResponseProcessor()
+            List<Processor> processes = new();
+
+            processes.Add(new DeleteInlineKeyboardProcessor()
+            {
+                MessageId = messageId,
+                ReceiverId = objectBox.User.UserId
+            });
+
+            processes.Add(new TextResponseProcessor()
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Send new caption:",
                 Keyboard = Keyboard.CancelKeyboard()
-            }.AddThisMessageToService(objectBox.Provider);
+            });
+
+            new MultiProcessor(processes).AddThisMessageToService(objectBox.Provider);
+
             return Task.CompletedTask;
         }
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

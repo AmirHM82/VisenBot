@@ -33,14 +33,14 @@ namespace TrimedBot.Core.Services
             return await context.Banners.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public Task<List<Banner>> GetAllAsync()
+        public async Task<List<Banner>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await context.Banners.ToListAsync();
         }
 
-        public Task SaveAsync()
+        public async Task SaveAsync()
         {
-            throw new NotImplementedException();
+            await context.SaveChangesAsync();
         }
     }
 }

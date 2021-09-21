@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Commands.Post
                 Keyboard = Keyboard.CancelKeyboard()
             }.AddThisMessageToService(objectBox.Provider);
 
-            objectBox.User.UserLocation = UserLocation.AddMedia_SendTitle;
+            objectBox.User.UserState = UserState.AddMedia_SendTitle;
             objectBox.UpdateUserInfo();
             //userServices.Update(objectBox.User);
             //await userServices.SaveAsync();
@@ -42,7 +42,7 @@ namespace TrimedBot.Core.Commands.Post
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }
