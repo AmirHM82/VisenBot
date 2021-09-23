@@ -17,6 +17,7 @@ using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Entities;
 using Telegram.Bot.Extensions.Polling;
 using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace TrimedBot.Core.Services
 {
@@ -45,14 +46,18 @@ namespace TrimedBot.Core.Services
         {
             var updateReceiver = new QueuedUpdateReceiver(this);
             updateReceiver.StartReceiving();
-            await foreach (var update in updateReceiver.YieldUpdatesAsync())
-            {
-                using var scope = provider.CreateScope();
-                var scopedProvider = scope.ServiceProvider;
 
-                var updateServices = provider.GetRequiredService<UpdateServices>();
-                await updateServices.ProcessUpdate(scopedProvider, update);
-            }
+            Parallel.ForEach(Partitioner.Create<Update>((IList<Update>)updateReceiver.YieldUpdatesAsync()),Handle);
+
+            await foreach (var update in updateReceiver.YieldUpdatesAsync()) Handle(update);
+        }
+        public async void Handle(Update update)
+        {
+            using var scope = provider.CreateScope();
+            var scopedProvider = scope.ServiceProvider;
+
+            var updateServices = provider.GetRequiredService<UpdateServices>();
+            await updateServices.ProcessUpdate(scopedProvider, update);
         }
     }
 }
