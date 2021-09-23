@@ -41,19 +41,18 @@ namespace TrimedBot.Core.Services
         //    await updateServices.ProcessUpdate(scopedProvider, e.Update);
         //}
 
-        public Task StartReceiving()
+        public async Task StartReceiving()
         {
             var updateReceiver = new QueuedUpdateReceiver(this);
             updateReceiver.StartReceiving();
-            Parallel.ForEach<Update>((IEnumerable<Update>) updateReceiver.YieldUpdatesAsync() , async (x) =>
+            await foreach (var update in updateReceiver.YieldUpdatesAsync())
             {
                 using var scope = provider.CreateScope();
                 var scopedProvider = scope.ServiceProvider;
 
                 var updateServices = provider.GetRequiredService<UpdateServices>();
-                await updateServices.ProcessUpdate(scopedProvider, x);
-            });
-            return Task.CompletedTask;
+                await updateServices.ProcessUpdate(scopedProvider, update);
+            }
         }
     }
 }
