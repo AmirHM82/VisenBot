@@ -121,5 +121,56 @@ namespace TrimedBot.Core.Classes
 
             return result;
         }
+
+        public async Task<Tuple<List<Processor>, bool>> GetMessages(List<Tag> tags)
+        {
+            bool needNP = false;
+            List<Processor> result = new List<Processor>();
+
+            if (tags.Count > 0)
+            {
+                result.Add(new TextResponseProcessor()
+                {
+                    IsDeletable = true,
+                    //Keyboard = Keyboard.CancelKeyboard(),
+                    ReceiverId = objectBox.User.UserId,
+                    Text = "Blocked tags:"
+                });
+
+                foreach (var t in tags)
+                {
+                    result.Add(new TextResponseProcessor()
+                    {
+                        IsDeletable = true,
+                        Keyboard = Keyboard.Tag(t),
+                        ReceiverId = objectBox.User.UserId,
+                        Text = t.Name
+                    });
+                }
+                needNP = true;
+            }
+            else result.Add(new TextResponseProcessor()
+            {
+                IsDeletable = true,
+                //Keyboard = Keyboard.CancelKeyboard(),
+                ReceiverId = objectBox.User.UserId,
+                Text = "There is no tag"
+            });
+
+            if (tags.Count < 5)
+                result.Add(new TextResponseProcessor()
+                {
+                    IsDeletable = true,
+                    Keyboard = Keyboard.AddTag(),
+                    ReceiverId = objectBox.User.UserId,
+                    Text = "Press add to block a tag"
+                });
+
+            //objectBox.User.UserLocation = DAL.Enums.UserLocation.See_All_Tags;
+            //objectBox.UpdateUserInfo();
+
+            return new Tuple<List<Processor>, bool>(result, needNP);
+
+        }
     }
 }

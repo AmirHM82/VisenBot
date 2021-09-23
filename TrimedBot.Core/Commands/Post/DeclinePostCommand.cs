@@ -54,6 +54,8 @@ namespace TrimedBot.Core.Commands.Post
                     }
                 }
 
+                //Add: Delete (or edit) the post from channel and channels posts table
+
                 messages.Add(new DeleteProcessor()
                 {
                     UserId = objectBox.User.UserId,

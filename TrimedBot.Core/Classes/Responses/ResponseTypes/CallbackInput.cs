@@ -195,6 +195,16 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             break;
                     }
                     break;
+                case CallbackSection.Tag:
+                    switch (data.Dequeue())
+                    {
+                        case CallbackSection.Add:
+                            break;
+                        case CallbackSection.Next:
+                        case CallbackSection.Previous:
+                            break;
+                    }
+                    break;
             }
             foreach (var x in cmds)
             {

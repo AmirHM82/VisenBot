@@ -22,6 +22,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
         public IReplyMarkup Keyboard { get; set; }
         public bool IsDeletable { get; set; } = false;
         public string Text { get; set; }
+        public int MessageId { get; private set; }
 
         protected override async Task Action(IServiceProvider provider)
         {
@@ -30,6 +31,8 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 
             var SentMessage = await bot.SendTextMessageAsync(ReceiverId, Text, ParseMode,
                 replyMarkup: Keyboard);
+
+            MessageId = SentMessage.MessageId;
 
             if (IsDeletable)
             {

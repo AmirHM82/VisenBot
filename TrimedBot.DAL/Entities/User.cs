@@ -27,5 +27,6 @@ namespace TrimedBot.DAL.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public ICollection<Banner> Banners { get; set; }
+        public ICollection<Tag> BlockedTags { get; set; }
     }
 }

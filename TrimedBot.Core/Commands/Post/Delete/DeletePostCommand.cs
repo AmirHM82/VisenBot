@@ -52,6 +52,8 @@ namespace TrimedBot.Core.Commands.Post.Delete
                 });
                 await mediaServices.SaveAsync();
 
+                //Add: Delete the post from channel and channels posts table
+
                 new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
 
                 await tempMessageServices.Delete(objectBox.User.UserId, messageId);

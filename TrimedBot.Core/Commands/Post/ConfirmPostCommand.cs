@@ -50,7 +50,7 @@ namespace TrimedBot.Core.Commands.Post
                 }
             }
 
-            await new Classes.Media(objectBox).SendToChannels(media);
+            await new Classes.Media(objectBox).SendToChannels(media); //Add: Save medias at channels posts table
 
             messages.Add(new DeleteProcessor()
             {

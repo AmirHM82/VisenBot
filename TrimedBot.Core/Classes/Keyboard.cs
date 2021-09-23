@@ -15,7 +15,8 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Add new video") },
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Send admin request") },
-            new[] {new KeyboardButton("Search in posts") }
+            new[] {new KeyboardButton("Search in posts") },
+            new[] {new KeyboardButton("Post filter") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Admin() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -23,7 +24,8 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Add new video") },
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
-            new[] {new KeyboardButton("Search in posts") }
+            new[] {new KeyboardButton("Search in posts") },
+            new[] {new KeyboardButton("Post filter") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Manager() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -38,6 +40,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Settings") },
             new[] {new KeyboardButton("Send message to admins") },
             new[] {new KeyboardButton("Send message to all") },
+            new[] {new KeyboardButton("Post filter") },
             new[] {new KeyboardButton("Census") }
         }, true);
 
@@ -227,6 +230,16 @@ namespace TrimedBot.Core.Classes
             };
 
             return new InlineKeyboardMarkup(new[] { k1, k2 });
+        }
+
+        public static InlineKeyboardMarkup AddBlockedTag()
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Add", $"{CallbackSection.User}/{CallbackSection.Tag}/{CallbackSection.Add}")
+            };
+
+            return new InlineKeyboardMarkup(k1);
         }
 
         public static InlineKeyboardMarkup PrivatePostProperties(Guid postId, bool HasCancel)

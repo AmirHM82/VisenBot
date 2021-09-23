@@ -25,6 +25,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using TrimedBot.Core.Commands.Service.Tags;
 using TrimedBot.Core.Commands.Service.Channels;
 using TrimedBot.Core.Commands.Service.Token;
+using TrimedBot.Core.Commands.User.All.BlockedTags;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -113,6 +114,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case "/census":
                 case "Census":
                     cmds.Add(new CensusCommand(objectBox).Do);
+                    break;
+                case "/postsfilters":
+                case "posts' filters":
+                    cmds.Add(new PostsFiltersCommand(objectBox).Do);
                     break;
                 default:
                     cmds.Add(new NotfoundCommand(objectBox).Do);

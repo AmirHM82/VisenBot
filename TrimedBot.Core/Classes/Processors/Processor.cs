@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using Telegram.Bot.Exceptions;
 using TrimedBot.Core.Services;
 
 namespace TrimedBot.Core.Classes.Processors
@@ -31,10 +32,13 @@ namespace TrimedBot.Core.Classes.Processors
                 Success = true;
                 OnSuccess?.Invoke(this);
             }
-            catch (Exception e)
+            catch (ApiRequestException e)
             {
+                FailProp = (FailProp.counter, e.ErrorCode);
                 Success = false;
                 OnFail?.Invoke(this);
+
+
                 e.Message.LogError();
                 if (e.InnerException is not null)
                     e.InnerException.Message.LogError();
