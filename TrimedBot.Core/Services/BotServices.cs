@@ -41,11 +41,11 @@ namespace TrimedBot.Core.Services
         //    await updateServices.ProcessUpdate(scopedProvider, e.Update);
         //}
 
-        public async Task StartReceiving()
+        public Task StartReceiving()
         {
-            var updateReceiver = new Telegram.Bot.Extensions.Polling.BlockingUpdateReceiver(this);
-            //updateReceiver.StartReceiving();
-            Parallel.ForEach<Update>(updateReceiver.YieldUpdatesAsync(), , async (x) =>
+            var updateReceiver = new QueuedUpdateReceiver(this);
+            updateReceiver.StartReceiving();
+            Parallel.ForEach<Update>((IEnumerable<Update>) updateReceiver.YieldUpdatesAsync() , async (x) =>
             {
                 using var scope = provider.CreateScope();
                 var scopedProvider = scope.ServiceProvider;
@@ -53,6 +53,7 @@ namespace TrimedBot.Core.Services
                 var updateServices = provider.GetRequiredService<UpdateServices>();
                 await updateServices.ProcessUpdate(scopedProvider, x);
             });
+            return Task.CompletedTask;
         }
     }
 }
