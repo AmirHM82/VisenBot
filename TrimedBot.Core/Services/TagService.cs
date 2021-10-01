@@ -44,9 +44,14 @@ namespace TrimedBot.Core.Services
             return await db.Tags.FirstOrDefaultAsync(x => x.Id == tagId);
         }
 
-        public async Task<List<Tag>> GetTagsAsync(int pageNum)
+        public Task<List<Tag>> GetTagsAsync(int pageNum)
         {
-            return await db.Tags.Skip((pageNum - 1) * 5).Take(5).ToListAsync();
+            return db.Tags.Skip((pageNum - 1) * 5).Take(5).ToListAsync();
+        }
+
+        public Task<List<Tag>> GetTagsAsync()
+        {
+            return db.Tags.ToListAsync();
         }
 
         public async Task SaveAsync()
@@ -54,9 +59,9 @@ namespace TrimedBot.Core.Services
             await db.SaveChangesAsync();
         }
 
-        public async Task<List<Tag>> Search(string name)
+        public Task<List<Tag>> Search(string name)
         {
-            return await db.Tags.Where(x => x.Name.Contains(name)).ToListAsync();
+            return db.Tags.Where(x => x.Name.Contains(name)).ToListAsync();
         }
 
         public void Update(Tag tag)

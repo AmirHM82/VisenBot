@@ -22,6 +22,7 @@ using TrimedBot.Core.Commands.User.All;
 using TrimedBot.Core.Commands.Post.Properties;
 using TrimedBot.Core.Commands.Post.Tag;
 using TrimedBot.Core.Commands.Service.Channels;
+using TrimedBot.Core.Commands.User.All.BlockedTags;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -117,6 +118,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                             cmds.Add(new AddPostsTagCommand(objectBox, Guid.Parse(data.Dequeue())).Do);
                             break;
                         case CallbackSection.Delete:
+                            cmds.Add(new DeletePostsTagCommand(objectBox, int.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:
@@ -199,9 +201,14 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     switch (data.Dequeue())
                     {
                         case CallbackSection.Add:
+                            cmds.Add(new AddBlockedTag(objectBox).Do);
+                            break;
+                        case CallbackSection.Delete:
+                            cmds.Add(new DeleteUserBlockedTag(objectBox, int.Parse(data.Dequeue())).Do);
                             break;
                         case CallbackSection.Next:
                         case CallbackSection.Previous:
+                            cmds.Add(new BlockedTagsCommand(objectBox, int.Parse(data.Dequeue())).Do);
                             break;
                     }
                     break;

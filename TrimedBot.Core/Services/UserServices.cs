@@ -30,20 +30,12 @@ namespace TrimedBot.Core.Services
 
         public Task<User> FindAsync(Guid id)
         {
-            return Task.Run(async () =>
-            {
-                User user = await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
-                return user;
-            });
+            return _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public Task<User> FindAsync(long id)
         {
-            return Task.Run(async () =>
-            {
-                User user = await _context.Users.FirstOrDefaultAsync(x => x.UserId == id);
-                return user;
-            });
+            return _context.Users.Include(x => x.BlockedTags).FirstOrDefaultAsync(x => x.UserId == id);
         }
 
         public Task<List<User>> GetUsersAsync()

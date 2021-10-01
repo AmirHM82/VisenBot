@@ -74,7 +74,7 @@ namespace TrimedBot.Core.Commands.Channel.Post
 
         public Task UnDo()
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

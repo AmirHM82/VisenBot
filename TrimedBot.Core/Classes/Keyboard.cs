@@ -16,7 +16,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Send admin request") },
             new[] {new KeyboardButton("Search in posts") },
-            new[] {new KeyboardButton("Post filter") }
+            new[] {new KeyboardButton("Blocked tags") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Admin() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
             new[] {new KeyboardButton("Search in posts") },
-            new[] {new KeyboardButton("Post filter") }
+            new[] {new KeyboardButton("Blocked tags") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Manager() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -40,7 +40,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Settings") },
             new[] {new KeyboardButton("Send message to admins") },
             new[] {new KeyboardButton("Send message to all") },
-            new[] {new KeyboardButton("Post filter") },
+            new[] {new KeyboardButton("Blocked tags") },
             new[] {new KeyboardButton("Census") }
         }, true);
 
@@ -192,6 +192,16 @@ namespace TrimedBot.Core.Classes
             InlineKeyboardButton[] result =
             {
                 InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}")
+            };
+
+            return new InlineKeyboardMarkup(result);
+        }
+
+        public static InlineKeyboardMarkup BlockedTag(Tag tag)
+        {
+            InlineKeyboardButton[] result =
+            {
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.User}/{CallbackSection.Tag}/{CallbackSection.Delete}/{tag.Id}")
             };
 
             return new InlineKeyboardMarkup(result);

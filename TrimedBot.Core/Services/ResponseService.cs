@@ -138,5 +138,13 @@ namespace TrimedBot.Core.Services
             if (Messages.Equals(processor)) result = true;
             return result;
         }
+
+        public bool RemoveFaild(Processor processor)
+        {
+            bool bresult = false;
+            if (processor is not null) 
+                bresult = Faileds.TryDequeue(out Processor result);
+            return bresult;
+        }
     }
 }

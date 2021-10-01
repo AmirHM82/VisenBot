@@ -4,39 +4,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 
-namespace TrimedBot.Core.Commands.Service.Channels
+namespace TrimedBot.Core.Commands.Post.Tag
 {
-    public class DeleteChannelCommand : ICommand
+    public class DeletePostsTagCommand : ICommand
     {
         private ObjectBox objectBox;
-        private int channelId;
+        private int tagId;
         private int messageId;
 
-        public DeleteChannelCommand(ObjectBox objectBox, int channelId, int messageId)
+        public DeletePostsTagCommand(ObjectBox objectBox, int tagId, int messageId)
         {
             this.objectBox = objectBox;
-            this.channelId = channelId;
+            this.tagId = tagId;
             this.messageId = messageId;
         }
 
         public async Task Do()
         {
-            var channelService = objectBox.Provider.GetRequiredService<IChannel>();
-            var channel = await channelService.FindAsync(channelId);
-            channelService.Delete(channel);
-            await channelService.SaveAsync();
-
-            var tempService = objectBox.Provider.GetRequiredService<ITempMessage>();
-            await tempService.Delete(objectBox.User.UserId, messageId);
-
+            var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
+            await mediaService.RemoveTag(Guid.Parse(objectBox.User.Temp), tagId);
             new DeleteProcessor()
             {
                 MessageId = messageId,
-                UserId = objectBox.User.UserId
+                UserId = objectBox.ChatId
             }.AddThisMessageToService(objectBox.Provider);
         }
 

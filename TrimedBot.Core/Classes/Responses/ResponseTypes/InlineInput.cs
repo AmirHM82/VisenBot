@@ -9,6 +9,7 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Commands.Post.Tag;
+using TrimedBot.Core.Commands.User.All.BlockedTags;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -34,12 +35,21 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         {
             List<Func<Task>> cmds = new();
             if (inlineQuery.Query != null && inlineQuery.Query != "")
-                if (user.UserState == UserState.Search_Users)
-                    cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                else if (user.UserState == UserState.Search_Posts_Tag)
-                    cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                else /*if (user.UserLocation == UserLocation.Search_Posts)*/
-                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                switch (user.UserState)
+                {
+                    case UserState.Search_Users:
+                        cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                        break;
+                    case UserState.Search_Posts_Tag:
+                        cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                        break;
+                    case UserState.Search_User_Blocked_Tags:
+                        cmds.Add(new SearchInUserBlockedTagsCommand(objectBox, inlineQuery.Id, inlineQuery.Query).Do);
+                        break;
+                    default: /*if (user.UserLocation == UserLocation.Search_Posts)*/
+                        cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                        break;
+                }
 
             foreach (var x in cmds)
             {
