@@ -112,12 +112,12 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new TokenCommand(objectBox).Do);
                     break;
                 case "/census":
-                case "Census":
+                case "census":
                     cmds.Add(new CensusCommand(objectBox).Do);
                     break;
-                case "/postsfilters":
-                case "posts' filters":
-                    cmds.Add(new PostsFiltersCommand(objectBox).Do);
+                case "/Blockedtags":
+                case "blocked tags":
+                    cmds.Add(new BlockedTagsCommand(objectBox, 1).Do);
                     break;
                 default:
                     cmds.Add(new NotfoundCommand(objectBox).Do);

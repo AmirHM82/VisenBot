@@ -71,7 +71,7 @@ namespace TrimedBot.Core.Services
 
         public Task<Media> FindAsync(string Id)
         {
-            return _db.Medias.Include(x => x.User).FirstOrDefaultAsync(t => t.Id.ToString() == Id);
+            return _db.Medias.Include(x => x.User).Include(x => x.Tags).FirstOrDefaultAsync(t => t.Id.ToString() == Id);
         }
 
         public Task<Media[]> GetMediasAsync(User user)
@@ -105,16 +105,16 @@ namespace TrimedBot.Core.Services
             return _db.SaveChangesAsync();
         }
 
-        public Task<Media[]> SearchAsync(Guid userId, string caption)
+        public Task<Media[]> SearchAsync(User user, string caption)
         {
             Task<Media[]> result;
             if (caption == null || caption == "")
                 result = _db.Medias.Where(x =>
-                x.IsConfirmed == true || x.User.Id == userId)
+                (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
                     .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
             else
                 result = _db.Medias.Where(x =>
-                (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == userId))
+                (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
                     .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
             return result;
         }
@@ -161,6 +161,17 @@ namespace TrimedBot.Core.Services
         public Task<Media> GetAsync(string fileId)
         {
             return _db.Medias.Where(x => x.FileId == fileId).FirstOrDefaultAsync();
+        }
+
+        public async Task RemoveTag(Guid mediaId, int tagId)
+        {
+            var media = await _db.Medias.Include(x => x.Tags).FirstOrDefaultAsync(x => x.Id == mediaId);
+            var tag = media.Tags.Where(x => x.Id == tagId);
+            if (tag is null) return;
+            _db.Attach(tag); //Error: The entity type 'WhereEnumerableIterator<Tag>' was not found. Ensure that the entity type has been added to the model.
+            _db.Entry(tag).State = EntityState.Deleted;
+            Update(media);
+            await SaveAsync();
         }
     }
 }

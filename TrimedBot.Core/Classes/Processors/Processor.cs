@@ -38,6 +38,15 @@ namespace TrimedBot.Core.Classes.Processors
                 Success = false;
                 OnFail?.Invoke(this);
 
+                e.Message.LogError();
+                if (e.InnerException is not null)
+                    e.InnerException.Message.LogError();
+                throw;
+            }
+            catch (Exception e)
+            {
+                Success = false;
+                OnFail?.Invoke(this);
 
                 e.Message.LogError();
                 if (e.InnerException is not null)

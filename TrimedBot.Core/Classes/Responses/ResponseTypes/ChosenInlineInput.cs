@@ -10,6 +10,7 @@ using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Commands.Post.Tag;
+using TrimedBot.Core.Commands.User.All.BlockedTags;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -45,6 +46,9 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case UserState.Search_Posts_Tag:
                     cmds.Add(new ChosenPostsTagsCommand(objectBox, int.Parse(chosenInlineResult.ResultId)).Do);
+                    break;
+                case UserState.Search_User_Blocked_Tags:
+                    cmds.Add(new ChosenUserBlockedTags(objectBox, int.Parse(chosenInlineResult.ResultId)).Do);
                     break;
             }
 

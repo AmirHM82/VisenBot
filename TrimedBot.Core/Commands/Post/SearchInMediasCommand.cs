@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.Post
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            var videos = await mediaServices.SearchAsync(objectBox.User.Id, caption.ToLower());
+            var videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
 
             if (videos != null)
             {

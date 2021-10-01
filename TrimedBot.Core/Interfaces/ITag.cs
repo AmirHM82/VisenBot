@@ -17,5 +17,6 @@ namespace TrimedBot.Core.Interfaces
         Task SaveAsync();
         void Update(Tag tag);
         Task<List<Tag>> GetTagsAsync(int pageNum);
+        Task<List<Tag>> GetTagsAsync();
     }
 }
