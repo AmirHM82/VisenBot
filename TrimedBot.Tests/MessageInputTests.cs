@@ -40,7 +40,7 @@ namespace TrimedBot.Tests
             Input messageInput = new MessageInput(objectBox, message);
             await messageInput.Response();
 
-            Assert.True(messageInput.Statue);
+            Assert.True(messageInput.Status);
         }
     }
 }

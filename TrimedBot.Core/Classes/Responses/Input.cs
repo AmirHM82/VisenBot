@@ -19,19 +19,27 @@ namespace TrimedBot.Core.Classes.Responses
             this.objectBox = objectBox;
         }
 
-        public bool Statue { get; set; }
+        public bool Status { get; set; }
 
-        public abstract Task Action();
+        public abstract Task Action(List<Func<Task>> cmds);
 
         public async Task Response()
         {
             try
             {
-                await Action();
+                List<Func<Task>> cmds = new List<Func<Task>>();
+
+                await Action(cmds);
+
+                foreach (var item in cmds)
+                {
+                    await item();
+                }
+
                 await objectBox.DeleteTemps(objectBox.ChatId);
                 await objectBox.UpdateDatabaseUserInfo();
                 await objectBox.UpdateDatabaseChannelInfo();
-                Statue = true;
+                Status = true;
             }
             catch (Exception e)
             {
@@ -39,7 +47,7 @@ namespace TrimedBot.Core.Classes.Responses
                 e.Message.LogError();
                 if (e.InnerException is not null)
                     e.InnerException.Message.LogError();
-                Statue = false;
+                Status = false;
                 throw;
             }
         }

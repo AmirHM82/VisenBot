@@ -37,52 +37,45 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             this.callbackQuery = callbackQuery;
         }
 
-        public override async Task Action()
+        public override async Task Action(List<Func<Task>> cmds)
         {
-            if (!objectBox.User.IsBanned) await ResponseCallback(callbackQuery);
+            if (!objectBox.User.IsBanned) ResponseCallback(cmds, callbackQuery);
         }
 
-        public async Task ResponseCallback(CallbackQuery callbackQuery)
+        public void ResponseCallback(List<Func<Task>> cmds, CallbackQuery callbackQuery)
         {
-            List<Func<Task>> cmds = new();
             new CallbackQueryProcessor()
             {
                 Id = callbackQuery.Id
             }.AddThisMessageToService(objectBox.Provider);
+
             var data = new Queue<string>(callbackQuery.Data.Split("/"));
 
             switch (data.Dequeue())
             {
                 case CallbackSection.Post:
-                    await ResponsePostSection(data);
+                    ResponsePostSection(cmds, data);
                     break;
                 case CallbackSection.Admin:
-                    await ResponseAdminSection(data);
+                    ResponseAdminSection(cmds, data);
                     break;
                 case CallbackSection.User:
-                    await ResponseUserSection(data);
+                    ResponseUserSection(cmds, data);
                     break;
                 case CallbackSection.Tag:
-                    await ResponseTagSection(data);
+                    ResponseTagSection(cmds, data);
                     break;
                 case CallbackSection.Cancel:
-                    await ResponseCancelSection(data);
+                    ResponseCancelSection(cmds, data);
                     break;
                 case CallbackSection.Channel:
-                    await ResponseChannelSection(data);
+                    ResponseChannelSection(cmds, data);
                     break;
-            }
-
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
             }
         }
 
-        public async Task ResponsePostSection(Queue<string> data)
+        public void ResponsePostSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            List<Func<Task>> cmds = new();
             switch (data.Dequeue())
             {
                 case CallbackSection.Edit:
@@ -131,16 +124,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new MediasNPCommand(objectBox, int.Parse(data.Dequeue()), CallbackSection.Post).Do);
                     break;
             }
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
-            }
         }
 
-        public async Task ResponseAdminSection(Queue<string> data)
+        public void ResponseAdminSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            List<Func<Task>> cmds = new();
             switch (data.Dequeue())
             {
                 case CallbackSection.Request:
@@ -171,16 +158,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 default:
                     break;
             }
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
-            }
         }
 
-        public async Task ResponseUserSection(Queue<string> data)
+        public void ResponseUserSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            List<Func<Task>> cmds = new();
             switch (data.Dequeue())
             {
                 case CallbackSection.Ban:
@@ -213,16 +194,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     }
                     break;
             }
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
-            }
         }
 
-        public async Task ResponseTagSection(Queue<string> data)
+        public void ResponseTagSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            List<Func<Task>> cmds = new();
             switch (data.Dequeue())
             {
                 case CallbackSection.Add:
@@ -236,21 +211,15 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new TagsCommand(int.Parse(data.Dequeue()), objectBox).Do);
                     break;
             }
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
-            }
         }
 
-        public async Task ResponseCancelSection(Queue<string> data)
+        public void ResponseCancelSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            await new CancelCommand(objectBox).Do();
+            cmds.Add(new CancelCommand(objectBox).Do);
         }
 
-        public async Task ResponseChannelSection(Queue<string> data)
+        public void ResponseChannelSection(List<Func<Task>> cmds, Queue<string> data)
         {
-            List<Func<Task>> cmds = new();
             switch (data.Dequeue())
             {
                 case CallbackSection.Add:
@@ -259,11 +228,6 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case CallbackSection.Delete:
                     cmds.Add(new DeleteChannelCommand(objectBox, int.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
                     break;
-            }
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
             }
         }
     }
