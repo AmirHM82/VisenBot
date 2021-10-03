@@ -27,17 +27,15 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
         public Message ChannelPost { get; }
         public DAL.Entities.Channel Channel { get; set; }
 
-        public override async Task Action()
+        public override async Task Action(List<Func<Task>> cmds)
         {
-            if (Channel.State == ChannelState.NoWhere) await ResponseCommand(ChannelPost.Text);
-            else await ResponseMessage(ChannelPost);
+            if (Channel.State == ChannelState.NoWhere) await ResponseCommand(cmds, ChannelPost.Text);
+            else await ResponseMessage(cmds, ChannelPost);
         }
 
-        public async Task ResponseCommand(string command)
+        public async Task ResponseCommand(List<Func<Task>> cmds, string command)
         {
             ObjectBox.IsNeedDeleteTemps = true;
-            List<Func<Task>> cmds = new();
-
             switch (command)
             {
                 case "/connecttochannel":
@@ -50,27 +48,15 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new PingCommand(ObjectBox).Do);
                     break;
             }
-
-            foreach (var cmd in cmds)
-            {
-                await cmd();
-            }
         }
 
-        public async Task ResponseMessage(Message post)
+        public async Task ResponseMessage(List<Func<Task>> cmds, Message post)
         {
-            List<Func<Task>> cmds = new();
-
             switch (Channel.State)
             {
                 case ChannelState.AddChannel:
                     cmds.Add(new ConnectToChannelCommand(ObjectBox, post.Text, post.MessageId).Do);
                     break;
-            }
-
-            foreach (var cmd in cmds)
-            {
-                await cmd();
             }
         }
     }

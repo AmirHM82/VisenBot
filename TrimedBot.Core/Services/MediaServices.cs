@@ -109,8 +109,8 @@ namespace TrimedBot.Core.Services
         {
             Task<Media[]> result;
             if (caption == null || caption == "")
-                result = _db.Medias.Where(x =>
-                (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
+                result = _db.Medias.Include(x => x.User).Where(x =>
+                  (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
                     .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
             else
                 result = _db.Medias.Where(x =>

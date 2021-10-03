@@ -26,35 +26,27 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             this.inlineQuery = inlineQuery;
         }
 
-        public override async Task Action()
+        public override async Task Action(List<Func<Task>> cmds)
         {
-            if (!objectBox.User.IsBanned) await ResponseInline(inlineQuery);
+            if (!objectBox.User.IsBanned) await ResponseInline(cmds, inlineQuery);
         }
 
-        public async Task ResponseInline(InlineQuery inlineQuery)
+        public async Task ResponseInline(List<Func<Task>> cmds, InlineQuery inlineQuery)
         {
-            List<Func<Task>> cmds = new();
-            if (inlineQuery.Query != null && inlineQuery.Query != "")
-                switch (user.UserState)
-                {
-                    case UserState.Search_Users:
-                        cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                        break;
-                    case UserState.Search_Posts_Tag:
-                        cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                        break;
-                    case UserState.Search_User_Blocked_Tags:
-                        cmds.Add(new SearchInUserBlockedTagsCommand(objectBox, inlineQuery.Id, inlineQuery.Query).Do);
-                        break;
-                    default: /*if (user.UserLocation == UserLocation.Search_Posts)*/
-                        cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
-                        break;
-                }
-
-            foreach (var x in cmds)
+            switch (user.UserState)
             {
-                await x();
-                await Task.Delay(34);
+                case UserState.Search_Users:
+                    cmds.Add(new InlineSearchInUsersCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                    break;
+                case UserState.Search_Posts_Tag:
+                    cmds.Add(new SearchInPostsTagsCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                    break;
+                case UserState.Search_User_Blocked_Tags:
+                    cmds.Add(new SearchInUserBlockedTagsCommand(objectBox, inlineQuery.Id, inlineQuery.Query).Do);
+                    break;
+                default: /*if (user.UserLocation == UserLocation.Search_Posts)*/
+                    cmds.Add(new SearchInMediasCommand(objectBox, inlineQuery.Query, inlineQuery.Id).Do);
+                    break;
             }
         }
     }

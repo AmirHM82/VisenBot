@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 using TrimedBot.Core.Commands.Message;
 using TrimedBot.Core.Commands.Post;
 using TrimedBot.Core.Commands.Post.Add;
@@ -15,13 +13,8 @@ using TrimedBot.Core.Commands.User.Manager.Request;
 using TrimedBot.Core.Commands.User.Manager.Settings;
 using TrimedBot.Core.Commands.User.Member;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
-using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
 using TrimedBot.DAL.Enums;
-using TrimedBot.DAL.Entities;
-using TrimedBot.DAL.Sections;
-using TrimedBot.Core.Classes;
-using Microsoft.Extensions.Caching.Distributed;
 using TrimedBot.Core.Commands.Service.Tags;
 using TrimedBot.Core.Commands.Service.Channels;
 using TrimedBot.Core.Commands.Service.Token;
@@ -42,10 +35,9 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             this.message = message;
         }
 
-        public async Task ResponseCommand(string command)
+        public async Task ResponseCommand(List<Func<Task>> cmds, string command)
         {
             objectBox.IsNeedDeleteTemps = true;
-            List<Func<Task>> cmds = new();
             switch (command)
             {
                 case "/start":
@@ -123,15 +115,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new NotfoundCommand(objectBox).Do);
                     break;
             }
-            foreach (var cmd in cmds)
-            {
-                await cmd();
-            }
         }
 
-        public async Task ResponseVideo(Video video, string caption)
+        public async Task ResponseVideo(List<Func<Task>> cmds, Video video, string caption)
         {
-            List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserState)
             {
                 case UserState.AddMedia_SendMedia:
@@ -147,15 +134,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new SendVideoToAllCommand(objectBox, video, message.Caption).Do);
                     break;
             }
-            foreach (var cmd in cmds)
-            {
-                await cmd();
-            }
         }
 
-        public async Task ResponseMessage(Message message)
+        public async Task ResponseMessage(List<Func<Task>> cmds, Message message)
         {
-            List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserState)
             {
                 case UserState.AddMedia_SendTitle:
@@ -191,35 +173,31 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new AddTagCommand(objectBox, message.Text).Do);
                     break;
             }
-            foreach (var cmd in cmds)
-            {
-                await cmd();
-            }
         }
 
-        public async Task ResponseCancel()
+        public async Task ResponseCancel(List<Func<Task>> cmds)
         {
             await new CancelCommand(objectBox).Do();
         }
 
-        public async Task Response(Message message)
+        public async Task Response(List<Func<Task>> cmds, Message message)
         {
             switch (message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.Text:
                     string command = message.Text.ToLower();
-                    if (command == "/cancel" || command == "cancel") { await ResponseCancel(); }
-                    else if (user.UserState == UserState.NoWhere) { await ResponseCommand(command); }
-                    else await ResponseMessage(message);
+                    if (command == "/cancel" || command == "cancel") { await ResponseCancel(cmds); }
+                    else if (user.UserState == UserState.NoWhere) { await ResponseCommand(cmds, command); }
+                    else await ResponseMessage(cmds, message);
                     break;
                 case Telegram.Bot.Types.Enums.MessageType.Video:
-                    await ResponseVideo(message.Video, message.Caption);
+                    await ResponseVideo(cmds, message.Video, message.Caption);
                     break;
                 //case Telegram.Bot.Types.Enums.MessageType.Photo:
-                //    await ResponsePhoto(message.Photo, message.Caption);
+                //    await ResponsePhoto(cmds, message.Photo, message.Caption);
                 //    break;
                 default:
-                    await ResponseOther(message);
+                    await ResponseOther(cmds, message);
                     break;
             }
         }
@@ -233,18 +211,17 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             }.AddThisMessageToService(objectBox.Provider);
         }
 
-        public override async Task Action()
+        public override async Task Action(List<Func<Task>> cmds)
         {
             if (objectBox.Settings.IsResponsingAvailable)
-                await Response(message);
+                await Response(cmds, message);
             else
                 ResponseNotAvailable();
         }
 
         //Idk why but just don't delete it
-        private async Task ResponsePhoto(PhotoSize[] photo, string caption)
+        private async Task ResponsePhoto(List<Func<Task>> cmds, PhotoSize[] photo, string caption)
         {
-            List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserState)
             {
                 case UserState.Send_Message_ToSomeone:
@@ -254,15 +231,10 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     cmds.Add(new SendPhotoToAllCommand(objectBox, message.Photo, message.Caption).Do);
                     break;
             }
-            foreach (var cmd in cmds)
-            {
-                await cmd();
-            }
         }
 
-        private async Task ResponseOther(Message message)
+        private async Task ResponseOther(List<Func<Task>> cmds, Message message)
         {
-            List<Func<Task>> cmds = new List<Func<Task>>();
             switch (user.UserState)
             {
                 case UserState.Send_Message_ToSomeone:
@@ -271,10 +243,6 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case UserState.Send_Message_ToAll:
                     cmds.Add(new SendMessageToAllCommand(objectBox, message).Do);
                     break;
-            }
-            foreach (var cmd in cmds)
-            {
-                await cmd();
             }
         }
     }

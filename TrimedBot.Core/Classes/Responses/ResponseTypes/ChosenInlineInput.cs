@@ -27,15 +27,13 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
             this.chosenInlineResult = chosenInlineResult;
         }
 
-        public override async Task Action()
+        public override async Task Action(List<Func<Task>> cmds)
         {
-            if (!objectBox.User.IsBanned) await ResponseChosenInline(chosenInlineResult);
+            if (!objectBox.User.IsBanned) await ResponseChosenInline(cmds, chosenInlineResult);
         }
 
-        public async Task ResponseChosenInline(ChosenInlineResult chosenInlineResult)
+        public async Task ResponseChosenInline(List<Func<Task>> cmds, ChosenInlineResult chosenInlineResult)
         {
-            List<Func<Task>> cmds = new();
-
             switch (user.UserState)
             {
                 case UserState.Search_Posts:
@@ -50,12 +48,6 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                 case UserState.Search_User_Blocked_Tags:
                     cmds.Add(new ChosenUserBlockedTags(objectBox, int.Parse(chosenInlineResult.ResultId)).Do);
                     break;
-            }
-
-            foreach (var x in cmds)
-            {
-                await x();
-                await Task.Delay(34);
             }
         }
     }
