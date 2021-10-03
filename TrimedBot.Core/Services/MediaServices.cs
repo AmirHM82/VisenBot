@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dasync.Collections;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -107,16 +108,14 @@ namespace TrimedBot.Core.Services
 
         public Task<Media[]> SearchAsync(User user, string caption)
         {
-            Task<Media[]> result;
-            if (caption == null || caption == "")
-                result = _db.Medias.Include(x => x.User).Where(x =>
-                  (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
-                    .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
-            else
-                result = _db.Medias.Where(x =>
-                (x.Caption.Contains(caption) || x.Title.Contains(caption)) && (x.IsConfirmed == true || x.User.Id == user.Id) && x.Tags != user.BlockedTags)
-                    .OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
-            return result;
+            var result = _db.Medias
+                    .Where(x => x.Tags != user.BlockedTags)
+                    .Where(x => x.IsConfirmed == true || x.User.Id == user.Id);
+
+            if (caption is not null || caption != "")
+                result = result.Where(x => x.Caption.Contains(caption) || x.Title.Contains(caption));
+
+            return result.OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
         }
 
         public Task<Media[]> GetMediasAsync(User user, int pageNumber)

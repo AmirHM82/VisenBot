@@ -10,7 +10,7 @@ namespace TrimedBot.Core.Interfaces
     {
         Task AddAsync(Media track);
         void Edit(Media track);
-        Task<Media[]> SearchAsync(User user,string caption);
+        Task<Media[]> SearchAsync(User user, string caption);
         Task<Media[]> GetMediasAsync(User user);
         Task<Media[]> GetMediasAsync(User user, int pageNumber);
         Task<Media> FindAsync(Guid id);
