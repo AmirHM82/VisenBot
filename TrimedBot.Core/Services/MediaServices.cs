@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dasync.Collections;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> ChangeTitle(Guid Id, string Title)
         {
-            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            Media media = await _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id == Id);
             media.Title = Title;
             media.IsConfirmed = false;
             _db.Medias.Update(media);
@@ -35,7 +36,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> ChangeCaption(Guid Id, string Caption)
         {
-            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            Media media = await _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id == Id);
             media.Caption = Caption;
             media.IsConfirmed = false;
             _db.Medias.Update(media);
@@ -45,7 +46,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> ChangeVideo(Guid Id, string FileId)
         {
-            Media media = await _db.Medias.FirstOrDefaultAsync(t => t.Id == Id);
+            Media media = await _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id == Id);
             media.FileId = FileId;
             media.IsConfirmed = false;
             _db.Medias.Update(media);
@@ -74,18 +75,20 @@ namespace TrimedBot.Core.Services
             return _db.Medias.Include(x => x.User).Include(x => x.Tags).FirstOrDefaultAsync(t => t.Id.ToString() == Id);
         }
 
+        public Task<Media[]> GetNotConfirmedPostsAsync(int pageNumber)
+        {
+            return _db.Medias.Include(x => x.User).OrderByDescending(x => x.AddDate)
+                .AsAsyncEnumerable().Where(x => x.IsConfirmed == false)
+                    .Skip(--pageNumber * 5).Take(5).ToArrayAsync();
+        }
+
         public Task<Media[]> GetMediasAsync(User user)
         {
-            var m = _db.Medias.Where(x => x.User.Id == user.Id).OrderByDescending(x => x.AddDate).ToArrayAsync();
+            var m = _db.Medias.OrderByDescending(x => x.AddDate).AsAsyncEnumerable()
+                .Where(x => x.User.Id == user.Id).ToArrayAsync();
             if (m == null)
                 m = _db.Medias.OrderByDescending(x => x.AddDate).ToArrayAsync();
             return m;
-        }
-
-        public Task<Media[]> GetNotConfirmedPostsAsync(int pageNumber)
-        {
-            return _db.Medias.Where(x => x.IsConfirmed == false).Include(x => x.User)
-                    .OrderBy(x => x.AddDate).Skip(--pageNumber * 5).Take(5).ToArrayAsync();
         }
 
         public void Remove(Media media)
@@ -95,7 +98,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> Remove(string Id)
         {
-            var m = await _db.Medias.FirstOrDefaultAsync(t => t.Id.ToString() == Id);
+            var m = await _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id.ToString() == Id);
             _db.Medias.Remove(m);
             return m;
         }
@@ -105,22 +108,24 @@ namespace TrimedBot.Core.Services
             return _db.SaveChangesAsync();
         }
 
-        public Task<Media[]> SearchAsync(User user, string caption)
+        public Task<List<Media>> SearchAsync(User user, string caption)
         {
-            var result = _db.Medias
+            var medias = _db.Medias.Include(x => x.Tags).Include(x => x.User)
+                .OrderByDescending(x => x.AddDate).AsAsyncEnumerable()
                     .Where(x => x.Tags != user.BlockedTags)
                     .Where(x => x.IsConfirmed == true || x.User.Id == user.Id);
 
             if (caption is not null || caption != "")
-                result = result.Where(x => x.Caption.Contains(caption) || x.Title.Contains(caption));
+                medias = medias.Where(x => x.Caption.Contains(caption) || x.Title.Contains(caption));
 
-            return result.OrderByDescending(x => x.AddDate).Take(50).ToArrayAsync();
+            return medias.Take(50).ToListAsync();
         }
 
         public Task<Media[]> GetMediasAsync(User user, int pageNumber)
         {
-            return _db.Medias.Where(x => x.User == user)
-                .OrderByDescending(x => x.AddDate).Skip((--pageNumber) * 5).Take(5).ToArrayAsync();
+            return _db.Medias.Include(x => x.User).OrderByDescending(x => x.AddDate)
+                .AsAsyncEnumerable().Where(x => x.User.Id == user.Id)
+                .Skip((--pageNumber) * 5).Take(5).ToArrayAsync();
         }
 
         public Task<Media[]> GetUsersMediasAsync(Guid userId, string fileId, int pageNumber)
@@ -158,7 +163,7 @@ namespace TrimedBot.Core.Services
 
         public Task<Media> GetAsync(string fileId)
         {
-            return _db.Medias.Where(x => x.FileId == fileId).FirstOrDefaultAsync();
+            return _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.FileId == fileId);
         }
 
         public async Task RemoveTag(Guid mediaId, int tagId)

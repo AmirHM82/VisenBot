@@ -28,13 +28,20 @@ namespace TrimedBot.Core.Commands.Post
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            var videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
+            var cacheService = objectBox.Provider.GetRequiredService<CacheService>();
+
+            var videos = await cacheService.GetCachedMedias(caption);
+            if (videos is null || videos.Count() == 0)
+            {
+                videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
+                await cacheService.CacheMedias(caption, videos);
+            }
 
             if (videos != null)
             {
-                var results = new InlineQueryResultCachedVideo[videos.Length];
+                var results = new InlineQueryResultCachedVideo[videos.Count];
 
-                for (int i = 0; i < videos.Length && i < 50; i++)
+                for (int i = 0; i < videos.Count && i < 50; i++)
                 {
                     results[i] = new InlineQueryResultCachedVideo(videos[i].Id.ToString(), videos[i].FileId, $"{videos[i].Title} - {videos[i].Caption}");
                 }

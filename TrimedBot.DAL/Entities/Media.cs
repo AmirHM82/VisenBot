@@ -15,7 +15,7 @@ namespace TrimedBot.DAL.Entities
         public string Title { get; set; }
         public string Caption { get; set; }
         public string FileId { get; set; }
-        public virtual User User { get; set; }
+        public User User { get; set; }
         public bool IsConfirmed { get; set; }
         public DateTime? AddDate { get; set; }
         public ICollection<Tag> Tags { get; set; }

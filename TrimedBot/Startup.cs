@@ -42,20 +42,16 @@ namespace TrimedBot
 
             services.AddControllers();
             services.AddHttpClient();
+            services.AddDistributedMemoryCache();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             app.UseDeveloperExceptionPage();
-
-            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseStaticFiles();
-
-            //app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
@@ -85,6 +81,7 @@ namespace TrimedBot
             services.AddScoped<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();
+            services.AddSingleton<CacheService>();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace TrimedBot.DAL.Entities
         public long UserId { get; set; }
         public UserState UserState { get; set; }
         public UserState LastUserState { get; set; }
-        public ICollection<Media> Medias { get; set; }
+        //public ICollection<Media> Medias { get; set; }
         public Access Access { get; set; }
         public DateTime StartDate { get; set; }
         public bool IsSentAdminRequest { get; set; }

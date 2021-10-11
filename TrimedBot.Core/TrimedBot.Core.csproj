@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <None Remove="Commands\Service\Channels\DeleteChannelCommand.cs~RF11fec5ad.TMP" />
+    <None Remove="Services\CacheService.cs~RF7dcdf1a.TMP" />
   </ItemGroup>
 
   <ItemGroup>

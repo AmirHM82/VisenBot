@@ -18,14 +18,11 @@ namespace TrimedBot.Core.Services
             _context = context;
         }
 
-        public Task AddAsync(User user)
+        public async Task AddAsync(User user)
         {
-            return Task.Run(async () =>
-            {
-                await _context.Users.AddAsync(user);
-                if (user.Medias != null)
-                    _context.Entry(user.Medias).State = EntityState.Unchanged;
-            });
+            await _context.Users.AddAsync(user);
+            //if (user.Medias != null)
+            //    _context.Entry(user.Medias).State = EntityState.Unchanged;
         }
 
         public Task<User> FindAsync(Guid id)
