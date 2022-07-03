@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.ConsoleApp", "Tri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.DatabasesInterface", "TrimedBot.DatabasesInterface\TrimedBot.DatabasesInterface.csproj", "{9FC1C43A-0FE0-46B1-A281-189909898996}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrimedBot.Tests", "TrimedBot.Tests\TrimedBot.Tests.csproj", "{F5516B98-66B0-4F61-937B-C8109DF4BCDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrimedBot.Tests", "TrimedBot.Tests\TrimedBot.Tests.csproj", "{F5516B98-66B0-4F61-937B-C8109DF4BCDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

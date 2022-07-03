@@ -80,8 +80,10 @@ namespace TrimedBot.Core.Services
 
         public async Task Delete(long userId, int messageId)
         {
-                var tempMessage = await FindAsync(userId, messageId);
-                Delete(tempMessage);
+            var tempMessage = await FindAsync(userId, messageId);
+            if (tempMessage is null) return;
+            Delete(tempMessage);
+            await SaveAsync();
         }
 
         public Task AddAsync(TempMessage tempMessages)

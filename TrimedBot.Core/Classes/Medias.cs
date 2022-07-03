@@ -32,8 +32,9 @@ namespace TrimedBot.Core.Classes
 
             if (pageNum > 0)
             {
+                var count = await mediaServices.CountAsync(objectBox.User.Id);
                 var medias = await mediaServices.GetMediasAsync(objectBox.User, pageNum);
-                if (medias.Length != 0)
+                if (medias.Length > 0)
                 {
                     for (int i = 0; i < medias.Length; i++)
                     {
@@ -50,7 +51,7 @@ namespace TrimedBot.Core.Classes
                     //objectBox.User.UserLocation = UserLocation.SeeAddedVideos_Member;
                     objectBox.User.Temp = "SendPrivateMedias";
                     objectBox.UpdateUserInfo();
-                    needNP = true;
+                    if (count > 5 || pageNum >= 2) needNP = true;
                 }
                 else
                 {
@@ -77,6 +78,7 @@ namespace TrimedBot.Core.Classes
             {
                 if (pageNum > 0)
                 {
+                    var count = await mediaServices.CountAsync(objectBox.User.Id);
                     var medias = await mediaServices.GetNotConfirmedPostsAsync(pageNum);
                     if (medias.Length > 0)
                     {
@@ -104,7 +106,7 @@ namespace TrimedBot.Core.Classes
                         //   : UserLocation.SeeAddedVideos_Manager;
                         objectBox.User.Temp = "SendPublicMedias";
                         objectBox.UpdateUserInfo();
-                        needNP = true;
+                        if (count > 5 || pageNum >= 2) needNP = true;
                     }
                     else
                     {

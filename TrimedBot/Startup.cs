@@ -81,7 +81,7 @@ namespace TrimedBot
             services.AddScoped<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();
-            services.AddSingleton<CacheService>();
+            //services.AddSingleton<CacheService>();
         }
     }
 }

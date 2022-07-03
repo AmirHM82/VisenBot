@@ -54,10 +54,11 @@ namespace TrimedBot.Core.Services
             return media;
         }
 
-        public void Confirm(Media media)
+        public async Task Confirm(Media media)
         {
             media.IsConfirmed = true;
             _db.Medias.Update(media);
+            await SaveAsync();
         }
 
         public void Edit(Media track)
@@ -98,7 +99,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> Remove(string Id)
         {
-            var m = await _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id.ToString() == Id);
+            var m = await _db.Medias.Include(x => x.User).AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id.ToString() == Id);
             _db.Medias.Remove(m);
             return m;
         }
@@ -111,11 +112,11 @@ namespace TrimedBot.Core.Services
         public Task<List<Media>> SearchAsync(User user, string caption)
         {
             var medias = _db.Medias.Include(x => x.Tags).Include(x => x.User)
-                .OrderByDescending(x => x.AddDate).AsAsyncEnumerable()
-                    .Where(x => x.Tags != user.BlockedTags)
-                    .Where(x => x.IsConfirmed == true || x.User.Id == user.Id);
+                .OrderByDescending(x => x.AddDate).Take(20).AsAsyncEnumerable();
+            //.Where(x => x.Tags != user.BlockedTags); //We will work on it next time :/
+            //.Where(x => x.IsConfirmed == true || x.User.Id == user.Id);
 
-            if (caption is not null || caption != "")
+            if (caption != "")
                 medias = medias.Where(x => x.Caption.Contains(caption) || x.Title.Contains(caption));
 
             return medias.Take(50).ToListAsync();
@@ -161,9 +162,9 @@ namespace TrimedBot.Core.Services
             return _db.Medias.Include(x => x.Tags).Where(x => x.IsConfirmed == true).ToListAsync();
         }
 
-        public Task<Media> GetAsync(string fileId)
+        public ValueTask<Media> GetAsync(string fileId)
         {
-            return _db.Medias.AsAsyncEnumerable().FirstOrDefaultAsync(x => x.FileId == fileId);
+            return _db.Medias.FindAsync(fileId);
         }
 
         public async Task RemoveTag(Guid mediaId, int tagId)
@@ -175,6 +176,11 @@ namespace TrimedBot.Core.Services
             _db.Entry(tag).State = EntityState.Deleted;
             Update(media);
             await SaveAsync();
+        }
+
+        public async Task<int> CountAsync(Guid userId)
+        {
+            return await _db.Medias.Include(x => x.User).CountAsync(x => x.User.Id == userId);
         }
     }
 }

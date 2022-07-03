@@ -16,7 +16,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Send admin request") },
             new[] {new KeyboardButton("Search in posts") },
-            new[] {new KeyboardButton("Blocked tags") }
+            //new[] {new KeyboardButton("Blocked tags") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Admin() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("My videos") },
             new[] {new KeyboardButton("Posts") },
             new[] {new KeyboardButton("Search in posts") },
-            new[] {new KeyboardButton("Blocked tags") }
+            //new[] {new KeyboardButton("Blocked tags") }
         }, true);
 
         public static ReplyKeyboardMarkup StartKeyboard_Manager() => new ReplyKeyboardMarkup(new KeyboardButton[][]
@@ -40,7 +40,7 @@ namespace TrimedBot.Core.Classes
             new[] {new KeyboardButton("Settings") },
             new[] {new KeyboardButton("Send message to admins") },
             new[] {new KeyboardButton("Send message to all") },
-            new[] {new KeyboardButton("Blocked tags") },
+            //new[] {new KeyboardButton("Blocked tags") },
             new[] {new KeyboardButton("Census") }
         }, true);
 
@@ -285,10 +285,10 @@ namespace TrimedBot.Core.Classes
                 InlineKeyboardButton.WithCallbackData("Edit video", $"{CallbackSection.Post}/{CallbackSection.Edit}/{CallbackSection.Video}/{postId}")
             };
 
-            InlineKeyboardButton[] k2 =
-            {
-                InlineKeyboardButton.WithCallbackData("Edit tags", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Next}/1")
-            };
+            //InlineKeyboardButton[] k2 =
+            //{
+            //    InlineKeyboardButton.WithCallbackData("Edit tags", $"{CallbackSection.Post}/{CallbackSection.Tag}/{CallbackSection.Next}/1")
+            //};
 
             if (HasCancel)
             {
@@ -297,11 +297,11 @@ namespace TrimedBot.Core.Classes
                     InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
                 };
 
-                return new InlineKeyboardMarkup(new[] { k1, k2, k3 });
+                return new InlineKeyboardMarkup(new[] { k1, /*k2,*/ k3 });
             }
             else
             {
-                return new InlineKeyboardMarkup(new[] { k1, k2 });
+                return new InlineKeyboardMarkup(new[] { k1, /*k2*/ });
             }
         }
 

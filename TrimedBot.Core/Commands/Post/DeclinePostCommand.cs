@@ -33,10 +33,7 @@ namespace TrimedBot.Core.Commands.Post
         public async Task Do()
         {
             List<Processor> messages = new();
-            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>(); ;
-            //if (objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Admin ||
-            //    objectBox.User.UserLocation == UserLocation.SeeAddedVideos_Manager ||
-            //    objectBox.User.UserLocation == UserLocation.Search_Posts)
+            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             {
                 var media = await mediaServices.FindAsync(Guid.Parse(id));
                 if (media != null)
@@ -61,19 +58,8 @@ namespace TrimedBot.Core.Commands.Post
                     UserId = objectBox.User.UserId,
                     MessageId = messageId
                 });
-                var m = await tempMessageServices.FindAsync(objectBox.User.UserId, messageId);
-                if (m != null)
-                {
-                    tempMessageServices.Delete(m);
-                    await tempMessageServices.SaveAsync();
-                }
+                await tempMessageServices.Delete(objectBox.User.UserId, messageId);
             }
-            //else
-            //    messages.Add(new TextResponseProcessor()
-            //    {
-            //        ReceiverId = objectBox.User.UserId,
-            //        Text = Sentences.Access_Denied
-            //    });
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 

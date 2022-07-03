@@ -28,22 +28,26 @@ namespace TrimedBot.Core.Commands.Post
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            var cacheService = objectBox.Provider.GetRequiredService<CacheService>();
+            //var cacheService = objectBox.Provider.GetRequiredService<CacheService>();
 
-            var videos = await cacheService.GetCachedMedias(caption);
-            if (videos is null || videos.Count() == 0)
+            //var videos = await cacheService.GetCachedMedias(caption);
+            //if (videos?.Count() < 1)
+            //{
+            //    videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
+            //    await cacheService.CacheMedias(caption, videos);
+            //}
+            //videos = videos.Where(x => x.IsConfirmed == true || x.User.Id == objectBox.User.Id); // It doesn't work (wtf)
+            var videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
+
+            if (videos?.Count() >= 1)
             {
-                videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
-                await cacheService.CacheMedias(caption, videos);
-            }
+                var results = new InlineQueryResultCachedVideo[videos.Count()];
 
-            if (videos != null)
-            {
-                var results = new InlineQueryResultCachedVideo[videos.Count];
-
-                for (int i = 0; i < videos.Count && i < 50; i++)
+                int i = 0;
+                foreach (var video in videos)
                 {
-                    results[i] = new InlineQueryResultCachedVideo(videos[i].Id.ToString(), videos[i].FileId, $"{videos[i].Title} - {videos[i].Caption}");
+                    results[i] = new InlineQueryResultCachedVideo(video.Id.ToString(), video.FileId, $"{video.Title} - {video.Caption}");
+                    i++;
                 }
 
                 new InlineQueryProcessor()

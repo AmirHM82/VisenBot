@@ -19,7 +19,7 @@ namespace TrimedBot.Core.Services
 
         public async Task SetAsync(string key, object item)
         {
-            if (item == null) return;
+            if (item is null || key is null) return;
 
             string jsonedItem = JsonConvert.SerializeObject(item);
             await cache.SetStringAsync(key, jsonedItem);
@@ -27,10 +27,19 @@ namespace TrimedBot.Core.Services
 
         public async Task<T> GetAsync<T>(string key)
         {
+            if (key is null) return default(T);
+
             var jsonedItem = await cache.GetStringAsync(key);
             if (jsonedItem == null) return default(T);
             var result = JsonConvert.DeserializeObject<T>(jsonedItem);
             return result;
+        }
+
+        public async Task RemoveAsync(string key)
+        {
+            if (key is null) return;
+
+            await cache.RemoveAsync(key);
         }
 
         // Wtf am I doing

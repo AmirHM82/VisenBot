@@ -82,7 +82,9 @@ namespace TrimedBot.Controllers
         public IActionResult FakeUpdate()
         {
             var botService = provider.GetRequiredService<BotServices>();
-            Update update = new Update()
+
+            List<Update> updates = new();
+            updates.Add(new Update()
             {
                 InlineQuery = new InlineQuery()
                 {
@@ -90,14 +92,33 @@ namespace TrimedBot.Controllers
                     Query = "aa",
                     From = new User()
                     {
-                        Id= 326683896,
+                        Id = 326683896,
                         Username = "DarknessMaster0",
                         FirstName = "AmirHM",
                         LastName = null
                     }
                 }
-            };
-            botService.Handle(update);
+            });
+            updates.Add(new Update()
+            {
+                InlineQuery = new InlineQuery()
+                {
+                    Id = "3",
+                    Query = "ss",
+                    From = new User()
+                    {
+                        Id = 1,
+                        Username = "Dark",
+                        FirstName = "Amir",
+                        LastName = null
+                    }
+                }
+            });
+
+            foreach (var update in updates)
+            {
+                botService.Handle(update);
+            }
 
             return Ok();
         }

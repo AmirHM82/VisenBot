@@ -31,6 +31,8 @@ namespace TrimedBot.Core.Commands.Post.Add
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
+            //var cacheService = objectBox.Provider.GetRequiredService<CacheService>();
+
             Processor message;
             if (video == null)
             {
@@ -61,6 +63,8 @@ namespace TrimedBot.Core.Commands.Post.Add
                 };
                 await mediaServices.AddAsync(media);
                 await mediaServices.SaveAsync();
+
+                //await cacheService.EditCachedMedias(new[] { media.Title, media.Caption }, new[] { media });
 
                 objectBox.User.Temp = null;
                 objectBox.User.UserState = UserState.NoWhere;

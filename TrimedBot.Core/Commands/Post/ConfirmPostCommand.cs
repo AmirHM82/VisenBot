@@ -32,37 +32,30 @@ namespace TrimedBot.Core.Commands.Post
 
         public async Task Do()
         {
-            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             List<Processor> messages = new();
+            var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
+
             var media = await mediaServices.FindAsync(Guid.Parse(id));
             if (media != null)
             {
-                if (!media.IsConfirmed)
+                if (media.IsConfirmed) return;
+                messages.Add(new VideoResponseProcessor()
                 {
-                    messages.Add(new VideoResponseProcessor()
-                    {
-                        ReceiverId = media.User.UserId,
-                        Text = $"{media.Title} - {media.Caption}\nThis post confirmed by an admin.",
-                        Video = media.FileId
-                    });
-                    mediaServices.Confirm(media);
-                    await mediaServices.SaveAsync();
-                }
-            }
+                    ReceiverId = media.User.UserId,
+                    Text = $"{media.Title} - {media.Caption}\nThis post confirmed by an admin.",
+                    Video = media.FileId
+                });
+                await mediaServices.Confirm(media);
 
-            await new Classes.Media(objectBox).SendToChannels(media); //Add: Save medias at channels posts table
+                await new Classes.Media(objectBox).SendToChannels(media); //Add: Save medias at channels posts table (Check is media tracking?)
+            }
 
             messages.Add(new DeleteProcessor()
             {
                 UserId = objectBox.User.UserId,
                 MessageId = messageId
             });
-            var m = await tempMessageServices.FindAsync(objectBox.User.UserId, messageId);
-            if (m != null)
-            {
-                tempMessageServices.Delete(m);
-                await tempMessageServices.SaveAsync();
-            }
+            await tempMessageServices.Delete(objectBox.User.UserId, messageId);
             new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
         }
 
