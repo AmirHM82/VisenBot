@@ -119,7 +119,7 @@ namespace TrimedBot.Core.Services
             if (caption != "")
                 medias = medias.Where(x => x.Caption.Contains(caption) || x.Title.Contains(caption));
 
-            return medias.Take(50).ToListAsync();
+            return medias.ToListAsync();
         }
 
         public Task<Media[]> GetMediasAsync(User user, int pageNumber)

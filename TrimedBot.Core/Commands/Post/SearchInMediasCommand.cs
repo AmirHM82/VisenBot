@@ -39,9 +39,9 @@ namespace TrimedBot.Core.Commands.Post
             //videos = videos.Where(x => x.IsConfirmed == true || x.User.Id == objectBox.User.Id); // It doesn't work (wtf)
             var videos = await mediaServices.SearchAsync(objectBox.User, caption.ToLower());
 
-            if (videos?.Count() >= 1)
+            if (videos?.Count() > 0)
             {
-                var results = new InlineQueryResultCachedVideo[videos.Count()];
+                var results = new InlineQueryResultCachedVideo[videos.Count];
 
                 int i = 0;
                 foreach (var video in videos)

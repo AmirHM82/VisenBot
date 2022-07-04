@@ -8,7 +8,6 @@ using Telegram.Bot.Types.InlineQueryResults;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace TrimedBot.Core.Commands.Post.Tag
 {

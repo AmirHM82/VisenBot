@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
 using Telegram.Bot.Types.ReplyMarkups;
-
 using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;

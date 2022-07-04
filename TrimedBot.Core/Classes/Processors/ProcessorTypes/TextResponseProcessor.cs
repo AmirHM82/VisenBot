@@ -26,7 +26,6 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 
         protected override async Task Action(IServiceProvider provider)
         {
-            ITempMessage tempService = provider.GetRequiredService<ITempMessage>();
             BotServices bot = provider.GetRequiredService<BotServices>();
 
             var SentMessage = await bot.SendTextMessageAsync(ReceiverId, Text, ParseMode,
@@ -36,6 +35,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 
             if (IsDeletable)
             {
+                ITempMessage tempService = provider.GetRequiredService<ITempMessage>();
                 await tempService.AddAsync(new TempMessage
                 {
                     MessageId = SentMessage.MessageId,
