@@ -23,6 +23,8 @@ using TrimedBot.Core.Commands.Post.Properties;
 using TrimedBot.Core.Commands.Post.Tag;
 using TrimedBot.Core.Commands.Service.Channels;
 using TrimedBot.Core.Commands.User.All.BlockedTags;
+using TrimedBot.Core.Commands.Channel.Properties;
+using TrimedBot.Core.Commands.Channel.Edit.Type;
 
 namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 {
@@ -44,7 +46,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 
         public void ResponseCallback(List<Func<Task>> cmds, CallbackQuery callbackQuery)
         {
-            new CallbackQueryProcessor()
+            new CallbackQueryProcessor(objectBox)
             {
                 Id = callbackQuery.Id
             }.AddThisMessageToService(objectBox.Provider);
@@ -227,6 +229,29 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
                     break;
                 case CallbackSection.Delete:
                     cmds.Add(new DeleteChannelCommand(objectBox, int.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
+                    break;
+                case CallbackSection.Properties:
+                    cmds.Add(new ChannelPropertiesCommand(objectBox, int.Parse(data.Dequeue()), callbackQuery.Message.MessageId).Do);
+                    break;
+                case CallbackSection.EditEntry:
+                    switch (data.Dequeue())
+                    {
+                        case CallbackSection.Type:
+                            cmds.Add(new GetInEditChannelTypeCommand(objectBox, callbackQuery.Message.MessageId, int.Parse(data.Dequeue())).Do);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case CallbackSection.Edit:
+                    switch (data.Dequeue())
+                    {
+                        case CallbackSection.Type:
+                            cmds.Add(new EditChannelTypeCommand(Enum.Parse<ChannelType>(data.Dequeue()), int.Parse(data.Dequeue()), objectBox, callbackQuery.Message.MessageId).Do);
+                            break;
+                        default:
+                            break;
+                    }
                     break;
             }
         }

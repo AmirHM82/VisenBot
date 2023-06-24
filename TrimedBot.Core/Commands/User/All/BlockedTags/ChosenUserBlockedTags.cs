@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
             objectBox.User.BlockedTags.Add(tag);
             objectBox.UpdateUserInfo();
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = $"{tag.Name} blocked. Use inline mode to add another tag or use cancel button (/cancel command)"

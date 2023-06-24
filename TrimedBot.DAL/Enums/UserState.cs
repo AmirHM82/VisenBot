@@ -35,6 +35,7 @@ namespace TrimedBot.DAL.Enums
         See_Posts_Tags = 23,
         Add_General_Tag = 24,
         Search_Posts_Tag = 25,
-        Search_User_Blocked_Tags = 26
+        Search_User_Blocked_Tags = 26,
+        EditChannel_Type = 27,
     }
 }

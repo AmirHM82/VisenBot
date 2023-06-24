@@ -27,7 +27,7 @@ namespace TrimedBot.Core.Commands.User.All
             switch (objectBox.User.Access)
             {
                 case Access.Manager:
-                    message = new TextResponseProcessor()
+                    message = new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Manager,
@@ -35,7 +35,7 @@ namespace TrimedBot.Core.Commands.User.All
                     };
                     break;
                 case Access.Admin:
-                    message = new TextResponseProcessor()
+                    message = new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Admin,
@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Commands.User.All
                     };
                     break;
                 case Access.Member:
-                    message = new TextResponseProcessor()
+                    message = new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = Sentences.Help_Member,

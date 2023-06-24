@@ -32,7 +32,8 @@ namespace TrimedBot.Controllers
         public IActionResult TestSenderTask()
         {
             var sender = provider.GetRequiredService<ResponseService>();
-            new TextResponseProcessor()
+            var objectBox = provider.GetRequiredService<ObjectBox>();
+            new TextResponseProcessor(objectBox)
             {
                 Text = "Test",
                 ReceiverId = 326683896

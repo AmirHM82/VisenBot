@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Commands.Service.Tags
             await tagsService.SaveAsync();
             await tempService.SaveAsync();
 
-            new DeleteProcessor()
+            new DeleteProcessor(objectBox)
             {
                 UserId = objectBox.User.UserId,
                 MessageId = messageId

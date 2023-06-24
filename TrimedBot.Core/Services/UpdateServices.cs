@@ -19,7 +19,7 @@ namespace TrimedBot.Core.Services
         {
             var objectBox = provider.GetRequiredService<ObjectBox>();
 
-            Input request = null;
+            Input request = default;
             await objectBox.AssignSettings();
 
             try
@@ -27,30 +27,37 @@ namespace TrimedBot.Core.Services
                 switch (update.Type)
                 {
                     case UpdateType.Message:
-                        //if (update.Message.Chat.Type == ChatType.Private &&
-                        //    (update.Message.Type == MessageType.Text || update.Message.Type == MessageType.Video || update.Message.Type == MessageType.Photo))
-                        //{
-                        //}
+                        objectBox.ChatType = update.Message.Chat.Type;
                         await objectBox.AssignUser(update.Message.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new MessageInput(objectBox, update.Message);
                         break;
                     case UpdateType.InlineQuery:
+                        objectBox.ChatType = update.InlineQuery.ChatType;
                         await objectBox.AssignUser(update.InlineQuery.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new InlineInput(objectBox, update.InlineQuery);
                         break;
                     case UpdateType.ChosenInlineResult:
+                        //Cannot specify type for Chosen Inline :/
                         await objectBox.AssignUser(update.ChosenInlineResult.From);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new ChosenInlineInput(objectBox, update.ChosenInlineResult);
                         break;
                     case UpdateType.CallbackQuery:
-                        await objectBox.AssignUser(update.CallbackQuery.From);
+                        bool userValidationState = true;
+                        objectBox.ChatType = update.CallbackQuery.Message.Chat.Type;
+                        if (objectBox.ChatType is ChatType.Channel)
+                        {
+                            await objectBox.AssignChannel(update.CallbackQuery.Message.Chat);
+                            userValidationState = false;
+                        }
+                        await objectBox.AssignUser(update.CallbackQuery.From, userValidationState);
                         objectBox.AssignKeyboard(objectBox.User.Access);
                         request = new CallbackInput(objectBox, update.CallbackQuery);
                         break;
                     case UpdateType.ChannelPost:
+                        objectBox.ChatType = update.ChannelPost.Chat.Type;
                         await objectBox.AssignChannel(update.ChannelPost.Chat);
                         request = new ChannelPostInput(objectBox, update.ChannelPost);
                         break;

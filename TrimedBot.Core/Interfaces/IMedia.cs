@@ -12,10 +12,11 @@ namespace TrimedBot.Core.Interfaces
         void Edit(Media track);
         Task<List<Media>> SearchAsync(User user, string caption);
         Task<Media[]> GetMediasAsync(User user);
+        Task<List<Media>> GetMediasAsync();
         Task<Media[]> GetMediasAsync(User user, int pageNumber);
         Task<Media> FindAsync(Guid id);
         Task<Media> FindAsync(string id);
-        ValueTask<Media> GetAsync(string fileId);
+        Task<Media> GetAsync(string fileId);
         Task<Media[]> GetUsersMediasAsync(Guid userId, string FileId, int pageNumber);
         Task<Media[]> GetMediasAsync(string fileId, int pageNumber);
         Task SaveAsync();
@@ -26,6 +27,7 @@ namespace TrimedBot.Core.Interfaces
         Task<Media> ChangeCaption(Guid Id, string Caption);
         Task<Media> ChangeVideo(Guid Id, string FileId);
         Task<Media[]> GetNotConfirmedPostsAsync(int pageNumber);
+        Task<List<Media>> GetNotConfirmedPostsAsync();
         void Decline(Media media);
         Task Confirm(Media media);
         Task<List<Media>> GetConfirmedMedias();

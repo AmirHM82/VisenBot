@@ -12,10 +12,8 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class StickerResponseProcessor : Processor
     {
-        //public IServiceProvider provider;
-        public StickerResponseProcessor(/*IServiceProvider provider*/)/* : base(provider)*/
+        public StickerResponseProcessor(ObjectBox objectBox) : base(objectBox)
         {
-            //this.provider = provider;
         }
 
         public long ReceiverId { get; set; }

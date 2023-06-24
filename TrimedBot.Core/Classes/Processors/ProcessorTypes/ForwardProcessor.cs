@@ -10,6 +10,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class ForwardProcessor : Processor
     {
+        public ForwardProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public long FromId { get; set; }
         public int messageId { get; set; }

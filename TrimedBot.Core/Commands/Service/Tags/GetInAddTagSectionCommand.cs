@@ -23,7 +23,7 @@ namespace TrimedBot.Core.Commands.Service.Tags
             //await new TempMessages(objectBox).Delete();
             objectBox.IsNeedDeleteTemps = false;
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 Keyboard = Keyboard.CancelKeyboard(),
                 ReceiverId = objectBox.User.UserId,

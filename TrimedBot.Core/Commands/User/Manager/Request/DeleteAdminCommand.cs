@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
             if (objectBox.User.Access == Access.Manager)
             {
                 var dadmin = await userServices.FindAsync(Guid.Parse(id));
-                messages.Add(new TextResponseProcessor()
+                messages.Add(new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = dadmin.UserId,
                     Text = Sentences.Admin_Deleted,
@@ -46,7 +46,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
                 userServices.Update(dadmin);
                 await userServices.SaveAsync();
 
-                    messages.Add(new DeleteProcessor()
+                    messages.Add(new DeleteProcessor(objectBox)
                     {
                         UserId = objectBox.User.UserId,
                         MessageId = messageId
@@ -55,12 +55,12 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
                 await tempMessageServices.SaveAsync();
             }
             else
-                messages.Add(new TextResponseProcessor()
+                messages.Add(new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied
                 });
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

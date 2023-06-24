@@ -33,7 +33,7 @@ namespace TrimedBot.Core.Commands.Service.Channels
             var tempService = objectBox.Provider.GetRequiredService<ITempMessage>();
             await tempService.Delete(objectBox.User.UserId, messageId);
 
-            new DeleteProcessor()
+            new DeleteProcessor(objectBox)
             {
                 MessageId = messageId,
                 UserId = objectBox.User.UserId

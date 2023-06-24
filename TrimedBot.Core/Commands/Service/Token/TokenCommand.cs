@@ -49,7 +49,7 @@ namespace TrimedBot.Core.Commands.Service.Token
                 await tokenService.SaveAsync();
             }
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = $"Code: {token.Code}\nExpire date: {token.ExpireDate}"

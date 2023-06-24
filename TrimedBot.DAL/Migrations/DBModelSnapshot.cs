@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrimedBot.DAL.Context;
 
+#nullable disable
+
 namespace TrimedBot.DAL.Migrations
 {
     [DbContext(typeof(DB))]
@@ -15,9 +17,10 @@ namespace TrimedBot.DAL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.Banner", b =>
                 {
@@ -51,8 +54,9 @@ namespace TrimedBot.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<long>("ChatId")
                         .HasColumnType("bigint");
@@ -64,6 +68,9 @@ namespace TrimedBot.DAL.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("State")
+                        .HasColumnType("tinyint");
+
+                    b.Property<byte>("Type")
                         .HasColumnType("tinyint");
 
                     b.HasKey("Id");
@@ -81,6 +88,9 @@ namespace TrimedBot.DAL.Migrations
 
                     b.Property<Guid?>("MediaId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte>("PostType")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("MessageId");
 
@@ -126,8 +136,9 @@ namespace TrimedBot.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<decimal>("BasicAdsPrice")
                         .HasColumnType("decimal(18,2)");
@@ -150,8 +161,9 @@ namespace TrimedBot.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<Guid?>("MediaId")
                         .HasColumnType("uniqueidentifier");
@@ -175,17 +187,15 @@ namespace TrimedBot.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<long>("ChatId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("MessageId")
                         .HasColumnType("int");
-
-                    b.Property<byte>("Type")
-                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
@@ -196,8 +206,9 @@ namespace TrimedBot.DAL.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .HasColumnType("nvarchar(max)");
@@ -268,13 +279,15 @@ namespace TrimedBot.DAL.Migrations
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.ChannelPost", b =>
                 {
-                    b.HasOne("TrimedBot.DAL.Entities.Channel", null)
-                        .WithMany("ChannelPosts")
+                    b.HasOne("TrimedBot.DAL.Entities.Channel", "Channel")
+                        .WithMany()
                         .HasForeignKey("ChannelId");
 
                     b.HasOne("TrimedBot.DAL.Entities.Media", "Media")
                         .WithMany()
                         .HasForeignKey("MediaId");
+
+                    b.Navigation("Channel");
 
                     b.Navigation("Media");
                 });
@@ -297,11 +310,6 @@ namespace TrimedBot.DAL.Migrations
                     b.HasOne("TrimedBot.DAL.Entities.User", null)
                         .WithMany("BlockedTags")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("TrimedBot.DAL.Entities.Channel", b =>
-                {
-                    b.Navigation("ChannelPosts");
                 });
 
             modelBuilder.Entity("TrimedBot.DAL.Entities.Media", b =>

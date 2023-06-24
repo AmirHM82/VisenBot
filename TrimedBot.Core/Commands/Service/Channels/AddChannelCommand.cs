@@ -20,7 +20,7 @@ namespace TrimedBot.Core.Commands.Service.Channels
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 Text = Sentences.Channel_Add_Guide,
                 ReceiverId = objectBox.User.UserId

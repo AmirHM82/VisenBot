@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.Message
         {
             if (media != null)
             {
-                new VideoResponseProcessor()
+                new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = $"{media.Title}\n{media.Caption}",
@@ -39,7 +39,7 @@ namespace TrimedBot.Core.Commands.Message
                     Video = media.FileId
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",

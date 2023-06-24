@@ -28,11 +28,11 @@ namespace TrimedBot.Core.Commands.Message
                 var users = await userService.GetUsersAsync();
                 StringBuilder sb = new();
                 sb.AppendLine($"Number of users: {users.Count()}");
-                foreach (var u in users)
-                {
-                    sb.AppendLine(JsonConvert.SerializeObject(u));
-                }
-                new TextResponseProcessor()
+                //foreach (var u in users)
+                //{
+                //    sb.AppendLine(JsonConvert.SerializeObject(u));
+                //}
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.ChatId,
                     Text = sb.ToString()

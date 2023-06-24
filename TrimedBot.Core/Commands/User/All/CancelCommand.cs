@@ -27,7 +27,7 @@ namespace TrimedBot.Core.Commands.User.All
             //await new TempMessages(objectBox).Delete();
             objectBox.IsNeedDeleteTemps = true;
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Canceled",

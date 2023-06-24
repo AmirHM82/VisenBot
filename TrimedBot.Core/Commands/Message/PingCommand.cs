@@ -19,7 +19,7 @@ namespace TrimedBot.Core.Commands.Message
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = "pong"

@@ -19,7 +19,7 @@ namespace TrimedBot.Core.Commands.Message
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Command not found.\nUse your keyboard or send /help",

@@ -27,10 +27,10 @@ namespace TrimedBot.Core.Commands.Channel.Post
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Add(new TempMessage
+            await new TempMessages(objectBox).AddUserTemp(new TempMessage   //Replace it with ChannelPosts class or maybe it's not needed
             {
                 MessageId = messageId,
-                Type = DAL.Enums.TempType.Channel,
+                //Type = DAL.Enums.TempType.Channel,
                 ChatId = objectBox.Channel.ChatId
             });
 
@@ -43,10 +43,11 @@ namespace TrimedBot.Core.Commands.Channel.Post
                 {
                     objectBox.Channel.IsVerified = true;
                     objectBox.Channel.State = DAL.Enums.ChannelState.NoWhere;
+                    objectBox.Channel.Type = DAL.Enums.ChannelType.NoOne;
                     objectBox.UpdateChannelInfo();
 
                     receiverId = objectBox.ChatId;
-                    text = "The new channel has been connected successfully";
+                    text = "The channel connected successfully";
 
                     tokenService.Remove(token);
                     await tokenService.SaveAsync();
@@ -64,7 +65,7 @@ namespace TrimedBot.Core.Commands.Channel.Post
                 text = "There is no code in bot. Use /token in bot to create a new one.";
             }
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = receiverId,
                 Text = text,

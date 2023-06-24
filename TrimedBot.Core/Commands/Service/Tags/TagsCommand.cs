@@ -42,13 +42,13 @@ namespace TrimedBot.Core.Commands.Service.Tags
                         processList.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Tag));
                 }
             }
-            else processList.Add(new TextResponseProcessor()
+            else processList.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Keyboard = objectBox.Keyboard,
                 Text = Sentences.Access_Denied
             });
-            new MultiProcessor(processList).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(processList, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

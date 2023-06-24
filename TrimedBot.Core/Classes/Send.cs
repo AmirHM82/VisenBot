@@ -14,7 +14,7 @@ namespace TrimedBot.Core.Classes
     {
         public static void SendText(this Message message, long ReceiverId, ObjectBox objectBox)
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId, //long.Parse(objectBox.User.Temp)
                 Text = $"Message from: {objectBox.User.Access}\n{message.Text}"
@@ -23,7 +23,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendPhoto(this PhotoSize[] photo, string caption, long ReceiverId, ObjectBox objectBox)
         {
-            new PhotoResponseProcessor()
+            new PhotoResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Photo = photo[0].FileId,
@@ -33,7 +33,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendVideo(this Video video, string caption, long ReceiverId, ObjectBox objectBox)
         {
-            new VideoResponseProcessor()
+            new VideoResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Text = $"Message from: {objectBox.User.Access}\n{caption}",
@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendVoice(this Voice voice, string caption, long ReceiverId, ObjectBox objectBox)
         {
-            new VoiceResponseProcessor()
+            new VoiceResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Text = $"Message from: {objectBox.User.Access}\n{caption}",
@@ -53,7 +53,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendAudio(this Audio audio, string caption, long ReceiverId, ObjectBox objectBox)
         {
-            new AudioResponseProcessor()
+            new AudioResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Text = $"Message from: {objectBox.User.Access}\n{caption}",
@@ -63,13 +63,13 @@ namespace TrimedBot.Core.Classes
 
         public static void SendSticker(this Sticker sticker, long ReceiverId, ObjectBox objectBox)
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Text = $"Message from: {objectBox.User.Access}"
             }.AddThisMessageToService(objectBox.Provider);
 
-            new StickerResponseProcessor()
+            new StickerResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Sticker = sticker.FileId
@@ -78,7 +78,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendDocument(this Document document, string caption, long ReceiverId, ObjectBox objectBox)
         {
-            new DocumentResponseProcessor()
+            new DocumentResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 Text = $"Message from: {objectBox.User.Access}\n{caption}",
@@ -88,7 +88,7 @@ namespace TrimedBot.Core.Classes
 
         public static void SendContact(this Contact contact, long ReceiverId, ObjectBox objectBox)
         {
-            new ContactResponseProcessor()
+            new ContactResponseProcessor(objectBox)
             {
                 ReceiverId = ReceiverId,
                 PhoneNumber = contact.PhoneNumber,
@@ -126,7 +126,7 @@ namespace TrimedBot.Core.Classes
                     message.Contact.SendContact(ReceiverId, objectBox);
                     break;
                 default:
-                    new TextResponseProcessor()
+                    new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = "Sorry! This kind of message doesn't support here."

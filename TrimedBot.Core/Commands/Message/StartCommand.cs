@@ -22,7 +22,7 @@ namespace TrimedBot.Core.Commands.Message
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Hello, send /help if you need help.",

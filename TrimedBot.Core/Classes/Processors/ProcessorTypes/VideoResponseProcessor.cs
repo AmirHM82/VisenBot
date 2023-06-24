@@ -16,10 +16,8 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class VideoResponseProcessor : Processor
     {
-        //public IServiceProvider provider;
-        public VideoResponseProcessor(/*IServiceProvider provider*/)/* : base(provider)*/
+        public VideoResponseProcessor(ObjectBox objectBox) : base(objectBox)
         {
-            //this.provider = provider;
         }
 
         public long ReceiverId { get; set; }
@@ -38,12 +36,11 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
                 caption: Text, parseMode: ParseMode, replyMarkup: Keyboard);
 
             if (IsDeletable)
-            {
+            {   //Should we change it?
                 await tempService.AddAsync(new TempMessage
                 {
                     MessageId = SentMessage.MessageId,
-                    ChatId = ReceiverId,
-                    Type = DAL.Enums.TempType.User
+                    ChatId = ReceiverId
                 });
                 await tempService.SaveAsync();
             }

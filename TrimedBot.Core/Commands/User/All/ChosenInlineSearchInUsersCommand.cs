@@ -33,7 +33,7 @@ namespace TrimedBot.Core.Commands.User.All
             var selectedUser = await userServices.FindAsync(userId);
             if (selectedUser != null)
             {
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = $"Id: {selectedUser.UserId}\nUsername: {selectedUser.UserName}",
@@ -41,7 +41,7 @@ namespace TrimedBot.Core.Commands.User.All
                     IsDeletable = true
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "No users found",

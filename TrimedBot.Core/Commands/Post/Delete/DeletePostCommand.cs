@@ -10,6 +10,8 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using Telegram.Bot.Types.Enums;
+using TrimedBot.Core.Classes;
 
 namespace TrimedBot.Core.Commands.Post.Delete
 {
@@ -31,30 +33,38 @@ namespace TrimedBot.Core.Commands.Post.Delete
         public async Task Do()
         {
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
-            {
-                List<Processor> messages = new();
-                messages.Add(new DeleteProcessor()
+
+            List<Processor> messages = new();
+
+            //Create a Delete proccess message to delete the message in pv
+            if (objectBox.ChatType == ChatType.Private)
+                messages.Add(new DeleteProcessor(objectBox)
                 {
                     UserId = objectBox.User.UserId,
                     MessageId = messageId
                 });
 
-                var deletedMedia = await mediaServices.Remove(id);
-                if (objectBox.User.Access == Access.Admin)
-                messages.Add(new VideoResponseProcessor()
-                {
-                    ReceiverId = deletedMedia.User.UserId,
-                    Text = $"{deletedMedia.Title} - {deletedMedia.Caption}\nThis post deleted by an admin.",
-                    Video = deletedMedia.FileId
-                });
-                await mediaServices.SaveAsync();
+            //Remove video from db
+            var deletedMedia = await mediaServices.Remove(id);
 
-                //Add: Delete the post from channel and channels posts table
+            //Delete post from channels
+            messages.AddRange(await new ChannelPosts(objectBox).Delete(deletedMedia.Id));
 
-                new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            //Create a message for the user who has added the video
+            messages.Add(new VideoResponseProcessor(objectBox)
+            {
+                ReceiverId = deletedMedia.User.UserId,
+                Text = $"{deletedMedia.Title} - {deletedMedia.Caption}\nThis post deleted by an admin.",
+                Video = deletedMedia.FileId
+            });
 
-                await tempMessageServices.Delete(objectBox.User.UserId, messageId);
-            }
+            await mediaServices.SaveAsync();
+
+            //Send the created messages to realted service
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
+
+            //U messed up again. It deletes all the messages from admin channel!!!!
+            //objectBox.IsNeedDeleteTemps = true; //It deletes admin post messages from channel post table!!!!!!!
         }
 
         public Task UnDo()

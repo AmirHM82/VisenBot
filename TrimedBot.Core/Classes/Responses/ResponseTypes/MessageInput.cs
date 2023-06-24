@@ -204,7 +204,7 @@ namespace TrimedBot.Core.Classes.Responses.ResponseTypes
 
         public void ResponseNotAvailable()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = Sentences.Bot_Not_Available

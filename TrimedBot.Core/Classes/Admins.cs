@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Classes
                         List<Processor> messages = new();
                         for (int i = 0; i < admins.Length; i++)
                         {
-                            messages.Add(new TextResponseProcessor()
+                            messages.Add(new TextResponseProcessor(objectBox)
                             {
                                 ReceiverId = objectBox.User.UserId,
                                 Text = $"UserName: {admins[i].UserName} \n Start date: {admins[i].StartDate}",
@@ -42,19 +42,19 @@ namespace TrimedBot.Core.Classes
                                 IsDeletable = true
                             });
                         }
-                        new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+                        new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
 
                         objectBox.User.UserState = UserState.SeeAdmins_Manager;
                         objectBox.UpdateUserInfo();
                     }
-                    else new TextResponseProcessor()
+                    else new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = "Admins not found"
                     }.AddThisMessageToService(objectBox.Provider);
                 }
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied
@@ -79,7 +79,7 @@ namespace TrimedBot.Core.Classes
                             if (admins[i].UserName != null && admins[i].UserName != "") userInfo += $"Username: {admins[i].UserName}\n";
                             if (admins[i].FirstName != null && admins[i].FirstName != "") userInfo += $"Firstname: {admins[i].FirstName}\n";
                             if (admins[i].LastName != null && admins[i].LastName != "") userInfo += $"Lastname: {admins[i].LastName}";
-                            messages.Add(new TextResponseProcessor()
+                            messages.Add(new TextResponseProcessor(objectBox)
                             {
                                 ReceiverId = objectBox.User.UserId,
                                 Text = $"{userInfo}\n\nStart date: {admins[i].StartDate}",
@@ -92,14 +92,14 @@ namespace TrimedBot.Core.Classes
                         //objectBox.UpdateUserInfo();
                         needNP = true;
                     }
-                    else messages.Add(new TextResponseProcessor()
+                    else messages.Add(new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = "Admins not found"
                     });
                 }
             }
-            else messages.Add(new TextResponseProcessor()
+            else messages.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied

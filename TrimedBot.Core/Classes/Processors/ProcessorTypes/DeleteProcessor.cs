@@ -10,7 +10,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class DeleteProcessor : Processor
     {
-        public DeleteProcessor()
+        public DeleteProcessor(ObjectBox objectBox) : base(objectBox)
         {
         }
 

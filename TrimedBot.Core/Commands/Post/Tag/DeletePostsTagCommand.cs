@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
         {
             var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
             await mediaService.RemoveTag(Guid.Parse(objectBox.User.Temp), tagId);
-            new DeleteProcessor()
+            new DeleteProcessor(objectBox)
             {
                 MessageId = messageId,
                 UserId = objectBox.ChatId

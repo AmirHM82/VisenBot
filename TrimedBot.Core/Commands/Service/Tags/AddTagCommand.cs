@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.Service.Tags
             await tagService.AddAsync(new DAL.Entities.Tag { Name = name });
             await tagService.SaveAsync();
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 Keyboard = objectBox.Keyboard,
                 ReceiverId = objectBox.User.UserId,

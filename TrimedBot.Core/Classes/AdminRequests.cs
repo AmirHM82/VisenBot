@@ -35,7 +35,7 @@ namespace TrimedBot.Core.Classes
                     List<Processor> messages = new();
                     for (int i = 0; i < users.Length; i++)
                     {
-                        messages.Add(new TextResponseProcessor()
+                        messages.Add(new TextResponseProcessor(objectBox)
                         {
                             ReceiverId = objectBox.User.UserId,
                             Text = $"UserName: {users[i].UserName} \n Start date: {users[i].StartDate}",
@@ -43,18 +43,18 @@ namespace TrimedBot.Core.Classes
                             IsDeletable = true
                         });
                     }
-                    new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+                    new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
 
                     objectBox.User.UserState = UserState.SeeAdminRequests_Manager;
                     objectBox.UpdateUserInfo();
                 }
-                else new TextResponseProcessor()
+                else new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "No request found."
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied
@@ -73,7 +73,7 @@ namespace TrimedBot.Core.Classes
                 {
                     for (int i = 0; i < users.Length; i++)
                     {
-                        messages.Add(new TextResponseProcessor()
+                        messages.Add(new TextResponseProcessor(objectBox)
                         {
                             ReceiverId = objectBox.User.UserId,
                             Text = $"UserName: {users[i].UserName} \n Start date: {users[i].StartDate}",
@@ -87,13 +87,13 @@ namespace TrimedBot.Core.Classes
 
                     needNP = true;
                 }
-                else messages.Add(new TextResponseProcessor()
+                else messages.Add(new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "No request found."
                 });
             }
-            else messages.Add(new TextResponseProcessor()
+            else messages.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied

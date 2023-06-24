@@ -53,7 +53,7 @@ namespace TrimedBot.Core.Commands.Message
                 if (needNP)
                     messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, Category));
 
-                new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+                new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
             }
         }
 

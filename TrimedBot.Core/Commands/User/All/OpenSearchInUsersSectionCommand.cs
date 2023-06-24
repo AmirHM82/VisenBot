@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Commands.User.All
         {
             if (objectBox.User.Access != Access.Member)
             {
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "You can find users here with inline mode.",
@@ -40,7 +40,7 @@ namespace TrimedBot.Core.Commands.User.All
                 //userServices.ChangeUserPlace(objectBox.User, UserPlace.Search_Users);
                 //await userServices.SaveAsync();
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied,

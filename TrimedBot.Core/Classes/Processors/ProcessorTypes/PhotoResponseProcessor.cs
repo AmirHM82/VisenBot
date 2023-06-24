@@ -13,6 +13,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class PhotoResponseProcessor : Processor
     {
+        public PhotoResponseProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }

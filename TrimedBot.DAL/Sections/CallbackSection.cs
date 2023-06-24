@@ -17,6 +17,7 @@ namespace TrimedBot.DAL.Sections
         public const string Previous = "Pre";
         public const string Post = "Po";
         public const string Edit = "E";
+        public const string EditEntry = "EE";
         public const string Title = "Ti";
         public const string Caption = "Cap";
         public const string Video = "V";
@@ -31,5 +32,6 @@ namespace TrimedBot.DAL.Sections
         public const string Properties = "Pro";
         public const string Cancel = "Can";
         public const string Channel = "Ch";
+        public const string Type = "Ty";
     }
 }

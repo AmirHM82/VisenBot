@@ -13,6 +13,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class AudioResponseProcessor : Processor
     {
+        public AudioResponseProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public InputOnlineFile Audio { get; set; }
         public string Text { get; set; }

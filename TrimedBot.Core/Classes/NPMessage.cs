@@ -28,7 +28,7 @@ namespace TrimedBot.Core.Classes
         {
             if (pageNumber > 0)
             {
-                new NPResponseProcessor()
+                new NPResponseProcessor(objectBox)
                 {
                     PageNumber = pageNumber,
                     Keyboard = Keyboard.NPKeyboard(pageNumber, category),
@@ -41,7 +41,7 @@ namespace TrimedBot.Core.Classes
         {
             if (pageNumber > 0)
             {
-                var npMessage = new NPResponseProcessor()
+                var npMessage = new NPResponseProcessor(objectBox)
                 {
                     PageNumber = pageNumber,
                     Keyboard = Keyboard.NPKeyboard(pageNumber, category),

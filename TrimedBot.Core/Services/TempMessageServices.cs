@@ -95,14 +95,14 @@ namespace TrimedBot.Core.Services
             });
         }
 
-        public async Task<List<TempMessage>> GetAndDeleteAsync(long chatId, TempType type)
-        {
-            var messages = await _db.TempMessages.Where(x => x.ChatId == chatId && x.Type == type).ToListAsync();
-            foreach (var msg in messages)
-            {
-                _db.Entry(msg).State = EntityState.Deleted;
-            }
-            return messages;
-        }
+        //public async Task<List<TempMessage>> GetAndDeleteAsync(long chatId, TempType type)
+        //{
+        //    var messages = await _db.TempMessages.Where(x => x.ChatId == chatId && x.Type == type).ToListAsync();
+        //    foreach (var msg in messages)
+        //    {
+        //        _db.Entry(msg).State = EntityState.Deleted;
+        //    }
+        //    return messages;
+        //}
     }
 }

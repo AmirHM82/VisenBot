@@ -14,6 +14,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class NPResponseProcessor : Processor
     {
+        public NPResponseProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }
@@ -33,8 +37,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
                 await tempService.AddAsync(new TempMessage
                 {
                     MessageId = SentMessage.MessageId,
-                    ChatId = ReceiverId,
-                    Type = DAL.Enums.TempType.User
+                    ChatId = ReceiverId
                 });
                 await tempService.SaveAsync();
             }

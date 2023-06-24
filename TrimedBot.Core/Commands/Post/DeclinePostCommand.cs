@@ -12,6 +12,7 @@ using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
+using Telegram.Bot.Types.Enums;
 
 namespace TrimedBot.Core.Commands.Post
 {
@@ -30,37 +31,53 @@ namespace TrimedBot.Core.Commands.Post
             this.messageId = messageId;
         }
 
-        public async Task Do()
+        public async Task Do() //Move this class to ConfirmPostCommand.cs (Undo method)
         {
             List<Processor> messages = new();
             var mediaServices = objectBox.Provider.GetRequiredService<IMedia>();
             {
                 var media = await mediaServices.FindAsync(Guid.Parse(id));
-                if (media != null)
+
+                //If media is null we should inform the admin for it (in pv)
+                //And return to stop the rest proccess
+                if (media == null)
                 {
-                    if (media.IsConfirmed)
+                    messages.Add(new TextResponseProcessor(objectBox)
                     {
-                        messages.Add(new VideoResponseProcessor()
-                        {
-                            ReceiverId = media.User.UserId,
-                            Text = $"{media.Title} - {media.Caption}\nThis post declined by an admin.",
-                            Video = media.FileId
-                        });
-                        mediaServices.Decline(media);
-                        await mediaServices.SaveAsync();
-                    }
+                        ReceiverId = objectBox.User.UserId,
+                        Text = "Media not found"
+                    });
+                    return;
                 }
 
-                //Add: Delete (or edit) the post from channel and channels posts table
-
-                messages.Add(new DeleteProcessor()
+                if (media.IsConfirmed)
                 {
-                    UserId = objectBox.User.UserId,
-                    MessageId = messageId
-                });
-                await tempMessageServices.Delete(objectBox.User.UserId, messageId);
+                    messages.Add(new VideoResponseProcessor(objectBox)
+                    {
+                        ReceiverId = media.User.UserId,
+                        Text = $"{media.Title} - {media.Caption}\nThis post declined by an admin.",
+                        Video = media.FileId
+                    });
+                    mediaServices.Decline(media);
+                    await mediaServices.SaveAsync();
+
+                    //Add: Delete (or edit) the post from channel and channels posts table
+                    messages.AddRange(await new ChannelPosts(objectBox).Delete(media.Id));
+                }
+
+                //Create a Delete proccess message to delete the message in pv
+                if (objectBox.ChatType is ChatType.Private)
+                    messages.Add(new DeleteProcessor(objectBox)
+                    {
+                        UserId = objectBox.ChatId,
+                        MessageId = messageId
+                    });
+
+                objectBox.IsNeedDeleteTemps = true;
             }
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+
+            //Send the created messages to realted service
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

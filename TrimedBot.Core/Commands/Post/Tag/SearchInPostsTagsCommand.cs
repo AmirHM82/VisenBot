@@ -37,7 +37,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
                         new InputTextMessageContent($"{tag[i].Id} - {tag[i].Name}"));
                 }
 
-                new InlineQueryProcessor()
+                new InlineQueryProcessor(objectBox)
                 {
                     Id = queryId,
                     Results = results

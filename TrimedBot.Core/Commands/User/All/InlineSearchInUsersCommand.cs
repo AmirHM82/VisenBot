@@ -38,7 +38,7 @@ namespace TrimedBot.Core.Commands.User.All
                         new InputTextMessageContent($"{seletedUsers[i].UserId} - {seletedUsers[i].UserName}"));
                 }
 
-                new InlineQueryProcessor()
+                new InlineQueryProcessor(objectBox)
                 {
                     Id = queryId,
                     Results = results

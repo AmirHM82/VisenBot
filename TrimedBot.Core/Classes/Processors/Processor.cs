@@ -8,11 +8,11 @@ namespace TrimedBot.Core.Classes.Processors
 {
     public abstract class Processor
     {
-        //public IServiceProvider Provider { get; set;  }
+        public ObjectBox ObjectBox { get; set; }
 
-        protected Processor(/*IServiceProvider provider*/)
+        protected Processor(ObjectBox objectBox)
         {
-            //Provider = provider;
+            ObjectBox = objectBox;
         }
 
         public event ProcessorEventHandler OnFail;
@@ -53,6 +53,7 @@ namespace TrimedBot.Core.Classes.Processors
                     e.InnerException.Message.LogError();
                 throw;
             }
+
             return Success;
         }
 

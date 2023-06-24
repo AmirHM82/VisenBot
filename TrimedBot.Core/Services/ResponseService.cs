@@ -37,8 +37,7 @@ namespace TrimedBot.Core.Services
                     {
                         try
                         {
-                            Task.WhenAll(item.Process(provider), Task.Delay(100));
-                            //await Task.Delay(300);
+                            Task.WhenAll(item.Process(provider), Task.Delay(50));
                         }
                         catch
                         {

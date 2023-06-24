@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TrimedBot.Core.Services;
 using TrimedBot.DAL.Entities;
 
 namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
@@ -10,12 +11,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
     public class MultiProcessor : Processor
     {
         public List<Processor> messages;
-        //public IServiceProvider provider;
 
-        public MultiProcessor(List<Processor> messages/*, IServiceProvider provider*/)/* : base(provider)*/
+        public MultiProcessor(List<Processor> messages, ObjectBox objectBox) : base(objectBox)
         {
             this.messages = messages;
-            //this.provider = provider;
         }
 
         protected async override Task Action(IServiceProvider provider)

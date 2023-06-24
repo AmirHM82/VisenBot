@@ -9,7 +9,7 @@ using TrimedBot.Core.Services;
 
 namespace TrimedBot.Core.Classes
 {
-    public static class User
+    public static class UserExtensions
     {
         public static void UpdateUserInfo(this ObjectBox objectBox)
         {

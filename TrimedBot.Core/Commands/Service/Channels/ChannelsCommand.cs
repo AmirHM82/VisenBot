@@ -29,13 +29,13 @@ namespace TrimedBot.Core.Commands.Service.Channels
 
                 processList.AddRange(await new Classes.Channels(objectBox).GetMessages());
             }
-            else processList.Add(new TextResponseProcessor()
+            else processList.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Keyboard = objectBox.Keyboard,
                 Text = Sentences.Access_Denied
             });
-            new MultiProcessor(processList).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(processList, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

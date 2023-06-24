@@ -32,7 +32,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
             switch (command.ToLower())
             {
                 case "ads properties":
-                    message = new TextResponseProcessor()
+                    message = new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = "Choose, wich one you wanna change:",
@@ -58,7 +58,7 @@ namespace TrimedBot.Core.Commands.Service.Settings
                             value = objectBox.Settings.NumberOfAdsPerDay;
                             break;
                     }
-                    message = new TextResponseProcessor()
+                    message = new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = $"Current value: {value}\nSend your new value:",

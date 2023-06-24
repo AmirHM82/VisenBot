@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
 
             var messages = await new Tags(objectBox).GetMessages(Guid.Parse(objectBox.User.Temp));
 
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

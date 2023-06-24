@@ -33,19 +33,19 @@ namespace TrimedBot.Core.Commands.User.Member
                 objectBox.UpdateUserInfo();
                 //userServices.SendAdminRequest(objectBox.User);
                 //await userServices.SaveAsync();
-                message = new TextResponseProcessor()
+                message = new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "Your admin request sent. Wait for answer from an admin.",
                     Keyboard = objectBox.Keyboard
                 };
             }
-            else if (objectBox.User.IsSentAdminRequest) message = new TextResponseProcessor()
+            else if (objectBox.User.IsSentAdminRequest) message = new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "You have sent an admin request."
             };
-            else message = new TextResponseProcessor()
+            else message = new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = $"You are {objectBox.User.Access}. You don't need to send an admin request."

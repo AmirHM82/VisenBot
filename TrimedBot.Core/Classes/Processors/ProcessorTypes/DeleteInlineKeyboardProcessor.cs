@@ -12,6 +12,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class DeleteInlineKeyboardProcessor : Processor
     {
+        public DeleteInlineKeyboardProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public int MessageId { get; set; }
 

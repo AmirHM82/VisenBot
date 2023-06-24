@@ -16,10 +16,8 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class ContactResponseProcessor : Processor
     {
-        //public IServiceProvider provider;
-        public ContactResponseProcessor(/*IServiceProvider provider*/)/* : base(provider)*/
+        public ContactResponseProcessor(ObjectBox objectBox) : base(objectBox)
         {
-            //this.provider = provider;
         }
 
         public long ReceiverId { get; set; }

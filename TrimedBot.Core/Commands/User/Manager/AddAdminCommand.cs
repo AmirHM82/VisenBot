@@ -38,13 +38,13 @@ namespace TrimedBot.Core.Commands.User.Manager
                     userServices.Update(selectedUser);
                     await userServices.SaveAsync();
                 }
-                else new TextResponseProcessor()
+                else new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "You're manager"
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied

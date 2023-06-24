@@ -43,11 +43,11 @@ namespace TrimedBot.Core.Services
 
         public async Task Handle(Update update)
         {
-            using var scope = provider.CreateScope();
-            var scopedProvider = scope.ServiceProvider;
+            
+            
 
             var updateServices = provider.GetRequiredService<UpdateServices>();
-            await updateServices.ProcessUpdate(scopedProvider, update);
+            await updateServices.ProcessUpdate(provider, update);
         }
     }
 }

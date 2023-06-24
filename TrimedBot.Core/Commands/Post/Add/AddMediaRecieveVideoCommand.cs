@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             Processor message;
             if (video == null)
             {
-                message = new TextResponseProcessor()
+                message = new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "Please send a video.",
@@ -45,7 +45,7 @@ namespace TrimedBot.Core.Commands.Post.Add
             }
             else
             {
-                message = new TextResponseProcessor()
+                message = new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "It's done.",
@@ -65,6 +65,8 @@ namespace TrimedBot.Core.Commands.Post.Add
                 await mediaServices.SaveAsync();
 
                 //await cacheService.EditCachedMedias(new[] { media.Title, media.Caption }, new[] { media });
+                await new Classes.Media(objectBox).SendToAdminChannels(media);
+                await new Classes.Media(objectBox).SendToOtherChannels(media);
 
                 objectBox.User.Temp = null;
                 objectBox.User.UserState = UserState.NoWhere;

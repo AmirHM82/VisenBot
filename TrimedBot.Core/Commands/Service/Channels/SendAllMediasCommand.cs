@@ -23,7 +23,7 @@ namespace TrimedBot.Core.Commands.Service.Channels
         public async Task Do()
         {
             var messages = await new Medias(objectBox).GetMediasForChannel();
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

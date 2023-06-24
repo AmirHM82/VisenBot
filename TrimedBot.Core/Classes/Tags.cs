@@ -33,7 +33,7 @@ namespace TrimedBot.Core.Classes
 
             if (tags.Count > 0)
             {
-                result.Add(new TextResponseProcessor()
+                result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     //Keyboard = Keyboard.CancelKeyboard(),
@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Classes
 
                 foreach (var t in tags)
                 {
-                    result.Add(new TextResponseProcessor()
+                    result.Add(new TextResponseProcessor(objectBox)
                     {
                         IsDeletable = true,
                         Keyboard = Keyboard.Tag(t),
@@ -53,7 +53,7 @@ namespace TrimedBot.Core.Classes
                 }
                 needNP = true;
             }
-            else result.Add(new TextResponseProcessor()
+            else result.Add(new TextResponseProcessor(objectBox)
             {
                 IsDeletable = true,
                 //Keyboard = Keyboard.CancelKeyboard(),
@@ -62,7 +62,7 @@ namespace TrimedBot.Core.Classes
             });
 
             if (tags.Count < 5)
-                result.Add(new TextResponseProcessor()
+                result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     Keyboard = Keyboard.AddTag(),
@@ -89,7 +89,7 @@ namespace TrimedBot.Core.Classes
 
             if (tags.Count > 0)
             {
-                result.Add(new TextResponseProcessor()
+                result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     ReceiverId = objectBox.User.UserId,
@@ -98,7 +98,7 @@ namespace TrimedBot.Core.Classes
 
                 foreach (var t in tags)
                 {
-                    result.Add(new TextResponseProcessor()
+                    result.Add(new TextResponseProcessor(objectBox)
                     {
                         IsDeletable = true,
                         Keyboard = Keyboard.PostsTag(t),
@@ -108,7 +108,7 @@ namespace TrimedBot.Core.Classes
                 }
             }
 
-            result.Add(new TextResponseProcessor()
+            result.Add(new TextResponseProcessor(objectBox)
             {
                 IsDeletable = true,
                 Keyboard = Keyboard.AddPostsTag(postId),
@@ -129,7 +129,7 @@ namespace TrimedBot.Core.Classes
             if (tags is not null)
                 if (tags.Count > 0)
                 {
-                    result.Add(new TextResponseProcessor()
+                    result.Add(new TextResponseProcessor(objectBox)
                     {
                         IsDeletable = true,
                         ReceiverId = objectBox.User.UserId,
@@ -138,7 +138,7 @@ namespace TrimedBot.Core.Classes
 
                     foreach (var t in tags)
                     {
-                        result.Add(new TextResponseProcessor()
+                        result.Add(new TextResponseProcessor(objectBox)
                         {
                             IsDeletable = true,
                             Keyboard = Keyboard.BlockedTag(t),
@@ -148,7 +148,7 @@ namespace TrimedBot.Core.Classes
                     }
                     needNP = true;
                 }
-                else result.Add(new TextResponseProcessor()
+                else result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     ReceiverId = objectBox.User.UserId,
@@ -156,7 +156,7 @@ namespace TrimedBot.Core.Classes
                 });
 
             if (tags is null || tags.Count < 5)
-                result.Add(new TextResponseProcessor()
+                result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     Keyboard = Keyboard.AddBlockedTag(),

@@ -5,6 +5,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.DAL.Entities;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Sections;
+using System.Linq;
 
 namespace TrimedBot.Core.Classes
 {
@@ -305,14 +306,37 @@ namespace TrimedBot.Core.Classes
             }
         }
 
-        public static InlineKeyboardMarkup Channel(DAL.Entities.Channel channel)
+        public static InlineKeyboardMarkup Channel(int channelId)
         {
             InlineKeyboardButton[] result =
             {
-                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Channel}/{CallbackSection.Delete}/{channel.Id}")
+                InlineKeyboardButton.WithCallbackData("Delete", $"{CallbackSection.Channel}/{CallbackSection.Delete}/{channelId}"),
+                InlineKeyboardButton.WithCallbackData("Properties", $"{CallbackSection.Channel}/{CallbackSection.Properties}/{channelId}")
             };
 
             return new InlineKeyboardMarkup(result);
+        }
+
+        public static InlineKeyboardMarkup ChannelProperties(int channelId, bool HasCancel)
+        {
+            InlineKeyboardButton[] k1 =
+            {
+                InlineKeyboardButton.WithCallbackData("Edit type", $"{CallbackSection.Channel}/{CallbackSection.EditEntry}/{CallbackSection.Type}/{channelId}")
+            };
+
+            if (HasCancel)
+            {
+                InlineKeyboardButton[] k3 =
+                {
+                    InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+                };
+
+                return new InlineKeyboardMarkup(new[] { k1, k3 });
+            }
+            else
+            {
+                return new InlineKeyboardMarkup(new[] { k1 });
+            }
         }
 
         public static InlineKeyboardMarkup AddChannel()
@@ -325,5 +349,34 @@ namespace TrimedBot.Core.Classes
             return new InlineKeyboardMarkup(k1);
         }
 
+        public static InlineKeyboardMarkup ChannelEnums(int channelId, bool hasCancel = true, int rowCap = 2)
+        {
+            string[] keys = Enum.GetNames(typeof(ChannelType));
+
+            List<InlineKeyboardButton[]> rows = new();
+
+            foreach (var array in keys.Chunk(rowCap))
+            {
+                if (array.Length == 0) continue;
+                var row = new List<InlineKeyboardButton>();
+                foreach (var text in array)
+                {
+                    row.Add(new() { Text = text, CallbackData = $"{CallbackSection.Channel}/{CallbackSection.Edit}/{CallbackSection.Type}/{text}/{channelId}" });
+                }
+                rows.Add(row.ToArray());
+            }
+
+            if (hasCancel)
+            {
+                InlineKeyboardButton[] k3 =
+                {
+                    InlineKeyboardButton.WithCallbackData("Cancel", CallbackSection.Cancel)
+                };
+
+                rows.Add(k3);
+            }
+
+            return new InlineKeyboardMarkup(rows);
+        }
     }
 }

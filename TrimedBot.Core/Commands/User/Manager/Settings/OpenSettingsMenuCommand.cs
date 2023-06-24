@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Settings
         {
             if (objectBox.User.Access == Access.Manager)
             {
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "Settings menu:",

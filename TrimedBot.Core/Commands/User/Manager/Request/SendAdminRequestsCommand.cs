@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Request
             needNP = tuple.Item2;
             if (needNP)
                 messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, $"{CallbackSection.Admin}/{CallbackSection.Request}"));
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

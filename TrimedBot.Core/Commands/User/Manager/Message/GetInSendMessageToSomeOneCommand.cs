@@ -32,7 +32,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                 objectBox.User.UserState = UserState.Send_Message_ToSomeone;
                 objectBox.User.Temp = userId;
                 objectBox.UpdateUserInfo();
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "Chat started.\nSend your messages. They will be send.\n/cancel if you want to finish chatting.",
@@ -40,7 +40,7 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                 }.AddThisMessageToService(objectBox.Provider);
             }
             else
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied,

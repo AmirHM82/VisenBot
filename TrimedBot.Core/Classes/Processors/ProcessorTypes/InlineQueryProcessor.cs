@@ -11,7 +11,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class InlineQueryProcessor : Processor
     {
-        public InlineQueryProcessor()
+        public InlineQueryProcessor(ObjectBox objectBox) : base(objectBox)
         {
         }
 

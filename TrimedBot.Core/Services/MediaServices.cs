@@ -66,9 +66,9 @@ namespace TrimedBot.Core.Services
             _db.Medias.Update(track);
         }
 
-        public Task<Media> FindAsync(Guid id)
+        public async Task<Media> FindAsync(Guid id)
         {
-            return _db.Medias.Include(x => x.User).Include(x => x.Tags).FirstOrDefaultAsync(t => t.Id == id);
+            return await _db.Medias.Include(x => x.User).Include(x => x.Tags).FirstOrDefaultAsync(t => t.Id == id);
         }
 
         public Task<Media> FindAsync(string Id)
@@ -99,7 +99,7 @@ namespace TrimedBot.Core.Services
 
         public async Task<Media> Remove(string Id)
         {
-            var m = await _db.Medias.Include(x => x.User).AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id.ToString() == Id);
+            var m = await _db.Medias.Include(x => x.User).AsAsyncEnumerable().FirstOrDefaultAsync(t => t.Id.ToString() == Id); //Wait why u use "AsAsyncEnumerable" here!
             _db.Medias.Remove(m);
             return m;
         }
@@ -162,9 +162,9 @@ namespace TrimedBot.Core.Services
             return _db.Medias.Include(x => x.Tags).Where(x => x.IsConfirmed == true).ToListAsync();
         }
 
-        public ValueTask<Media> GetAsync(string fileId)
+        public Task<Media> GetAsync(string fileId)
         {
-            return _db.Medias.FindAsync(fileId);
+            return _db.Medias.FirstOrDefaultAsync(x => x.FileId == fileId);
         }
 
         public async Task RemoveTag(Guid mediaId, int tagId)
@@ -181,6 +181,16 @@ namespace TrimedBot.Core.Services
         public async Task<int> CountAsync(Guid userId)
         {
             return await _db.Medias.Include(x => x.User).CountAsync(x => x.User.Id == userId);
+        }
+
+        public Task<List<Media>> GetMediasAsync()
+        {
+            return _db.Medias.Include(x => x.Tags).ToListAsync();
+        }
+
+        public Task<List<Media>> GetNotConfirmedPostsAsync()
+        {
+            return _db.Medias.Include(x => x.Tags).Where(x => x.IsConfirmed == false).ToListAsync();
         }
     }
 }

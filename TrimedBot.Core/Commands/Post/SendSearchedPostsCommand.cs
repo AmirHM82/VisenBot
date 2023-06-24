@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.Post
                 new Classes.Media(objectBox).SendPublic(media);
             else
             {
-                new VideoResponseProcessor()
+                new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Video = media.FileId,

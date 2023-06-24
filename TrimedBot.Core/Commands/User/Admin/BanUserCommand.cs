@@ -38,14 +38,14 @@ namespace TrimedBot.Core.Commands.User.Admin
                     userServices.Update(user);
                     await userServices.SaveAsync();
 
-                    new EditInlineKeyboardProcessor()
+                    new EditInlineKeyboardProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         MessageId = MessageId,
                         Keyboard = Keyboard.ManageUser(user.Id, user.UserId, user.Access, user.IsBanned)
                     }.AddThisMessageToService(objectBox.Provider);
 
-                    new TextResponseProcessor()
+                    new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = user.UserId,
                         Text = Sentences.User_Banned
@@ -65,14 +65,14 @@ namespace TrimedBot.Core.Commands.User.Admin
                     userServices.Update(user);
                     await userServices.SaveAsync();
 
-                    new EditInlineKeyboardProcessor()
+                    new EditInlineKeyboardProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         MessageId = MessageId,
                         Keyboard = Keyboard.ManageUser(user.Id, user.UserId, user.Access, user.IsBanned)
                     }.AddThisMessageToService(objectBox.Provider);
 
-                    new TextResponseProcessor()
+                    new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = user.UserId,
                         Text = Sentences.User_Unbanned

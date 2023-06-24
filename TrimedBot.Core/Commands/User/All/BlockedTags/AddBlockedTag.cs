@@ -31,12 +31,12 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
             {
                 tagsString.Append($"{t.Name}, ");
             }
-            messages.Add(new TextResponseProcessor()
+            messages.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = $"Existing tags: {tagsString}"
             });
-            messages.Add(new TextResponseProcessor()
+            messages.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = "U can use inline mode to block a tag. Just simply wrtie @(bot username) and write name of the tag, then select it.",
@@ -46,7 +46,7 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
             objectBox.User.UserState = DAL.Enums.UserState.Search_User_Blocked_Tags;
             objectBox.UpdateUserInfo();
 
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

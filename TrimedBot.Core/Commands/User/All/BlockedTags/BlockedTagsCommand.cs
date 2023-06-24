@@ -32,7 +32,7 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
             needNP = tupleResult.Item2;
             if (needNP)
                 messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, $"{CallbackSection.User}/{CallbackSection.Tag}"));
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
             return Task.CompletedTask;
         }
 

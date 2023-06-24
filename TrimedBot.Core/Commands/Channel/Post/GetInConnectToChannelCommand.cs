@@ -25,11 +25,18 @@ namespace TrimedBot.Core.Commands.Channel.Post
 
         public async Task Do()
         {
-            await new TempMessages(objectBox).Add(new TempMessage
+            await new TempMessages(objectBox).AddUserTemp(new TempMessage   //Replace it with ChannelPosts class or maybe it's not needed
             {
                 MessageId = messageId,
-                Type = DAL.Enums.TempType.Channel,
+                //Type = DAL.Enums.TempType.Channel,
                 ChatId = objectBox.Channel.ChatId
+            });
+
+            await new ChannelPosts(objectBox).Add(new ChannelPost
+            {
+                Channel = objectBox.Channel,
+                MessageId = messageId,
+                PostType = DAL.Enums.PostType.Temp
             });
 
             var channelService = objectBox.Provider.GetRequiredService<IChannel>();
@@ -38,7 +45,7 @@ namespace TrimedBot.Core.Commands.Channel.Post
             {
                 if (!channel.IsVerified)
                 {
-                    new TextResponseProcessor()
+                    new TextResponseProcessor(objectBox)
                     {
                         IsDeletable = true,
                         ReceiverId = objectBox.Channel.ChatId,
@@ -48,7 +55,7 @@ namespace TrimedBot.Core.Commands.Channel.Post
                     objectBox.Channel.State = DAL.Enums.ChannelState.AddChannel;
                     objectBox.UpdateChannelInfo();
                 }
-                else new TextResponseProcessor()
+                else new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     ReceiverId = objectBox.ChatId,

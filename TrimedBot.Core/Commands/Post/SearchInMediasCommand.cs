@@ -50,7 +50,7 @@ namespace TrimedBot.Core.Commands.Post
                     i++;
                 }
 
-                new InlineQueryProcessor()
+                new InlineQueryProcessor(objectBox)
                 {
                     Id = queryId,
                     Results = results

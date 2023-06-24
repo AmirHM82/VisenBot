@@ -8,6 +8,7 @@ using TrimedBot.Core.Interfaces;
 using TrimedBot.DAL.Enums;
 using TrimedBot.DAL.Entities;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace TrimedBot.Core.Services
 {
@@ -15,12 +16,14 @@ namespace TrimedBot.Core.Services
     {
         public bool IsUserInfoChanged { get; set; }
         public bool IsChannelInfoChanged { get; set; }
-        public bool IsNeedDeleteTemps {  get; set; }
+
+        public bool IsNeedDeleteTemps { get; set; } = false;
         public long ChatId { get; set; }
         public DAL.Entities.User User { get; set; }
-        public Channel Channel { get; set; }
+        public Channel? Channel { get; set; }
         public ReplyKeyboardMarkup Keyboard { get; set; }
         public Settings Settings { get; set; }
+        public ChatType? ChatType { get; set; }
 
         public IServiceProvider Provider { get; set; }
 
@@ -29,7 +32,7 @@ namespace TrimedBot.Core.Services
             this.Provider = provider;
         }
 
-        public async Task AssignUser(Telegram.Bot.Types.User user)
+        public async Task AssignUser(Telegram.Bot.Types.User user, bool validateChatId = true)
         {
             IUser userServices = Provider.GetRequiredService<IUser>();
             var u = new DAL.Entities.User
@@ -63,10 +66,11 @@ namespace TrimedBot.Core.Services
 
             if (IsChanged) IsUserInfoChanged = true;
             User = NewOrFoundedUser;
-            ChatId = NewOrFoundedUser.UserId;
+            if (validateChatId)
+                ChatId = NewOrFoundedUser.UserId;
         }
 
-        public async Task AssignChannel(Chat chat)
+        public async Task AssignChannel(Chat chat, bool validateChatId = true)
         {
             var channelServices = Provider.GetRequiredService<IChannel>();
             var channel = new Channel
@@ -85,7 +89,8 @@ namespace TrimedBot.Core.Services
 
             if (IsChanged) IsChannelInfoChanged = true;
             Channel = NewOrFoundedUser;
-            ChatId = NewOrFoundedUser.ChatId;
+            if (validateChatId)
+                ChatId = NewOrFoundedUser.ChatId;
         }
 
         public async Task AssignSettings()

@@ -9,32 +9,41 @@ using Telegram.Bot.Types.InputFiles;
 using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Interfaces;
 using TrimedBot.Core.Services;
+using TrimedBot.DAL.Entities;
+using TrimedBot.DAL.Enums;
 
 namespace TrimedBot.Core.Classes.Processors.ProcessorTypes.Channel
 {
     public class ChannelVideoProcessor : Processor
     {
-        public long ReceiverId { get; set; }
+        public ChannelVideoProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
+        //public long ReceiverId { get; set; }
+        public DAL.Entities.Channel Channel { get; set; }
         public ParseMode ParseMode { get; set; } = ParseMode.Default;
         public IReplyMarkup Keyboard { get; set; }
         public string Text { get; set; }
         public InputOnlineFile Video { get; set; }
+        public bool IsDeletable { get; set; } = false;
 
         protected override async Task Action(IServiceProvider provider)
         {
             var bot = provider.GetRequiredService<BotServices>();
-            var channelService = provider.GetRequiredService<IChannel>();
             var mediaService = provider.GetRequiredService<IMedia>();
 
-            var SentMessage = await bot.SendVideoAsync(ReceiverId, Video,
+            var SentMessage = await bot.SendVideoAsync(Channel.ChatId, Video,
                 caption: Text, parseMode: ParseMode, replyMarkup: Keyboard);
 
-            await channelService.AddPostAsync(new DAL.Entities.ChannelPost
+            //It was in TempMessages.cs. Changed to ChannelPosts.cs
+            await new ChannelPosts(ObjectBox).Add(new ChannelPost
             {
                 Media = await mediaService.GetAsync(Video.FileId),
-                MessageId = SentMessage.MessageId
+                MessageId = SentMessage.MessageId,
+                PostType = IsDeletable ? PostType.Temp : PostType.Regular,
+                Channel = Channel
             });
-            await channelService.SaveAsync();
         }
     }
 }

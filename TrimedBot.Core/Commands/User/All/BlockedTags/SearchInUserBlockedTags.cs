@@ -40,7 +40,7 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
                         new InputTextMessageContent($"{tags[i].Id} - {tags[i].Name}"));
                 }
 
-                new InlineQueryProcessor()
+                new InlineQueryProcessor(objectBox)
                 {
                     Id = queryId,
                     Results = results

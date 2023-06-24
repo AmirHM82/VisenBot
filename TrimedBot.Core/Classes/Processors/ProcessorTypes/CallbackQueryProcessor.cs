@@ -10,7 +10,7 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class CallbackQueryProcessor : Processor
     {
-        public CallbackQueryProcessor()
+        public CallbackQueryProcessor(ObjectBox objectBox) : base(objectBox)
         {
         }
 

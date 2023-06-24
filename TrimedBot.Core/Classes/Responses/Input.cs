@@ -44,9 +44,11 @@ namespace TrimedBot.Core.Classes.Responses
             catch (Exception e)
             {
                 "Input:".LogError();
+                e.TargetSite.Name.LogError();
                 e.Message.LogError();
                 if (e.InnerException is not null)
                     e.InnerException.Message.LogError();
+
                 Status = false;
                 throw;
             }

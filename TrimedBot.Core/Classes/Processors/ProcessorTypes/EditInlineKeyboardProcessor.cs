@@ -11,6 +11,10 @@ namespace TrimedBot.Core.Classes.Processors.ProcessorTypes
 {
     public class EditInlineKeyboardProcessor : Processor
     {
+        public EditInlineKeyboardProcessor(ObjectBox objectBox) : base(objectBox)
+        {
+        }
+
         public long ReceiverId { get; set; }
         public int MessageId { get; set; }
         public InlineKeyboardMarkup Keyboard { get; set; }

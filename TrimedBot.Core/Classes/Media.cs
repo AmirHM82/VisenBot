@@ -30,18 +30,18 @@ namespace TrimedBot.Core.Classes
         {
             if (media != null)
             {
-                new VideoResponseProcessor()
+                new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = $"{media.Title}\n{media.Caption}",
                     Keyboard = objectBox.User.Access == Access.Member ?
                     Keyboard.PrivateMediaKeyboard(media.Id) :
-                    Keyboard.PrivateMediaKeyboard(media.Id),
+                    Keyboard.PublicPostProperties(media.Id, false),
                     IsDeletable = true,
                     Video = media.FileId
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",
@@ -55,7 +55,7 @@ namespace TrimedBot.Core.Classes
             var media = await mediaServices.FindAsync(postId);
 
             var state = objectBox.User.LastUserState;
-            new VideoResponseProcessor()
+            new VideoResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Keyboard = Keyboard.PrivatePostProperties(postId, HasCancel),
@@ -71,7 +71,7 @@ namespace TrimedBot.Core.Classes
             var media = await mediaServices.FindAsync(postId);
 
             var state = objectBox.User.LastUserState;
-            new VideoResponseProcessor()
+            new VideoResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Keyboard = Keyboard.PublicPostProperties(postId, HasCancel),
@@ -91,7 +91,7 @@ namespace TrimedBot.Core.Classes
                 else
                     key = Keyboard.ConfirmedPublicMediaKeyboard(media.Id);
 
-                new VideoResponseProcessor()
+                new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Video = media.FileId,
@@ -100,7 +100,7 @@ namespace TrimedBot.Core.Classes
                     IsDeletable = true
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",
@@ -108,28 +108,64 @@ namespace TrimedBot.Core.Classes
             }.AddThisMessageToService(objectBox.Provider);
         }
 
-        public async Task SendToChannels(DAL.Entities.Media media)
+        //Posts for admins channel have different keyboard, that's why bool is there
+        public async Task SendToOtherChannels(DAL.Entities.Media media)
         {
             var channelService = objectBox.Provider.GetRequiredService<IChannel>();
-            var channels = await channelService.GetChannelsAsync();
+            var channels = await channelService.GetOtherChannelsAsync();
+
             if (channels.Count > 0)
             {
-                foreach (var c in channels)
-                {
-                    string tags = "";
+                string tags = "";
+                if (media.Tags != null)
                     foreach (var t in media.Tags)
                     {
                         tags += $"{t.Name}, ";
                     }
 
-                    string text = null;
-                    if (tags != "") text = $"{media.Title} - {media.Caption}\nTags: {tags}";
-                    else text = $"{media.Title} - {media.Caption}";
-                    new ChannelVideoProcessor()
+                string text;
+                if (tags != "") text = $"{media.Title} - {media.Caption}\nTags: {tags}";
+                else text = $"{media.Title} - {media.Caption}";
+
+                foreach (var c in channels)
+                {
+                    new ChannelVideoProcessor(objectBox)
                     {
-                        ReceiverId = c.ChatId,
+                        Channel = c,
                         Text = text,
                         Video = media.FileId
+                    }.AddThisMessageToService(objectBox.Provider);
+                }
+            }
+        }
+
+        public async Task SendToAdminChannels(DAL.Entities.Media media)
+        {
+            var channelService = objectBox.Provider.GetRequiredService<IChannel>();
+            var channels = await channelService.GetAdminChannelsAsync();
+
+            if (channels.Count > 0)
+            {
+                string tags = "";
+                if (media.Tags != null)
+                    foreach (var t in media.Tags)
+                    {
+                        tags += $"{t.Name}, ";
+                    }
+
+                string text;
+                if (tags != "") text = $"{media.Title} - {media.Caption}\nTags: {tags}";
+                else text = $"{media.Title} - {media.Caption}";
+
+                foreach (var c in channels)
+                {
+                    new ChannelVideoProcessor(objectBox)
+                    {
+                        Channel = c,
+                        Text = text,
+                        Video = media.FileId,
+                        Keyboard = Keyboard.DeclinedPublicMediaKeyboard(media.Id),
+                        IsDeletable = true
                     }.AddThisMessageToService(objectBox.Provider);
                 }
             }

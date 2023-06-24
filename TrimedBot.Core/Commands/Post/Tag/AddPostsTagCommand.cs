@@ -26,7 +26,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
             objectBox.User.Temp = postId.ToString();
             objectBox.UpdateUserInfo();
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Search name of the tag in inline mode & choose it",

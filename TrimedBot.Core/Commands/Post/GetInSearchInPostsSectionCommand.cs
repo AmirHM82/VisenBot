@@ -25,7 +25,7 @@ namespace TrimedBot.Core.Commands.Post
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "You can find posts here with inline mode.",

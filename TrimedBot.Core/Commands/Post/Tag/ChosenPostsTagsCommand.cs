@@ -46,7 +46,7 @@ namespace TrimedBot.Core.Commands.Post.Tag
                 tags.Append($"{item.Name} ");
             }
 
-            new VideoResponseProcessor()
+            new VideoResponseProcessor(objectBox)
             {
                 IsDeletable = true,
                 Keyboard = Keyboard.PublicPostProperties(postId, true),

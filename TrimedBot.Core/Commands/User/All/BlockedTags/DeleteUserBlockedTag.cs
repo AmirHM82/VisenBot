@@ -29,7 +29,7 @@ namespace TrimedBot.Core.Commands.User.All.BlockedTags
             objectBox.User.BlockedTags.Remove(tag);
             objectBox.UpdateUserInfo();
 
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.ChatId,
                 Text = $"{tag.Name} removed"

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,7 +77,8 @@ namespace TrimedBot
             services.AddTransient<IBanner, BannerServices>();
             services.AddTransient<ITag, TagService>();
             services.AddTransient<IChannel, ChannelService>();
-            services.AddScoped<ObjectBox>();
+            services.AddTransient<IChannelPost, ChannelPostService>();
+            services.AddTransient<ObjectBox>();
             services.AddSingleton<ResponseService>();
             services.AddSingleton<BotServices>();
             //services.AddSingleton<CacheService>();

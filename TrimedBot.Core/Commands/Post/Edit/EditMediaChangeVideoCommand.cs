@@ -36,7 +36,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
             {
                 var media = await mediaServices.ChangeVideo(Guid.Parse(objectBox.User.Temp), video.FileId);
 
-                processes.Add(new TextResponseProcessor()
+                processes.Add(new TextResponseProcessor(objectBox)
                 {
                     Keyboard = objectBox.Keyboard,
                     ReceiverId = objectBox.User.UserId,
@@ -44,7 +44,7 @@ namespace TrimedBot.Core.Commands.Post.Edit
                 });
 
                 var state = objectBox.User.LastUserState;
-                processes.Add(new VideoResponseProcessor()
+                processes.Add(new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Keyboard = state == UserState.SeePublicAddedVideos ? Keyboard.PublicPostProperties(media.Id, true) : Keyboard.PrivatePostProperties(media.Id, true),
@@ -53,19 +53,21 @@ namespace TrimedBot.Core.Commands.Post.Edit
                     IsDeletable = true
                 });
 
+                await new Classes.Media(objectBox).SendToAdminChannels(media);
+
                 objectBox.IsNeedDeleteTemps = true;
                 objectBox.User.Temp = null;
                 objectBox.User.UserState = UserState.NoWhere;
                 objectBox.UpdateUserInfo();
             }
-            else processes.Add(new TextResponseProcessor()
+            else processes.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Please send a video.",
                 Keyboard = Keyboard.CancelKeyboard()
             });
 
-            new MultiProcessor(processes).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(processes, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

@@ -37,14 +37,14 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
             {
                 var AcceptedUser = await userServices.AcceptAdminRequest(long.Parse(id));
 
-                messages.Add(new DeleteProcessor()
+                messages.Add(new DeleteProcessor(objectBox)
                 {
                     UserId = objectBox.User.UserId,
                     MessageId = messageId
                 });
                 await tempMessageServices.Delete(objectBox.User.UserId, messageId);
                 await tempMessageServices.SaveAsync();
-                messages.Add(new TextResponseProcessor()
+                messages.Add(new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = AcceptedUser.UserId,
                     Text = Sentences.Admin_Request_Accepted,
@@ -52,12 +52,12 @@ namespace TrimedBot.Core.Commands.objectBox.User.Manager.Request
                 });
             }
             else
-                messages.Add(new TextResponseProcessor()
+                messages.Add(new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = Sentences.Access_Denied
                 });
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
         }
 
         public Task UnDo()

@@ -34,7 +34,7 @@ namespace TrimedBot.Core.Commands.Message
                 else
                     key = Keyboard.ConfirmedPublicMediaKeyboard(media.Id);
 
-                new VideoResponseProcessor()
+                new VideoResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Video = media.FileId,
@@ -43,7 +43,7 @@ namespace TrimedBot.Core.Commands.Message
                     IsDeletable = true
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "No posts found",

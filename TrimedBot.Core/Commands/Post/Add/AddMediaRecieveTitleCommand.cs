@@ -27,7 +27,7 @@ namespace TrimedBot.Core.Commands.Post.Add
 
         public Task Do()
         {
-            new TextResponseProcessor()
+            new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Please send caption of the video:",

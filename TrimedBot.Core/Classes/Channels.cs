@@ -24,12 +24,12 @@ namespace TrimedBot.Core.Classes
         {
             List<Processor> result = new List<Processor>();
             var channelService = objectBox.Provider.GetRequiredService<IChannel>();
-            var channels = await channelService.GetChannelsAsync();
+            var channels = await channelService.Channels();
 
 
             if (channels.Count > 0)
             {
-                result.Add(new TextResponseProcessor()
+                result.Add(new TextResponseProcessor(objectBox)
                 {
                     IsDeletable = true,
                     //Keyboard = Keyboard.CancelKeyboard(),
@@ -39,20 +39,20 @@ namespace TrimedBot.Core.Classes
 
                 foreach (var c in channels)
                 {
-                    string text = $"{c.Name}\nState: ";
+                    string text = $"{c.Name}\nType: {c.Type}\nState: ";
                     if (c.IsVerified) text += "Verified";
                     else text += "Not Verified";
 
-                    result.Add(new TextResponseProcessor()
+                    result.Add(new TextResponseProcessor(objectBox)
                     {
                         IsDeletable = true,
-                        Keyboard = Keyboard.Channel(c),
+                        Keyboard = Keyboard.Channel(c.Id),
                         ReceiverId = objectBox.User.UserId,
                         Text = text
                     });
                 }
             }
-            else result.Add(new TextResponseProcessor()
+            else result.Add(new TextResponseProcessor(objectBox)
             {
                 IsDeletable = true,
                 //Keyboard = Keyboard.CancelKeyboard(),
@@ -60,7 +60,7 @@ namespace TrimedBot.Core.Classes
                 Text = "There is no channel"
             });
 
-            result.Add(new TextResponseProcessor()
+            result.Add(new TextResponseProcessor(objectBox)
             {
                 IsDeletable = true,
                 Keyboard = Keyboard.AddChannel(),

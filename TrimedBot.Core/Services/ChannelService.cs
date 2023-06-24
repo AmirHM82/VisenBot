@@ -37,6 +37,15 @@ namespace TrimedBot.Core.Services
             await db.ChannelPosts.AddRangeAsync(channelPosts);
         }
 
+        public async Task<Channel> ChangeType(int id, ChannelType type)
+        {
+            var channel = await db.Channels.FindAsync(id);
+            channel.Type = type;
+            Update(channel);
+            await SaveAsync();
+            return channel;
+        }
+
         public void Delete(Channel channel)
         {
             db.Channels.Remove(channel);
@@ -78,7 +87,13 @@ namespace TrimedBot.Core.Services
             return foundChannel;
         }
 
-        public async Task<List<Channel>> GetChannelsAsync()
+        public Task<List<Channel>> GetOtherChannelsAsync() =>
+            db.Channels.Where(x => x.Type != ChannelType.Admins).ToListAsync();
+
+        public Task<List<Channel>> GetAdminChannelsAsync() =>
+            db.Channels.Where(x => x.Type == ChannelType.Admins).ToListAsync();
+
+        public async Task<List<Channel>> Channels()
         {
             return await db.Channels.ToListAsync();
         }

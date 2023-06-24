@@ -35,20 +35,20 @@ namespace TrimedBot.Core.Commands.Post.Edit
 
             List<Processor> processes = new();
 
-            processes.Add(new DeleteInlineKeyboardProcessor()
+            processes.Add(new DeleteInlineKeyboardProcessor(objectBox)
             {
                 MessageId = messageId,
                 ReceiverId = objectBox.User.UserId
             });
 
-            processes.Add(new TextResponseProcessor()
+            processes.Add(new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = "Send new caption:",
                 Keyboard = Keyboard.CancelKeyboard()
             });
 
-            new MultiProcessor(processes).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(processes, objectBox).AddThisMessageToService(objectBox.Provider);
 
             return Task.CompletedTask;
         }

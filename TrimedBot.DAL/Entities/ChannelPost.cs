@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrimedBot.DAL.Enums;
 
 namespace TrimedBot.DAL.Entities
 {
@@ -14,5 +15,7 @@ namespace TrimedBot.DAL.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int MessageId { get; set; }
         public Media Media { get; set; }
+        public virtual Channel Channel { get; set; }
+        public PostType PostType { get; set; }
     }
 }

@@ -15,6 +15,6 @@ namespace TrimedBot.DAL.Entities
         public int Id { get; set; }
         public int MessageId { get; set; }
         public long ChatId { get; set; }
-        public TempType Type { get; set; }
+        //public TempType Type { get; set; }
     }
 }

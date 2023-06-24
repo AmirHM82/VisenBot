@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 using TrimedBot.Core.Classes.Processors;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes;
 using TrimedBot.Core.Classes.Processors.ProcessorTypes.Channel;
@@ -38,7 +39,7 @@ namespace TrimedBot.Core.Classes
                 {
                     for (int i = 0; i < medias.Length; i++)
                     {
-                        messages.Add(new VideoResponseProcessor()
+                        messages.Add(new VideoResponseProcessor(objectBox)
                         {
                             Text = $"{medias[i].Title}\n{medias[i].Caption}",
                             Keyboard = Keyboard.PrivateMediaKeyboard(medias[i].Id),
@@ -55,7 +56,7 @@ namespace TrimedBot.Core.Classes
                 }
                 else
                 {
-                    messages.Add(new TextResponseProcessor()
+                    messages.Add(new TextResponseProcessor(objectBox)
                     {
                         ReceiverId = objectBox.User.UserId,
                         Text = "There is no videos.",
@@ -80,7 +81,7 @@ namespace TrimedBot.Core.Classes
                 {
                     var count = await mediaServices.CountAsync(objectBox.User.Id);
                     var medias = await mediaServices.GetNotConfirmedPostsAsync(pageNum);
-                    if (medias.Length > 0)
+                    if (medias.Length > 0) //Add medias in messages list
                     {
                         for (int i = 0; i < medias.Length; i++)
                         {
@@ -91,7 +92,7 @@ namespace TrimedBot.Core.Classes
                                     tags.Append($"{item.Name} ");
                                 }
 
-                            messages.Add(new VideoResponseProcessor()
+                            messages.Add(new VideoResponseProcessor(objectBox)
                             {
                                 ReceiverId = objectBox.User.UserId,
                                 Video = medias[i].FileId,
@@ -108,9 +109,9 @@ namespace TrimedBot.Core.Classes
                         objectBox.UpdateUserInfo();
                         if (count > 5 || pageNum >= 2) needNP = true;
                     }
-                    else
+                    else //Add not found message in message list
                     {
-                        messages.Add(new TextResponseProcessor()
+                        messages.Add(new TextResponseProcessor(objectBox)
                         {
                             ReceiverId = objectBox.User.UserId,
                             Text = "No medias found.",
@@ -130,7 +131,7 @@ namespace TrimedBot.Core.Classes
             List<Processor> messages = new List<Processor>();
 
             var mediaService = objectBox.Provider.GetRequiredService<IMedia>();
-            var medias = await mediaService.GetConfirmedMedias();
+            var medias = objectBox.Channel.Type is ChannelType.Admins ? await mediaService.GetNotConfirmedPostsAsync() : await mediaService.GetConfirmedMedias();
 
             foreach (var m in medias)
             {
@@ -140,12 +141,22 @@ namespace TrimedBot.Core.Classes
                     tags.Append($"{item.Name} ");
                 }
 
-                string text = $"{m.Title} - {m.Caption}\nTags: {tags}";
-                messages.Add(new ChannelVideoProcessor()
+                IReplyMarkup keyboard = default;
+                bool isDeletable = false;
+                if (objectBox.Channel.Type is ChannelType.Admins)
                 {
-                    ReceiverId = objectBox.ChatId,
+                    keyboard = Keyboard.DeclinedPublicMediaKeyboard(m.Id);
+                    isDeletable = true;
+                }
+
+                string text = $"{m.Title} - {m.Caption}\nTags: {tags}";
+                messages.Add(new ChannelVideoProcessor(objectBox)
+                {
+                    Channel = objectBox.Channel,
                     Text = text,
-                    Video = m.FileId
+                    Video = m.FileId,
+                    Keyboard = keyboard,
+                    IsDeletable = isDeletable
                 });
             }
             return messages;

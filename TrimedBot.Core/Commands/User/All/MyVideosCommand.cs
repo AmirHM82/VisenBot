@@ -32,7 +32,7 @@ namespace TrimedBot.Core.Commands.User.All
             needNP = tuple.Item2;
             if (needNP)
                 messages.AddRange(new NPMessage(objectBox).CreateNP(pageNum, CallbackSection.Post));
-            new MultiProcessor(messages).AddThisMessageToService(objectBox.Provider);
+            new MultiProcessor(messages, objectBox).AddThisMessageToService(objectBox.Provider);
 
             objectBox.User.LastUserState = DAL.Enums.UserState.SeePrivateAddedVideos;
             objectBox.UpdateUserInfo();

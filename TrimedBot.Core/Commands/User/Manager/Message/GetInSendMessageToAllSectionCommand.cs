@@ -31,14 +31,14 @@ namespace TrimedBot.Core.Commands.User.Manager.Message
                 objectBox.User.UserState = UserState.Send_Message_ToAll;
                 objectBox.UpdateUserInfo();
 
-                new TextResponseProcessor()
+                new TextResponseProcessor(objectBox)
                 {
                     ReceiverId = objectBox.User.UserId,
                     Text = "Send your messages:",
                     Keyboard = Keyboard.CancelKeyboard()
                 }.AddThisMessageToService(objectBox.Provider);
             }
-            else new TextResponseProcessor()
+            else new TextResponseProcessor(objectBox)
             {
                 ReceiverId = objectBox.User.UserId,
                 Text = Sentences.Access_Denied,
